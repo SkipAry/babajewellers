@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --maroon: #53020c;
+  --maroon-deep: #3b0108;
+  --gold: #d4a648;
+  --gold-light: #efd9a7;
+  --ivory: #faf6ef;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  @apply bg-ivory font-body text-ink antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--maroon-deep);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Gold foil text for display headings on maroon */
+.gold-foil {
+  background: linear-gradient(160deg, #f3dfae 0%, #d4a648 38%, #b8862e 62%, #efd9a7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Thin gold rule with a diamond at the centre — hallmark motif */
+.gold-rule {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(212, 166, 72, 0.7), transparent);
+}
+.gold-rule::after {
+  content: "◆";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 9px;
+  color: var(--gold);
+  background: inherit;
+}
+
+/* Hallmark stamp label used above section headings */
+.stamp-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.stamp-label::before,
+.stamp-label::after {
+  content: "";
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* Subtle jaali-inspired pattern for maroon sections */
+.jaali {
+  background-image: radial-gradient(rgba(212, 166, 72, 0.09) 1px, transparent 1.6px);
+  background-size: 26px 26px;
+}
+
+/* Scroll cue */
+@keyframes cue {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+.scroll-cue {
+  animation: cue 2s ease-in-out infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

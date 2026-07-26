@@ -1,0 +1,296 @@
+/**
+ * ─────────────────────────────────────────────────────────────
+ *  BABA JEWELLERS — SITE CONFIGURATION
+ *  Every editable detail of the website lives in this file.
+ * ─────────────────────────────────────────────────────────────
+ */
+
+export const site = {
+  name: "Baba Jewellers",
+  tagline: "Where Trust Meets Tradition",
+  url: "https://babajewellers.in", // update when the domain is confirmed
+  phoneDisplay: "+91 96071 76437",
+  phoneE164: "+919607176437",
+  whatsappNumber: "919607176437",
+  whatsappMessage:
+    "Hello Baba Jewellers, I would like to enquire about your jewellery collection.",
+  establishedDate: "9 June 2008",
+  establishedYear: 2008,
+  founder: "Mr. Santosh Tiwari",
+  businessHours: "8:30 AM – 9:00 PM, all days",
+  /**
+   * Formspree endpoint for the enquiry form.
+   * Create a free form at https://formspree.io and paste its endpoint
+   * here before launch. The form shows a friendly error until then.
+   */
+  formEndpoint: "https://formspree.io/f/REPLACE_ME",
+  instagram:
+    "https://www.instagram.com/babajewellersofficial?igsh=MW51dXJiaXZ0bXBkdg==",
+};
+
+export type Store = {
+  id: string;
+  label: string;
+  line1: string;
+  line2: string;
+  city: string;
+  note: string;
+};
+
+export const stores: Store[] = [
+  {
+    id: "karanje",
+    label: "The Original Store — Since 2008",
+    line1: "Shop No. 13, Karanje Complex",
+    line2: "Pune–Nagar Road, Shikrapur",
+    city: "Pune, Maharashtra 412208",
+    note: "Where our journey began on 9 June 2008.",
+  },
+  {
+    id: "baba-complex",
+    label: "Our New Chapter — Since 2023",
+    line1: "Baba Complex",
+    line2: "Shikrapur–Talegaon Dhamdhere Road, Shikrapur",
+    city: "Pune, Maharashtra 412208",
+    note: "Opened 22 October 2023 to serve you even better.",
+  },
+];
+
+export const mapsLinkFor = (store: Store) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `Baba Jewellers, ${store.line1}, ${store.line2}, ${store.city}`
+  )}`;
+
+export const whatsappLink = `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(
+  site.whatsappMessage
+)}`;
+
+export const telLink = `tel:${site.phoneE164}`;
+
+/* ── The six Baba Jewellers promises ────────────────────────── */
+export const promises = [
+  {
+    icon: "hallmark" as const,
+    title: "100% BIS Hallmarked Gold",
+    text: "Every gold jewellery piece is BIS Hallmarked for guaranteed purity and authenticity.",
+  },
+  {
+    icon: "returns" as const,
+    title: "15-Day Returns",
+    text: "Easy and hassle-free returns within 15 days, as per our return policy.",
+  },
+  {
+    icon: "pricing" as const,
+    title: "Transparent Pricing",
+    text: "Clear gold rates, making charges, GST and complete pricing with no hidden costs.",
+  },
+  {
+    icon: "payment" as const,
+    title: "Multiple Payment Options",
+    text: "Pay conveniently using Cash, UPI, Credit/Debit Cards, EMI and Bank Transfer.",
+  },
+  {
+    icon: "trust" as const,
+    title: "Trusted Jewellery Store",
+    text: "A trusted destination for premium jewellery, honest service and lasting relationships.",
+  },
+  {
+    icon: "heart" as const,
+    title: "Customer Satisfaction",
+    text: "Committed to exceptional service and a memorable shopping experience every time.",
+  },
+];
+
+export type PromiseIcon = (typeof promises)[number]["icon"];
+
+/* ── Collection pieces (public/products/) ───────────────────── */
+export type Piece = {
+  id: string;
+  title: string;
+  category: "Necklaces" | "Earrings" | "Bangles" | "Rings";
+  image: string;
+  alt: string;
+  tall?: boolean;
+};
+
+export const collectionFilters = [
+  "All",
+  "Necklaces",
+  "Earrings",
+  "Bangles",
+  "Rings",
+] as const;
+
+export const pieces: Piece[] = [
+  {
+    id: "gold-choker",
+    title: "Bridal Gold Choker",
+    category: "Necklaces",
+    image: "/products/11-gold-choker.webp",
+    alt: "Intricately carved gold choker necklace displayed on a maroon velvet box",
+    tall: true,
+  },
+  {
+    id: "necklace-set",
+    title: "Necklace & Earrings Set",
+    category: "Necklaces",
+    image: "/products/05-necklace-set.webp",
+    alt: "Gold necklace with matching earrings set displayed on a maroon velvet bust",
+  },
+  {
+    id: "chandbali-earrings",
+    title: "Pearl Chandbali Earrings",
+    category: "Earrings",
+    image: "/products/01-earrings.webp",
+    alt: "Gold chandbali earrings with pearl drops resting on an earthen bowl",
+    tall: true,
+  },
+  {
+    id: "long-necklace",
+    title: "Temple Long Necklace",
+    category: "Necklaces",
+    image: "/products/03-long-necklace.webp",
+    alt: "Long gold temple-style necklace arranged on maroon fabric",
+  },
+  {
+    id: "peacock-bangles",
+    title: "Peacock Bangles",
+    category: "Bangles",
+    image: "/products/07-peacock-bangles.webp",
+    alt: "Pair of gold bangles with peacock motifs on a maroon backdrop",
+  },
+  {
+    id: "ornate-earrings",
+    title: "Ornate Jhumka Earrings",
+    category: "Earrings",
+    image: "/products/06-ornate-earrings.webp",
+    alt: "Ornate gold jhumka earrings photographed on deep maroon velvet",
+    tall: true,
+  },
+  {
+    id: "classic-bangles",
+    title: "Classic Gold Bangles",
+    category: "Bangles",
+    image: "/products/02-bangles.webp",
+    alt: "Set of classic carved gold bangles stacked on a maroon surface",
+  },
+  {
+    id: "pendant-necklace",
+    title: "Pendant Necklace",
+    category: "Necklaces",
+    image: "/products/08-pendant-necklace.webp",
+    alt: "Delicate gold pendant necklace displayed against maroon velvet",
+  },
+  {
+    id: "stone-ring",
+    title: "Statement Stone Ring",
+    category: "Rings",
+    image: "/products/09-square-stone-ring.webp",
+    alt: "Gold ring with a square cut stone in a maroon presentation box",
+  },
+  {
+    id: "jhumka-stand",
+    title: "Heritage Jhumkas",
+    category: "Earrings",
+    image: "/products/04-jhumka-stand.webp",
+    alt: "Traditional gold jhumka earrings hanging on a display stand",
+  },
+  {
+    id: "jhumka-box",
+    title: "Bridal Jhumkas",
+    category: "Earrings",
+    image: "/products/10-jhumka-box.webp",
+    alt: "Bridal gold jhumka earrings presented in a maroon jewellery box",
+  },
+];
+
+/* ── Reels (public/reels/) ──────────────────────────────────── */
+export const reels = [
+  {
+    id: "reel-1",
+    src: "/reels/reel-1.mp4",
+    poster: "/reels/reel-1-poster.webp",
+    label: "From our collection",
+  },
+  {
+    id: "reel-2",
+    src: "/reels/reel-2.mp4",
+    poster: "/reels/reel-2-poster.webp",
+    label: "Crafted to be worn",
+  },
+  {
+    id: "reel-3",
+    src: "/reels/reel-3.mp4",
+    poster: "/reels/reel-3-poster.webp",
+    label: "Moments in gold",
+  },
+];
+
+/* ── Journey milestones ─────────────────────────────────────── */
+export const milestones = [
+  {
+    year: "2008",
+    title: "The First Store",
+    text: "On 9 June 2008, Mr. Santosh Tiwari opened Baba Jewellers at Karanje Complex, Pune–Nagar Road, Shikrapur — with a simple vision: pure jewellery, honest pricing and personal service.",
+  },
+  {
+    year: "2023",
+    title: "A New Chapter",
+    text: "On 22 October 2023, we began a proud new chapter at Baba Complex on the Shikrapur–Talegaon Dhamdhere Road — growing while staying true to the values we started with.",
+  },
+  {
+    year: "Today",
+    title: "Generations of Trust",
+    text: "Families who visited us as newlyweds now bring their children. Every ornament we sell carries the same promise of purity, transparency and care.",
+  },
+];
+
+/* ── FAQs (visible content; also used for FAQ schema) ───────── */
+export const faqs = [
+  {
+    question: "Is all your gold jewellery BIS Hallmarked?",
+    answer:
+      "Yes. Every gold ornament at Baba Jewellers is 100% BIS Hallmarked, which certifies its purity and authenticity as per the Bureau of Indian Standards.",
+  },
+  {
+    question: "What is your return policy?",
+    answer:
+      "We offer easy returns within 15 days of purchase, as per our return policy. Visit either store with your ornament and invoice, and our team will assist you.",
+  },
+  {
+    question: "Do you offer an exchange facility?",
+    answer:
+      "Yes. We provide a lifetime exchange facility on our jewellery, along with transparent valuation. Ask our team in-store for the details that apply to your ornament.",
+  },
+  {
+    question: "How is your pricing calculated?",
+    answer:
+      "Our pricing is fully transparent — the day's gold rate, making charges and GST are shown clearly, with no hidden costs. You are welcome to ask for a complete breakup before you buy.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer:
+      "Cash, UPI, credit and debit cards, EMI and bank transfer — choose whatever is most convenient for you.",
+  },
+  {
+    question: "What kind of jewellery do you keep?",
+    answer:
+      "An exclusive collection of gold and silver jewellery for weddings, festivals, daily wear and every special occasion — necklaces, chokers, earrings, jhumkas, bangles, rings and more.",
+  },
+  {
+    question: "Where are your stores located?",
+    answer:
+      "We have two stores in Shikrapur, Pune: the original store at Shop No. 13, Karanje Complex, Pune–Nagar Road (since 2008), and our newer store at Baba Complex, Shikrapur–Talegaon Dhamdhere Road (since 2023). Both are open 8:30 AM to 9:00 PM, all days.",
+  },
+];
+
+/* ── Occasions for the enquiry form ─────────────────────────── */
+export const occasions = [
+  "Wedding / Bridal",
+  "Engagement",
+  "Festival",
+  "Gift",
+  "Daily Wear",
+  "Investment",
+  "Other",
+];
