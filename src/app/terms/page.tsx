@@ -5,7 +5,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "Terms of Use | Baba Jewellers",
   description: "Terms of use for the Baba Jewellers website.",
-  alternates: { canonical: `${site.url}/terms` },
+  alternates: { canonical: `${site.url}/terms/` },
 };
 
 export default function TermsPage() {

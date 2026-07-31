@@ -108,12 +108,12 @@ export default function Footer() {
           <p>© {year} {site.name}. All rights reserved.</p>
           <ul className="flex gap-6">
             <li>
-              <a href="/privacy" className="hover:text-gold-light">
+              <a href="/privacy/" className="hover:text-gold-light">
                 Privacy Policy
               </a>
             </li>
             <li>
-              <a href="/terms" className="hover:text-gold-light">
+              <a href="/terms/" className="hover:text-gold-light">
                 Terms
               </a>
             </li>

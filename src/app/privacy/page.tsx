@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Privacy Policy | Baba Jewellers",
   description:
     "How Baba Jewellers handles the information you share through this website.",
-  alternates: { canonical: `${site.url}/privacy` },
+  alternates: { canonical: `${site.url}/privacy/` },
 };
 
 export default function PrivacyPage() {
