@@ -43,10 +43,49 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
+summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--ivory);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--maroon-deep);
   border-radius: 2px;
+}
+
+#main:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 70;
+  transform: translateY(-200%);
+  border-radius: 2px;
+  background: var(--ivory);
+  color: var(--maroon-deep);
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(59, 1, 8, 0.28);
+  transition: transform 180ms ease-out;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+@media (forced-colors: active) {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid CanvasText;
+    box-shadow: none;
+  }
 }
 
 /* Gold foil text for display headings on maroon */

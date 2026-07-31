@@ -16,7 +16,7 @@ export default function SectionHeading({
   return (
     <Reveal className={`max-w-3xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       <p
-        className={`stamp-label text-[11px] font-semibold uppercase tracking-caps ${
+        className={`stamp-label text-xs font-semibold uppercase tracking-[0.18em] ${
           onDark ? "text-gold" : "text-maroon"
         }`}
       >

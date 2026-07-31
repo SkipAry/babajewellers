@@ -19,6 +19,8 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const brandRef = useRef<HTMLAnchorElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -35,15 +37,28 @@ export default function Header() {
         toggleRef.current?.focus();
       }
     };
+
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeAtDesktop = () => {
+      if (!desktop.matches) return;
+      const focusWasInMenu = menuRef.current?.contains(document.activeElement);
+      setMenuOpen(false);
+      if (focusWasInMenu) brandRef.current?.focus();
+    };
+
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    desktop.addEventListener("change", closeAtDesktop);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      desktop.removeEventListener("change", closeAtDesktop);
     };
   }, [menuOpen]);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const closeMenuAndRestore = useCallback(() => {
+    setMenuOpen(false);
+    requestAnimationFrame(() => toggleRef.current?.focus());
+  }, []);
   const solid = scrolled || menuOpen;
 
   return (
@@ -51,11 +66,12 @@ export default function Header() {
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         solid
           ? "bg-maroon-deep/95 shadow-[0_1px_0_0_rgba(212,166,72,0.25)] backdrop-blur"
-          : "bg-transparent"
+          : "bg-maroon-deep/80 shadow-[0_1px_0_0_rgba(212,166,72,0.12)] backdrop-blur-sm"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-site items-center justify-between px-4 sm:px-6 md:h-20 lg:px-8">
         <Link
+          ref={brandRef}
           href="#home"
           className="flex items-center gap-3"
           aria-label="Baba Jewellers — back to top"
@@ -73,7 +89,7 @@ export default function Header() {
             <span className="font-display text-xl font-bold tracking-wide text-gold-light md:text-xl">
               Baba Jewellers
             </span>
-            <span className="text-[9px] uppercase tracking-caps text-ivory/70">
+            <span className="text-[11px] uppercase tracking-[0.08em] text-ivory/75 md:text-xs md:tracking-caps">
               Since 2008 · Shikrapur, Pune
             </span>
           </span>
@@ -105,7 +121,7 @@ export default function Header() {
         <button
           ref={toggleRef}
           type="button"
-          className="flex h-11 w-11 items-center justify-center lg:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center lg:hidden"
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -133,17 +149,18 @@ export default function Header() {
 
       {/* Mobile menu */}
       <div
+        ref={menuRef}
         id="mobile-menu"
         className={`lg:hidden ${
           menuOpen ? "block" : "hidden"
-        } max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-gold/25 bg-maroon-deep`}
+        } relative max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-gold/25 bg-maroon-deep md:max-h-[calc(100dvh-5rem)]`}
       >
         <nav aria-label="Mobile" className="flex flex-col px-4 py-4">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              onClick={closeMenu}
+              onClick={closeMenuAndRestore}
               className="border-b border-gold/15 py-4 text-base font-medium text-ivory/90"
             >
               {link.label}
@@ -154,7 +171,7 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => {
-              closeMenu();
+              closeMenuAndRestore();
               trackEvent("cta_whatsapp", { placement: "mobile_menu" });
             }}
             className="mt-4 rounded-sm bg-gold px-5 py-3.5 text-center text-base font-semibold text-maroon-deep"
@@ -163,7 +180,10 @@ export default function Header() {
           </a>
           <a
             href={telLink}
-            onClick={() => trackEvent("cta_call", { placement: "mobile_menu" })}
+            onClick={() => {
+              closeMenuAndRestore();
+              trackEvent("cta_call", { placement: "mobile_menu" });
+            }}
             className="mt-3 rounded-sm border border-gold/40 px-5 py-3.5 text-center text-base font-semibold text-gold-light"
           >
             Call {site.phoneDisplay}

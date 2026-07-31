@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { reels, site } from "@/data/site";
 import { trackEvent } from "@/lib/analytics";
 import Reveal from "./Reveal";
@@ -23,29 +24,63 @@ function ReelCard({
   index: number;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const userPausedRef = useRef(false);
   const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const requestPlay = useCallback(async () => {
+    const video = videoRef.current;
+    if (!video || !video.paused) return;
+    try {
+      await video.play();
+      trackEvent("reel_play", { reel: index + 1 });
+    } catch {
+      setPlaying(false);
+    }
+  }, [index]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return; // show poster; user can press play via controls
+    if (reduceMotion) video.pause();
 
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry.isIntersecting) {
-          video.play().catch(() => undefined);
-          trackEvent("reel_play", { reel: index + 1 });
+        if (reduceMotion) {
+          if (!entry.isIntersecting) video.pause();
+          return;
+        }
+        if (
+          entry.intersectionRatio >= 0.35 &&
+          !userPausedRef.current
+        ) {
+          void requestPlay();
         } else {
           video.pause();
         }
       },
-      { threshold: 0.35 }
+      { threshold: [0, 0.35] }
     );
     observer.observe(video);
-    return () => observer.disconnect();
-  }, [index]);
+    return () => {
+      observer.disconnect();
+      video.pause();
+    };
+  }, [reduceMotion, requestPlay]);
+
+  const togglePlayback = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      userPausedRef.current = false;
+      void requestPlay();
+    } else {
+      userPausedRef.current = true;
+      video.pause();
+    }
+  }, [requestPlay]);
 
   return (
     <figure className="group relative overflow-hidden rounded-sm">
@@ -58,6 +93,8 @@ function ReelCard({
         playsInline
         controls={false}
         preload="none"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
         aria-label={`Baba Jewellers reel: ${label}`}
         className="aspect-[9/16] w-full object-cover"
       />
@@ -66,23 +103,40 @@ function ReelCard({
           {label}
         </span>
       </figcaption>
-      <button
-        type="button"
-        onClick={() => setMuted((m) => !m)}
-        aria-label={muted ? "Unmute reel" : "Mute reel"}
-        aria-pressed={!muted}
-        className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-maroon-deep/70 text-gold-light backdrop-blur transition-colors hover:bg-maroon"
-      >
-        {muted ? (
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.6 3 3.2 3.2-1.4 1.4L15.2 13.4 12 16.6l-1.4-1.4 3.2-3.2-3.2-3.2L12 7.4l3.2 3.2 3.2-3.2 1.4 1.4L16.6 12z" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" />
-          </svg>
-        )}
-      </button>
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
+        <button
+          type="button"
+          onClick={togglePlayback}
+          aria-label={playing ? "Pause reel" : "Play reel"}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-maroon-deep/80 text-gold-light backdrop-blur transition-colors hover:bg-maroon"
+        >
+          {playing ? (
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+              <path d="M6 5h4v14H6V5Zm8 0h4v14h-4V5Z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+              <path d="m8 5 11 7-11 7V5Z" />
+            </svg>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          aria-label={muted ? "Unmute reel" : "Mute reel"}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-maroon-deep/80 text-gold-light backdrop-blur transition-colors hover:bg-maroon"
+        >
+          {muted ? (
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.6 3 3.2 3.2-1.4 1.4L15.2 13.4 12 16.6l-1.4-1.4 3.2-3.2-3.2-3.2L12 7.4l3.2 3.2 3.2-3.2 1.4 1.4L16.6 12z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" />
+            </svg>
+          )}
+        </button>
+      </div>
     </figure>
   );
 }
@@ -98,13 +152,18 @@ export default function Reels() {
           intro="A closer look at our pieces, straight from the store floor."
         />
 
-        <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-3">
+        <ul className="-mx-4 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:mx-auto sm:grid sm:max-w-4xl sm:grid-cols-3 sm:gap-5 sm:overflow-visible sm:px-0">
           {reels.map((reel, i) => (
-            <Reveal key={reel.id} delay={i * 0.08}>
+            <Reveal
+              as="li"
+              key={reel.id}
+              delay={i * 0.08}
+              className="w-[78vw] max-w-72 shrink-0 snap-center sm:w-auto sm:max-w-none"
+            >
               <ReelCard src={reel.src} poster={reel.poster} label={reel.label} index={i} />
             </Reveal>
           ))}
-        </div>
+        </ul>
 
         <Reveal className="mt-10 text-center">
           <a

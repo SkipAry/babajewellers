@@ -47,7 +47,7 @@ export default function Contact() {
   }
 
   const inputClass =
-    "w-full rounded-sm border border-maroon/20 bg-white px-4 py-3 text-sm text-ink placeholder:text-ink/40 focus:border-gold-dark";
+    "w-full rounded-sm border border-maroon/50 bg-white px-4 py-3 text-base text-ink placeholder:text-ink/60 focus:border-maroon";
   const labelClass = "mb-1.5 block text-sm font-medium text-maroon-deep";
 
   return (
@@ -178,12 +178,12 @@ export default function Contact() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="flex items-start gap-3 text-sm text-ink/60">
+                  <label className="flex items-start gap-3 text-sm text-ink/70">
                     <input
                       type="checkbox"
                       name="consent"
                       required
-                      className="mt-0.5 h-4 w-4 accent-maroon"
+                      className="mt-0.5 h-5 w-5 shrink-0 accent-maroon"
                     />
                     <span>
                       I agree that Baba Jewellers may contact me about this
@@ -223,7 +223,7 @@ export default function Contact() {
               </h3>
               <dl className="mt-6 space-y-6 text-sm leading-relaxed">
                 <div>
-                  <dt className="text-[10px] font-semibold uppercase tracking-caps text-ink/50">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
                     Phone
                   </dt>
                   <dd className="mt-1">
@@ -237,7 +237,7 @@ export default function Contact() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] font-semibold uppercase tracking-caps text-ink/50">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
                     WhatsApp
                   </dt>
                   <dd className="mt-1">
@@ -253,7 +253,7 @@ export default function Contact() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] font-semibold uppercase tracking-caps text-ink/50">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
                     Instagram
                   </dt>
                   <dd className="mt-1">
@@ -269,7 +269,7 @@ export default function Contact() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] font-semibold uppercase tracking-caps text-ink/50">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
                     Business Hours
                   </dt>
                   <dd className="mt-1 text-ink/80">{site.businessHours}</dd>

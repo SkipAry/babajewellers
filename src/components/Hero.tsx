@@ -25,7 +25,7 @@ export default function Hero() {
       <div className="jaali relative mx-auto grid min-h-[100svh] w-full max-w-site items-center gap-10 px-4 pb-24 pt-28 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-14 lg:pb-20 lg:pt-32 lg:px-8">
         {/* Copy */}
         <div className="relative flex h-full flex-col justify-end lg:justify-center">
-          <p className="stamp-label text-[11px] font-semibold uppercase tracking-caps text-gold">
+          <p className="stamp-label text-xs font-semibold uppercase tracking-[0.18em] text-gold">
             Est. 9 June 2008 · Shikrapur, Pune
           </p>
 
@@ -100,7 +100,7 @@ export default function Hero() {
       <a
         href="#promises"
         aria-label="Scroll to our promises"
-        className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 md:block"
+        className="absolute bottom-4 left-1/2 hidden h-11 w-11 -translate-x-1/2 items-center justify-center md:flex"
       >
         <span className="flex h-10 w-6 items-start justify-center rounded-full border border-gold/50 p-1.5">
           <span className="scroll-cue block h-1.5 w-1.5 rounded-full bg-gold" />

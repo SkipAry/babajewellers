@@ -31,7 +31,7 @@ export default function Footer() {
                 <p className="font-display text-xl font-bold text-gold-light">
                   Baba Jewellers
                 </p>
-                <p className="text-[9px] uppercase tracking-caps text-ivory/60">
+                <p className="text-xs uppercase tracking-[0.18em] text-ivory/70">
                   Since 2008
                 </p>
               </div>
@@ -53,7 +53,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <nav aria-label="Footer">
-            <h3 className="text-[10px] font-semibold uppercase tracking-caps text-gold/70">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-light/80">
               Navigation
             </h3>
             <ul className="mt-4 space-y-2.5">
@@ -72,7 +72,7 @@ export default function Footer() {
 
           {/* Stores */}
           <div className="lg:col-span-2">
-            <h3 className="text-[10px] font-semibold uppercase tracking-caps text-gold/70">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-light/80">
               Our Stores
             </h3>
             <div className="mt-4 grid gap-6 sm:grid-cols-2">

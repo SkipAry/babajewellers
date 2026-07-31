@@ -14,8 +14,11 @@ import Stores from "@/components/Stores";
 export default function Home() {
   return (
     <>
+      <a href="#main" className="skip-link">
+        Skip to main content
+      </a>
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <Hero />
         <Promises />
         <About />

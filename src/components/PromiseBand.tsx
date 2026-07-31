@@ -20,7 +20,7 @@ export default function PromiseBand() {
 
       <div className="relative mx-auto max-w-site px-4 text-center sm:px-6 lg:px-8">
         <Reveal>
-          <p className="stamp-label justify-center text-[11px] font-semibold uppercase tracking-caps text-gold">
+          <p className="stamp-label justify-center text-xs font-semibold uppercase tracking-[0.18em] text-gold">
             Our Promise
           </p>
           <h2 className="mx-auto mt-5 max-w-3xl font-display text-[clamp(2rem,5.5vw,3.4rem)] font-bold leading-[1.2]">

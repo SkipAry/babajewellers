@@ -9,7 +9,7 @@ export default function About() {
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Photo */}
-          <Reveal className="relative order-2 mx-auto w-full max-w-md lg:order-1">
+          <Reveal as="figure" className="relative order-2 mx-auto w-full max-w-md lg:order-1">
             <div className="relative aspect-[3/4] overflow-hidden rounded-t-[7rem]">
               <Image
                 src="/models/model-smiling.webp"

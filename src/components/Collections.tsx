@@ -69,7 +69,7 @@ export default function Collections() {
 
         {/* Filters */}
         <div
-          role="tablist"
+          role="group"
           aria-label="Filter the collection by category"
           className="no-scrollbar mt-10 flex justify-start gap-2 overflow-x-auto pb-1 sm:justify-center"
         >
@@ -78,13 +78,13 @@ export default function Collections() {
             return (
               <button
                 key={cat}
-                role="tab"
-                aria-selected={selected}
+                type="button"
+                aria-pressed={selected}
                 onClick={() => {
                   setFilter(cat);
                   trackEvent("collection_filter", { category: cat });
                 }}
-                className={`whitespace-nowrap rounded-sm px-5 py-2.5 text-sm font-medium transition-colors ${
+                className={`min-h-11 whitespace-nowrap rounded-sm px-5 py-2.5 text-sm font-medium transition-colors ${
                   selected
                     ? "bg-maroon text-gold-light"
                     : "border border-maroon/25 text-maroon hover:border-maroon/60"
@@ -116,11 +116,11 @@ export default function Collections() {
                   alt={piece.alt}
                   fill
                   sizes="(min-width: 1024px) 25vw, 50vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                  className="object-cover transition-[filter] duration-300 ease-out group-hover:brightness-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-maroon-deep/80 via-transparent to-transparent opacity-90" />
                 <div className="absolute inset-x-0 bottom-0 p-4 text-left">
-                  <p className="text-[10px] font-semibold uppercase tracking-caps text-gold-light/80">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-light/90">
                     {piece.category}
                   </p>
                   <p className="mt-0.5 font-display text-lg font-bold text-ivory">
@@ -165,7 +165,7 @@ export default function Collections() {
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3 p-5">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-caps text-maroon/70">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-maroon/80">
                   {openPiece.category}
                 </p>
                 <p className="font-display text-2xl font-bold text-maroon-deep">
@@ -184,7 +184,7 @@ export default function Collections() {
               type="button"
               onClick={closeModal}
               aria-label="Close"
-              className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-maroon-deep/80 text-xl leading-none text-gold-light hover:bg-maroon"
+              className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-maroon-deep/80 text-xl leading-none text-gold-light hover:bg-maroon"
             >
               ×
             </button>

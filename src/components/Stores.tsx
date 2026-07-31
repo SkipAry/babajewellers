@@ -18,7 +18,7 @@ export default function Stores() {
           {stores.map((store, i) => (
             <Reveal key={store.id} delay={i * 0.08}>
               <article className="flex h-full flex-col border border-maroon/15 bg-white p-7 md:p-8">
-                <p className="stamp-label text-[10px] font-semibold uppercase tracking-caps text-maroon">
+                <p className="stamp-label text-xs font-semibold uppercase tracking-[0.18em] text-maroon">
                   {store.label}
                 </p>
                 <h3 className="mt-4 font-display text-2xl font-bold text-maroon-deep">
@@ -28,7 +28,7 @@ export default function Stores() {
                   {store.line2},<br />
                   {store.city}
                 </p>
-                <p className="mt-3 text-sm italic text-ink/55">{store.note}</p>
+                <p className="mt-3 text-sm italic text-ink/70">{store.note}</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <TrackedLink
                     href={mapsLinkFor(store)}
