@@ -8,7 +8,7 @@
 export const site = {
   name: "Baba Jewellers",
   tagline: "Where Trust Meets Tradition",
-  url: "https://babajewellers.in", // update when the domain is confirmed
+  url: "https://babajewellers.co.in",
   phoneDisplay: "+91 96071 76437",
   phoneE164: "+919607176437",
   whatsappNumber: "919607176437",
