@@ -187,8 +187,10 @@ export default function Contact() {
                     />
                     <span>
                       I agree that Baba Jewellers may contact me about this
-                      enquiry. My details will not be shared with third
-                      parties. *
+                      enquiry. My details will be processed by Formspree, our
+                      form service provider, to submit and manage my enquiry.
+                      We do not sell my details or share them with third
+                      parties for their own marketing. *
                     </span>
                   </label>
                 </div>

@@ -22,12 +22,16 @@ export default function PrivacyPage() {
         <p>
           Baba Jewellers collects the information you submit through the
           enquiry form on this website — your name, contact details and
-          enquiry — solely to respond to you and assist with your purchase.
+          enquiry — to respond to you and assist with your purchase. Form
+          submissions are processed and may be stored on our behalf by
+          Formspree, our form service provider.
         </p>
         <p>
-          We do not sell, rent or share your personal information with third
-          parties for marketing purposes. Your details are retained only as
-          long as needed to serve your enquiry.
+          We do not sell or rent your personal information, or share it with
+          third parties for their own marketing. We share it with service
+          providers such as Formspree only as needed to operate the enquiry
+          service, and retain it only as long as needed to handle your enquiry,
+          subject to legal and service-provider retention requirements.
         </p>
         <p>
           If you would like your information removed from our records, call us

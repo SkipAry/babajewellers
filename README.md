@@ -16,8 +16,9 @@ Cloudflare Pages, or plain hosting).
 
 ## Editing content
 
-**Everything editable lives in `src/data/site.ts`** — phone, WhatsApp
-message, hours, both store addresses, the six promises, collection
+**Everything editable lives in `src/data/site.ts`** — global phone and
+WhatsApp details, per-store calling and WhatsApp contacts, hours, both
+store addresses, the Formspree endpoint, the six promises, collection
 pieces, reels, milestones, FAQs and the Instagram link.
 
 Assets:
@@ -27,9 +28,8 @@ Assets:
 
 ## Before launch checklist
 
-1. **Form endpoint** — create a free form at formspree.io and paste its
-   endpoint into `site.formEndpoint` in `src/data/site.ts`. Until then
-   the form shows a friendly error directing customers to call/WhatsApp.
+1. **Form integration** — enquiries submit to the active Formspree
+   endpoint configured in `site.formEndpoint` in `src/data/site.ts`.
 2. **Domain** — update `site.url` when the domain is confirmed.
 3. **Analytics** — CTA clicks, reel plays and form submits already push
    to `window.dataLayer`; add a GA4/GTM snippet in `src/app/layout.tsx`.

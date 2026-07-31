@@ -78,7 +78,7 @@ const storeSchemas = stores.map((store, i) => ({
   name: site.name,
   image: `${site.url}/models/hero-model.webp`,
   logo: `${site.url}/icon-512.png`,
-  telephone: site.phoneE164,
+  telephone: store.callE164,
   url: site.url,
   foundingDate: "2008-06-09",
   founder: { "@type": "Person", name: site.founder },

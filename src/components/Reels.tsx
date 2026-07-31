@@ -9,7 +9,7 @@ import SectionHeading from "./SectionHeading";
 
 /**
  * Three vertical reels. Videos autoplay muted while on screen, pause
- * when scrolled away, and each card has a sound toggle. Under
+ * when scrolled away, and toggle playback on direct interaction. Under
  * prefers-reduced-motion videos wait for a tap instead of autoplaying.
  */
 function ReelCard({
@@ -25,7 +25,6 @@ function ReelCard({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const userPausedRef = useRef(false);
-  const [muted, setMuted] = useState(true);
   const [playing, setPlaying] = useState(false);
   const reduceMotion = useReducedMotion() ?? false;
 
@@ -84,59 +83,31 @@ function ReelCard({
 
   return (
     <figure className="group relative overflow-hidden rounded-sm">
-      <video
-        ref={videoRef}
-        src={src}
-        poster={poster}
-        muted={muted}
-        loop
-        playsInline
-        controls={false}
-        preload="none"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        aria-label={`Baba Jewellers reel: ${label}`}
-        className="aspect-[9/16] w-full object-cover"
-      />
+      <button
+        type="button"
+        onClick={togglePlayback}
+        aria-label={`${playing ? "Pause" : "Play"} reel: ${label}`}
+        className="block w-full cursor-pointer appearance-none bg-transparent p-0 text-left focus-visible:!outline-offset-[-4px]"
+      >
+        <video
+          ref={videoRef}
+          src={src}
+          poster={poster}
+          muted
+          loop
+          playsInline
+          controls={false}
+          preload="none"
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          className="aspect-[9/16] w-full object-cover"
+        />
+      </button>
       <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-maroon-deep/85 to-transparent p-4">
         <span className="font-display text-base font-bold text-gold-light">
           {label}
         </span>
       </figcaption>
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
-        <button
-          type="button"
-          onClick={togglePlayback}
-          aria-label={playing ? "Pause reel" : "Play reel"}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-maroon-deep/80 text-gold-light backdrop-blur transition-colors hover:bg-maroon"
-        >
-          {playing ? (
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-              <path d="M6 5h4v14H6V5Zm8 0h4v14h-4V5Z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-              <path d="m8 5 11 7-11 7V5Z" />
-            </svg>
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-label={muted ? "Unmute reel" : "Mute reel"}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-maroon-deep/80 text-gold-light backdrop-blur transition-colors hover:bg-maroon"
-        >
-          {muted ? (
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.6 3 3.2 3.2-1.4 1.4L15.2 13.4 12 16.6l-1.4-1.4 3.2-3.2-3.2-3.2L12 7.4l3.2 3.2 3.2-3.2 1.4 1.4L16.6 12z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" />
-            </svg>
-          )}
-        </button>
-      </div>
     </figure>
   );
 }

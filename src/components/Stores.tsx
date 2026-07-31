@@ -1,5 +1,11 @@
 import Image from "next/image";
-import { mapsLinkFor, site, stores, telLink } from "@/data/site";
+import {
+  mapsLinkFor,
+  site,
+  stores,
+  telLinkFor,
+  whatsappLinkFor,
+} from "@/data/site";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import TrackedLink from "./TrackedLink";
@@ -29,7 +35,43 @@ export default function Stores() {
                   {store.city}
                 </p>
                 <p className="mt-3 text-sm italic text-ink/70">{store.note}</p>
-                <div className="mt-6 flex flex-wrap gap-3">
+                <dl className="mt-6 grid gap-4 border-t border-maroon/15 pt-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  <div>
+                    <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
+                      Mobile Number (Calling)
+                    </dt>
+                    <dd className="mt-1">
+                      <TrackedLink
+                        href={telLinkFor(store)}
+                        event="cta_call"
+                        placement={`store_${store.id}_call`}
+                        aria-label={`Call ${store.line1} at ${store.callDisplay}`}
+                        className="inline-flex min-h-11 items-center font-semibold text-maroon underline decoration-maroon/35 underline-offset-4 transition-colors hover:text-maroon-deep"
+                      >
+                        {store.callDisplay}
+                      </TrackedLink>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
+                      WhatsApp Number
+                    </dt>
+                    <dd className="mt-1">
+                      <TrackedLink
+                        href={whatsappLinkFor(store)}
+                        event="cta_whatsapp"
+                        placement={`store_${store.id}_whatsapp`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`WhatsApp ${store.line1} at ${store.whatsappDisplay} (opens in a new tab)`}
+                        className="inline-flex min-h-11 items-center font-semibold text-maroon underline decoration-maroon/35 underline-offset-4 transition-colors hover:text-maroon-deep"
+                      >
+                        {store.whatsappDisplay}
+                      </TrackedLink>
+                    </dd>
+                  </div>
+                </dl>
+                <div className="mt-5">
                   <TrackedLink
                     href={mapsLinkFor(store)}
                     event="cta_directions"
@@ -39,14 +81,6 @@ export default function Stores() {
                     className="rounded-sm bg-maroon px-5 py-3 text-sm font-semibold text-gold-light transition-colors hover:bg-maroon-deep"
                   >
                     Get Directions
-                  </TrackedLink>
-                  <TrackedLink
-                    href={telLink}
-                    event="cta_call"
-                    placement={`store_${store.id}`}
-                    className="rounded-sm border border-maroon/30 px-5 py-3 text-sm font-semibold text-maroon transition-colors hover:border-maroon"
-                  >
-                    {site.phoneDisplay}
                   </TrackedLink>
                 </div>
               </article>

@@ -20,10 +20,9 @@ export const site = {
   businessHours: "8:30 AM – 9:00 PM, all days",
   /**
    * Formspree endpoint for the enquiry form.
-   * Create a free form at https://formspree.io and paste its endpoint
-   * here before launch. The form shows a friendly error until then.
+   * Keep this in sync with the active form at https://formspree.io.
    */
-  formEndpoint: "https://formspree.io/f/REPLACE_ME",
+  formEndpoint: "https://formspree.io/f/mpqveyvp",
   instagram:
     "https://www.instagram.com/babajewellersofficial?igsh=MW51dXJiaXZ0bXBkdg==",
 };
@@ -35,6 +34,10 @@ export type Store = {
   line2: string;
   city: string;
   note: string;
+  callDisplay: string;
+  callE164: string;
+  whatsappDisplay: string;
+  whatsappNumber: string;
 };
 
 export const stores: Store[] = [
@@ -45,6 +48,10 @@ export const stores: Store[] = [
     line2: "Pune–Nagar Road, Shikrapur",
     city: "Pune, Maharashtra 412208",
     note: "Where our journey began on 9 June 2008.",
+    callDisplay: "+91 73979 65958",
+    callE164: "+917397965958",
+    whatsappDisplay: "9096082163",
+    whatsappNumber: "919096082163",
   },
   {
     id: "baba-complex",
@@ -53,12 +60,23 @@ export const stores: Store[] = [
     line2: "Shikrapur–Talegaon Dhamdhere Road, Shikrapur",
     city: "Pune, Maharashtra 412208",
     note: "Opened 22 October 2023 to serve you even better.",
+    callDisplay: "+91 85301 75311",
+    callE164: "+918530175311",
+    whatsappDisplay: "8379985958",
+    whatsappNumber: "918379985958",
   },
 ];
 
 export const mapsLinkFor = (store: Store) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `Baba Jewellers, ${store.line1}, ${store.line2}, ${store.city}`
+  )}`;
+
+export const telLinkFor = (store: Store) => `tel:${store.callE164}`;
+
+export const whatsappLinkFor = (store: Store) =>
+  `https://wa.me/${store.whatsappNumber}?text=${encodeURIComponent(
+    site.whatsappMessage
   )}`;
 
 export const whatsappLink = `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(
