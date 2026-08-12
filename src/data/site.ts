@@ -302,6 +302,50 @@ export const faqs = [
   },
 ];
 
+/* ── बाबा सुवर्ण एलीट योजना — savings scheme ─────────────────
+   Figures are transcribed from the scheme poster. Do not compute the
+   bonus from a rate: it is not a fixed percentage (12 months = 6.25% of
+   the deposit, 30 months at ₹5,000 = 15%), so every row is stated. */
+
+export type SavingsPlan = { amount: number; months: number; bonus: number };
+
+export const savingsPlans: SavingsPlan[] = [
+  { amount: 5000, months: 12, bonus: 3750 },
+  { amount: 5000, months: 18, bonus: 8500 },
+  { amount: 5000, months: 24, bonus: 15000 },
+  { amount: 5000, months: 30, bonus: 22500 },
+  { amount: 10000, months: 24, bonus: 30000 },
+  { amount: 20000, months: 30, bonus: 90000 },
+  { amount: 30000, months: 30, bonus: 135000 },
+];
+
+/** Monthly amounts, in poster order. */
+export const savingsAmounts = [...new Set(savingsPlans.map((p) => p.amount))];
+
+/** Durations available for a given monthly amount. */
+export const monthsFor = (amount: number) =>
+  savingsPlans.filter((p) => p.amount === amount).map((p) => p.months);
+
+export const findPlan = (amount: number, months: number) =>
+  savingsPlans.find((p) => p.amount === amount && p.months === months);
+
+/** ₹1,20,000 — Indian grouping, no decimals. */
+export const inr = (n: number) =>
+  `₹${new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(n)}`;
+
+export const savingsScheme = {
+  /** Eyebrow above the heading — the poster's own strapline. */
+  name: "आजची बचत, उद्याचे सुवर्ण भविष्य",
+  heading: "बाबा ज्वेलर्स एलीट योजना",
+  intro:
+    "मासिक रक्कम आणि कालावधी निवडा. तुमची एकूण बचत व अतिरिक्त लाभ लगेच पाहा.",
+  disclaimer:
+    "ही योजना फक्त सुवर्ण दागिने खरेदीसाठी लागू आहे. नियम व अटी लागू.",
+  /** Pre-filled WhatsApp text. The number itself is site.whatsappNumber. */
+  enquiryMessage:
+    "नमस्कार बाबा ज्वेलर्स, मला बाबा ज्वेलर्स एलीट योजनेबद्दल अधिक माहिती हवी आहे.",
+};
+
 /* ── Occasions for the enquiry form ─────────────────────────── */
 export const occasions = [
   "Wedding / Bridal",

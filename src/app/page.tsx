@@ -1,4 +1,5 @@
 import About from "@/components/About";
+import BenefitCalculator from "@/components/BenefitCalculator";
 import Collections from "@/components/Collections";
 import Contact from "@/components/Contact";
 import FAQ from "@/components/FAQ";
@@ -24,6 +25,7 @@ export default function Home() {
         <About />
         <Collections />
         <Reels />
+        <BenefitCalculator />
         <Stores />
         <FAQ />
         <PromiseBand />
