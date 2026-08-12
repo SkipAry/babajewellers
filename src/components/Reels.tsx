@@ -113,8 +113,11 @@ function ReelCard({
 }
 
 export default function Reels() {
+  // No bottom padding: the next section (BenefitCalculator) is the same
+  // maroon and brings its own top padding, so keeping both stacked two
+  // full paddings into one dead band with no visible seam.
   return (
-    <section className="jaali bg-maroon-deep py-16 md:py-24">
+    <section className="jaali bg-maroon-deep pt-16 md:pt-24">
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
         <SectionHeading
           onDark

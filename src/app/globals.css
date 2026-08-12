@@ -88,12 +88,26 @@ summary:focus-visible,
   }
 }
 
-/* Gold foil text for display headings on maroon */
+/* Gold foil text for display headings on maroon.
+
+   background-clip: text only paints the gradient across the element's
+   background box, so any part of a glyph sitting outside that box gets
+   no paint and vanishes. Latin caps fit inside a tight display leading,
+   but Devanagari marks above the shirorekha (repha, the ी matra) do not
+   — at leading 1.15 they were being clipped away, turning
+   "बाबा ज्वेलर्स एलीट योजना" into "बाबा ज्वेलसे एलोट योजना".
+
+   The padding grows the paint box enough to cover those marks. It is
+   deliberately NOT cancelled by a negative margin: the marks need real
+   vertical space, or they collide with the eyebrow label above. On the
+   inline spans (Hero, PromiseBand) vertical padding does not affect
+   line layout, so only the block headings gain the extra room. */
 .gold-foil {
   background: linear-gradient(160deg, #f3dfae 0%, #d4a648 38%, #b8862e 62%, #efd9a7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  padding-block: 0.18em;
 }
 
 /* Thin gold rule with a diamond at the centre — hallmark motif */
