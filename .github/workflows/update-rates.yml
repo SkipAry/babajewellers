@@ -1,0 +1,54 @@
+name: Update gold & silver rates
+
+# 05:00 UTC = 10:30 IST. GitHub schedules in UTC only.
+# GitHub may delay scheduled runs by a few minutes under load; the script
+# is idempotent per India date, so a late or repeated run is harmless.
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Re-fetch even if today's rates were already published (uses 2 API requests)"
+        type: boolean
+        default: false
+
+# Only one rate run at a time, so two jobs can never both spend quota.
+concurrency:
+  group: metal-rates
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No install needed: the script uses only Node built-ins and global fetch.
+      - name: Verify rate maths
+        run: node scripts/fetch-rates.mjs --selftest
+
+      - name: Fetch and publish rates
+        env:
+          GOLDAPI_KEY: ${{ secrets.GOLDAPI_KEY }}
+        run: node scripts/fetch-rates.mjs ${{ inputs.force && '--force' || '' }}
+
+      - name: Commit if the rates changed
+        run: |
+          if git diff --quiet -- public/rates.json data/rates-state.json; then
+            echo "No change — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/rates.json data/rates-state.json
+          git commit -m "chore(rates): daily gold & silver update"
+          git push
