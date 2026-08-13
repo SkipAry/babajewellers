@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "npx serve out"
+    "start": "npx serve out",
+    "rates:fetch": "node scripts/fetch-rates.mjs",
+    "rates:test": "node scripts/fetch-rates.mjs --selftest"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",

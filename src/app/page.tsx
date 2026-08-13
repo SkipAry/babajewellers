@@ -6,6 +6,7 @@ import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import MetalRates from "@/components/MetalRates";
 import MobileActions from "@/components/MobileActions";
 import PromiseBand from "@/components/PromiseBand";
 import Promises from "@/components/Promises";
@@ -23,6 +24,7 @@ export default function Home() {
         <Hero />
         <Promises />
         <About />
+        <MetalRates />
         <Collections />
         <Reels />
         <BenefitCalculator />
