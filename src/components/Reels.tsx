@@ -103,7 +103,11 @@ function ReelCard({
           className="aspect-[9/16] w-full object-cover"
         />
       </button>
-      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-maroon-deep/85 to-transparent p-4">
+      {/* The scrim runs to /95 and holds full strength through the first 45%
+          of its height, because the caption sits over photography: measured
+          against the brightest pixels behind the text the old /85 fade fell to
+          2.96:1, even though its median was a comfortable 7:1. */}
+      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-maroon-deep/95 from-45% to-transparent p-4">
         <span className="font-display text-base font-bold text-gold-light">
           {label}
         </span>
@@ -117,7 +121,9 @@ export default function Reels() {
   // maroon and brings its own top padding, so keeping both stacked two
   // full paddings into one dead band with no visible seam.
   return (
-    <section className="jaali bg-maroon-deep pt-16 md:pt-24">
+    // py, not pt: with no bottom padding this section's gap to the one below
+    // was 96px against 192px everywhere else on the page.
+    <section className="jaali bg-maroon-deep py-16 md:py-24">
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
         <SectionHeading
           onDark

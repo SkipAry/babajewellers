@@ -101,7 +101,7 @@ export default function Header() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-ivory/85 transition-colors hover:text-gold-light"
+              className="py-1 text-sm font-medium text-ivory/85 transition-colors hover:text-gold-light"
             >
               {link.label}
             </a>

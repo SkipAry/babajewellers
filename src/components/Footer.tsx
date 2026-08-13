@@ -45,7 +45,7 @@ export default function Footer() {
               href={site.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-block text-sm text-gold-light/80 transition-colors hover:text-gold-light"
+              className="mt-6 inline-block py-1 text-sm text-gold-light/80 transition-colors hover:text-gold-light"
             >
               Instagram — @babajewellersofficial
             </a>
@@ -56,12 +56,14 @@ export default function Footer() {
             <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-light/80">
               Navigation
             </h3>
-            <ul className="mt-4 space-y-2.5">
+            {/* inline-block py-1 lifts each link from 18px to 26px tall.
+                WCAG 2.5.8 (AA) wants 24×24 minimum for a pointer target. */}
+            <ul className="mt-4 space-y-1.5">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-sm text-ivory/75 transition-colors hover:text-gold-light"
+                    className="inline-block py-1 text-sm text-ivory/75 transition-colors hover:text-gold-light"
                   >
                     {link.label}
                   </a>
@@ -87,7 +89,7 @@ export default function Footer() {
                     href={mapsLinkFor(store)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-block text-gold-light/80 underline underline-offset-4 hover:text-gold-light"
+                    className="mt-2 inline-block py-1 text-gold-light/80 underline underline-offset-4 hover:text-gold-light"
                   >
                     View on Google Maps
                   </a>
@@ -95,10 +97,10 @@ export default function Footer() {
               ))}
             </div>
             <p className="mt-6 text-sm text-ivory/75">
-              <a href={telLink} className="font-semibold text-ivory hover:text-gold-light">
+              <a href={telLink} className="inline-block py-1 font-semibold text-ivory hover:text-gold-light">
                 {site.phoneDisplay}
               </a>
-              <span className="mx-2 text-gold/50">◆</span>
+              <span aria-hidden="true" className="mx-2 text-gold/50">◆</span>
               {site.businessHours}
             </p>
           </div>

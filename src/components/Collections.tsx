@@ -59,7 +59,10 @@ export default function Collections() {
   }, [openPiece, closeModal]);
 
   return (
-    <section id="collections" className="bg-ivory-warm py-16 md:py-24">
+    // bg-ivory, not ivory-warm: the rates section above is warm, and two warm
+    // sections in a row erased the boundary — 192px of identical cream with no
+    // cue that one section had ended and another begun.
+    <section id="collections" className="bg-ivory py-16 md:py-24">
       <div className="mx-auto max-w-site px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="The Collection"
@@ -133,7 +136,7 @@ export default function Collections() {
         </ul>
 
         <Reveal className="mt-12 text-center">
-          <p className="text-sm text-ink/60">
+          <p className="text-sm text-ink/70">
             Looking for something specific? Message us — we will help you find it.
           </p>
         </Reveal>

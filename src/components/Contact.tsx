@@ -248,7 +248,7 @@ export default function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => trackEvent("cta_whatsapp", { placement: "contact_panel" })}
-                      className="font-medium text-maroon underline-offset-4 hover:underline"
+                      className="inline-block py-1 font-medium text-maroon underline-offset-4 hover:underline"
                     >
                       Start a WhatsApp chat →
                     </a>
@@ -264,7 +264,7 @@ export default function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => trackEvent("cta_instagram", { placement: "contact_panel" })}
-                      className="font-medium text-maroon underline-offset-4 hover:underline"
+                      className="inline-block py-1 font-medium text-maroon underline-offset-4 hover:underline"
                     >
                       @babajewellersofficial →
                     </a>

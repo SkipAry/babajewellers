@@ -137,7 +137,7 @@ export default function MetalRates() {
                           ) : (
                             <>
                               {inr(value)}
-                              <span className="ml-1 text-[13px] font-normal text-ink/55">
+                              <span className="ml-1 text-[13px] font-normal text-ink/70">
                                 /g
                               </span>
                             </>
@@ -168,7 +168,7 @@ export default function MetalRates() {
                   </p>
                 ) : null}
 
-                <p className="m-0 mt-5 text-center text-[12.5px] leading-relaxed text-ink/55">
+                <p className="m-0 mt-5 text-center text-[12.5px] leading-relaxed text-ink/70">
                   {ratesCopy.disclaimer}
                 </p>
               </>

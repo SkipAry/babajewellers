@@ -229,7 +229,7 @@ export default function BenefitCalculator() {
               </table>
             </div>
 
-            <p className="m-0 mt-6 text-center text-[13px] leading-relaxed text-ink/60">
+            <p className="m-0 mt-6 text-center text-[13px] leading-relaxed text-ink/70">
               {savingsScheme.disclaimer}
             </p>
           </div>
