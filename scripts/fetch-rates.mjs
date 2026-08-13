@@ -18,6 +18,7 @@
  * ─────────────────────────────────────────────────────────────
  */
 
+import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -120,8 +121,19 @@ const EMPTY_STATE = {
   raw: null,
   usage: { month: istMonth(), requestCount: 0, lastAttemptAt: null, lastSuccessAt: null },
   lastRunDate: null,
+  configHash: null,
   history: [],
 };
+
+/* Fingerprint of every setting that changes the published number. Sorted so
+   that reordering keys in the config file is not mistaken for a real change. */
+function configHash(cfg) {
+  const stable = Object.keys(cfg)
+    .sort()
+    .map((k) => `${k}=${cfg[k]}`)
+    .join("|");
+  return createHash("sha256").update(stable).digest("hex").slice(0, 12);
+}
 
 function readJSON(file, fallback) {
   try {
@@ -190,10 +202,19 @@ async function main() {
     state.usage = { month, requestCount: 0, lastAttemptAt: null, lastSuccessAt: state.usage.lastSuccessAt ?? null };
   }
 
-  // Idempotency: one publish per India day, however often the job fires.
-  if (state.lastRunDate === today && !process.argv.includes("--force")) {
-    console.log(`Already updated for ${today} (IST). Nothing to do.`);
+  /* Idempotency: one publish per India day, however often the job fires.
+     Keyed on the date AND the config, because the published rate is a
+     function of both. Keying on the date alone meant that changing a markup
+     and re-running produced "already updated today" and silently kept
+     publishing the old numbers — the job went green having done nothing. */
+  const cfgHash = configHash(cfg);
+  const cfgChanged = state.configHash !== cfgHash;
+  if (state.lastRunDate === today && !cfgChanged && !process.argv.includes("--force")) {
+    console.log(`Already updated for ${today} (IST) with this config. Nothing to do.`);
     return;
+  }
+  if (cfgChanged && state.lastRunDate === today) {
+    console.log("Rate config changed since the last publish — re-fetching.");
   }
 
   if (state.usage.requestCount + 2 > MONTHLY_LIMIT) {
@@ -304,6 +325,7 @@ async function main() {
 
   state.raw = raw;
   state.lastRunDate = today;
+  state.configHash = cfgHash;
   if (goldStatus === "fresh" || silverStatus === "fresh") {
     state.usage.lastSuccessAt = istISO();
   }
@@ -366,6 +388,32 @@ function selftest() {
   assert.match(istISO(d), /^2026-08-13T09:30:00\+05:30$/);
   // 20:00 UTC is already the next day in India
   assert.equal(istDate(new Date("2026-08-13T20:00:00Z")), "2026-08-14");
+
+  /* The config fingerprint. This exists because a markup change on a day the
+     job had already run was silently ignored: the job went green and kept
+     publishing gold 13% under the market rate. */
+  const base = { goldMarkupPercentage: 15, silverMarkupPercentage: 27.5, includeGST: false };
+  assert.equal(configHash(base), configHash({ ...base }), "same settings must hash the same");
+  assert.equal(
+    configHash(base),
+    configHash({ includeGST: false, silverMarkupPercentage: 27.5, goldMarkupPercentage: 15 }),
+    "key order must not count as a change"
+  );
+  assert.notEqual(
+    configHash(base),
+    configHash({ ...base, goldMarkupPercentage: 15.5 }),
+    "a changed markup must invalidate the day's publish"
+  );
+  assert.notEqual(
+    configHash(base),
+    configHash({ ...base, includeGST: true }),
+    "toggling GST must invalidate the day's publish"
+  );
+
+  // A real published rate must actually carry the markup, not pass spot through.
+  const spot = 13511.9042;
+  assert.equal(calculatePublishedRate(spot, 15, 0, false, 3, 1), 15539);
+  assert.equal(calculatePublishedRate(199.9744, 27.5, 0, false, 3, 1), 255);
 
   console.log("self-check passed");
 }
