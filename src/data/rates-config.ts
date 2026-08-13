@@ -36,15 +36,42 @@ export type RatesConfig = {
   gstPercentage: number;
 };
 
+/**
+ * ── CALIBRATION — last checked 13 August 2026 ──────────────────
+ *
+ * GoldAPI returns the INTERNATIONAL spot price converted to INR. It does not
+ * know about anything that happens once metal lands in India, so the raw
+ * figure sits well below what any Indian jeweller quotes. The markups below
+ * close that gap.
+ *
+ *   Reference on 13 Aug 2026     spot (raw)   Indian market   implied markup
+ *   24K gold                     ₹13,512/g    ₹15,470/g       +14.5%
+ *   Silver 999                   ₹200/g       ₹255.10/g       +27.6%
+ *
+ * Gold is almost entirely the import duty, which the government raised from
+ * 6% to 15% on 13 May 2026 — hence 15 below, which lands within 0.4% of the
+ * quoted market rate. Silver carries that same duty PLUS a wide domestic
+ * physical premium, so it needs roughly 27.5%.
+ *
+ * THESE ARE CALIBRATION CONSTANTS, NOT CONSTANTS OF NATURE. The duty changed
+ * once already this year and the silver premium moves with physical supply.
+ * Re-check against a public rate page every month or so; if the site drifts
+ * more than a percent or two from the market, retune here.
+ *
+ * Separately: this makes the site track the MARKET rate. If Baba Jewellers
+ * quotes above or below market at the counter, add that on top via the flat
+ * adjustments — nobody but the shop knows that number.
+ * ───────────────────────────────────────────────────────────────
+ */
 export const ratesConfig: RatesConfig = {
-  goldMarkupPercentage: 0,
+  goldMarkupPercentage: 15,
   gold24kFlatAdjustment: 0,
   gold22kFlatAdjustment: 0,
   gold18kFlatAdjustment: 0,
   gold14kFlatAdjustment: 0,
   gold9kFlatAdjustment: 0,
 
-  silverMarkupPercentage: 0,
+  silverMarkupPercentage: 27.5,
   silverFlatAdjustment: 0,
 
   goldRoundingIncrement: 1,
