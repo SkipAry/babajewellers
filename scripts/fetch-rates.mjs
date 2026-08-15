@@ -70,12 +70,8 @@ function readConfig() {
     gold24kFlatAdjustment: num("gold24kFlatAdjustment", 0),
     gold22kFlatAdjustment: num("gold22kFlatAdjustment", 0),
     gold18kFlatAdjustment: num("gold18kFlatAdjustment", 0),
-    gold14kFlatAdjustment: num("gold14kFlatAdjustment", 0),
-    gold9kFlatAdjustment: num("gold9kFlatAdjustment", 0),
     goldPurityFactor22k: num("goldPurityFactor22k", 22 / 24),
     goldPurityFactor18k: num("goldPurityFactor18k", 18 / 24),
-    goldPurityFactor14k: num("goldPurityFactor14k", 14 / 24),
-    goldPurityFactor9k: num("goldPurityFactor9k", 9 / 24),
     silverMarkupPercentage: num("silverMarkupPercentage", 0),
     silverFlatAdjustment: num("silverFlatAdjustment", 0),
     goldRoundingIncrement: num("goldRoundingIncrement", 1),
@@ -251,15 +247,13 @@ async function main() {
       );
     } else {
       /* Every purity is derived from 24K using the configured factors.
-         GoldAPI's own price_gram_22k/18k/14k fields are deliberately IGNORED:
+         GoldAPI's own price_gram_22k/18k fields are deliberately IGNORED:
          they are strict karat/24 of the 24K price, which is not how Indian
          jewellers quote. Trusting them put our 18K ₹440/g under the shop's
          own counter rate. One source of truth, and it is the config. */
       raw.gold24k = g24;
       raw.gold22k = g24 * cfg.goldPurityFactor22k;
       raw.gold18k = g24 * cfg.goldPurityFactor18k;
-      raw.gold14k = g24 * cfg.goldPurityFactor14k;
-      raw.gold9k = g24 * cfg.goldPurityFactor9k;
       raw.goldSourceUpdatedAt = istISO();
       goldStatus = "fresh";
     }
@@ -307,8 +301,6 @@ async function main() {
       "24k": g(raw.gold24k, cfg.gold24kFlatAdjustment),
       "22k": g(raw.gold22k, cfg.gold22kFlatAdjustment),
       "18k": g(raw.gold18k, cfg.gold18kFlatAdjustment),
-      "14k": g(raw.gold14k, cfg.gold14kFlatAdjustment),
-      "9k": g(raw.gold9k, cfg.gold9kFlatAdjustment),
     },
     silver: {
       "999": calculatePublishedRate(

@@ -21,8 +21,6 @@ export type RatesConfig = {
   gold24kFlatAdjustment: number;
   gold22kFlatAdjustment: number;
   gold18kFlatAdjustment: number;
-  gold14kFlatAdjustment: number;
-  gold9kFlatAdjustment: number;
 
   /**
    * Lower purities as a fraction of the 24K rate.
@@ -34,8 +32,6 @@ export type RatesConfig = {
    */
   goldPurityFactor22k: number;
   goldPurityFactor18k: number;
-  goldPurityFactor14k: number;
-  goldPurityFactor9k: number;
 
   silverMarkupPercentage: number;
   silverFlatAdjustment: number;
@@ -50,7 +46,7 @@ export type RatesConfig = {
 };
 
 /**
- * ── CALIBRATION — last checked 13 August 2026 ──────────────────
+ * ── CALIBRATION — last checked 15 August 2026 ──────────────────
  *
  * GoldAPI returns the INTERNATIONAL spot price converted to INR. It does not
  * know about anything that happens once metal lands in India, so the raw
@@ -88,18 +84,10 @@ export const ratesConfig: RatesConfig = {
   gold24kFlatAdjustment: 0,
   gold22kFlatAdjustment: 0,
   gold18kFlatAdjustment: 0,
-  gold14kFlatAdjustment: 0,
-  gold9kFlatAdjustment: 0,
 
   // 22K and 18K measured from the shop's own quoted rates (see note above).
   goldPurityFactor22k: 0.9258,
   goldPurityFactor18k: 0.7823,
-  // UNVERIFIED — strict karat/24, because the shop has not quoted these two.
-  // If Baba Jewellers deals in 14K/9K, get their rates and measure the real
-  // factors; if they do not, drop the rows from MetalRates rather than
-  // publishing a convention nobody confirmed.
-  goldPurityFactor14k: 0.5833,
-  goldPurityFactor9k: 0.375,
 
   silverMarkupPercentage: 20.85,
   silverFlatAdjustment: 0,
@@ -138,15 +126,12 @@ export function calculatePublishedRate(
   return roundRate(value, roundingIncrement);
 }
 
-/** 22K = 24K × 22/24, and so on. */
-export function calculatePurity(rate24k: number, karat: number): number {
-  return (rate24k * karat) / 24;
-}
-
 /* ── Public shape written to public/rates.json ──────────────── */
 
 export type PublishedRates = {
-  gold: { "24k": number; "22k": number; "18k": number; "14k": number; "9k": number };
+  /* 14K and 9K were dropped in Aug 2026: Baba Jewellers does not deal in
+     them, and publishing a purity nobody quoted meant publishing a guess. */
+  gold: { "24k": number; "22k": number; "18k": number };
   silver: { "999": number };
   unit: "INR per gram";
   /** ISO 8601 with +05:30 offset. */

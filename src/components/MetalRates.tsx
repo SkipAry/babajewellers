@@ -24,8 +24,6 @@ const ROWS = [
   { key: "24k", label: "24K Gold", metal: "gold" },
   { key: "22k", label: "22K Gold", metal: "gold" },
   { key: "18k", label: "18K Gold", metal: "gold" },
-  { key: "14k", label: "14K Gold", metal: "gold" },
-  { key: "9k", label: "9K Gold", metal: "gold" },
   { key: "999", label: "Silver 999", metal: "silver" },
 ] as const;
 
