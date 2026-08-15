@@ -74,7 +74,7 @@ export default function Header() {
         <Link
           ref={brandRef}
           href="#home"
-          className="flex items-center gap-3"
+          className="flex min-w-0 items-center gap-3"
           aria-label="Baba Jewellers — back to top"
           onClick={closeMenu}
         >
@@ -86,11 +86,13 @@ export default function Header() {
             priority
             className="h-10 w-10 rounded-full md:h-11 md:w-11"
           />
-          <span className="flex flex-col leading-tight">
-            <span className="font-display text-xl font-bold tracking-wide text-gold-light md:text-xl">
+          <span className="flex min-w-0 flex-col leading-tight">
+            <span className="font-display text-lg font-bold tracking-wide text-gold-light min-[360px]:text-xl">
               Baba Jewellers
             </span>
-            <span className="text-[11px] uppercase tracking-[0.08em] text-ivory/75 md:text-xs md:tracking-caps">
+            {/* Below 360px the rates button leaves the brand ~144px, not enough
+                for name + tagline inside the 64px bar. Name wins, tagline waits. */}
+            <span className="hidden text-[11px] uppercase tracking-[0.08em] text-ivory/75 min-[360px]:block md:text-xs md:tracking-caps">
               Since 2008 · Shikrapur, Pune
             </span>
           </span>
