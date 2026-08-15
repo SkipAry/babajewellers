@@ -50,8 +50,6 @@ function calculatePublishedRate(raw, markupPct, flat, includeGST, gstPct, increm
   return roundRate(v, increment);
 }
 
-const calculatePurity = (rate24k, karat) => (rate24k * karat) / 24;
-
 /* ── config: read the TS file without a TS toolchain ─────────
    The config is plain literals, so pulling the values out with a regex
    is enough and avoids adding ts-node or a build step to CI. */
@@ -74,6 +72,10 @@ function readConfig() {
     gold18kFlatAdjustment: num("gold18kFlatAdjustment", 0),
     gold14kFlatAdjustment: num("gold14kFlatAdjustment", 0),
     gold9kFlatAdjustment: num("gold9kFlatAdjustment", 0),
+    goldPurityFactor22k: num("goldPurityFactor22k", 22 / 24),
+    goldPurityFactor18k: num("goldPurityFactor18k", 18 / 24),
+    goldPurityFactor14k: num("goldPurityFactor14k", 14 / 24),
+    goldPurityFactor9k: num("goldPurityFactor9k", 9 / 24),
     silverMarkupPercentage: num("silverMarkupPercentage", 0),
     silverFlatAdjustment: num("silverFlatAdjustment", 0),
     goldRoundingIncrement: num("goldRoundingIncrement", 1),
@@ -248,11 +250,16 @@ async function main() {
         `Gold: rejected, ${g24.toFixed(2)} differs >20% from ${prevRaw.gold24k}. Keeping previous.`
       );
     } else {
+      /* Every purity is derived from 24K using the configured factors.
+         GoldAPI's own price_gram_22k/18k/14k fields are deliberately IGNORED:
+         they are strict karat/24 of the 24K price, which is not how Indian
+         jewellers quote. Trusting them put our 18K ₹440/g under the shop's
+         own counter rate. One source of truth, and it is the config. */
       raw.gold24k = g24;
-      raw.gold22k = positive(g.price_gram_22k) ? g.price_gram_22k : calculatePurity(g24, 22);
-      raw.gold18k = positive(g.price_gram_18k) ? g.price_gram_18k : calculatePurity(g24, 18);
-      raw.gold14k = positive(g.price_gram_14k) ? g.price_gram_14k : calculatePurity(g24, 14);
-      raw.gold9k = calculatePurity(g24, 9);
+      raw.gold22k = g24 * cfg.goldPurityFactor22k;
+      raw.gold18k = g24 * cfg.goldPurityFactor18k;
+      raw.gold14k = g24 * cfg.goldPurityFactor14k;
+      raw.gold9k = g24 * cfg.goldPurityFactor9k;
       raw.goldSourceUpdatedAt = istISO();
       goldStatus = "fresh";
     }
@@ -344,11 +351,14 @@ async function main() {
 /* ── self-check: the smallest thing that fails if the maths break ── */
 
 function selftest() {
-  // purity ladder
-  assert.equal(calculatePurity(2400, 22), 2200);
-  assert.equal(calculatePurity(2400, 18), 1800);
-  assert.equal(calculatePurity(2400, 14), 1400);
-  assert.equal(calculatePurity(2400, 9), 900);
+  /* Purity ladder. NOT karat/24 — the trade prices lower purities above
+     their metal content. These factors come from the shop's own counter
+     rates; the strict ratios left 18K ~4% short. */
+  const shop = { "24k": 15365, "22k": 14225, "18k": 12020 };
+  assert.equal(Math.round(shop["24k"] * 0.9258), shop["22k"], "22K factor must reproduce the shop's 22K");
+  assert.equal(Math.round(shop["24k"] * 0.7823), shop["18k"], "18K factor must reproduce the shop's 18K");
+  // and the naive version must NOT, so nobody quietly reverts to it
+  assert.notEqual(Math.round(shop["24k"] * 18 / 24), shop["18k"], "strict 18/24 is known wrong");
 
   // spot passthrough, no markup / GST
   assert.equal(calculatePublishedRate(1000, 0, 0, false, 3, 1), 1000);

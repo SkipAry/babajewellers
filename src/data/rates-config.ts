@@ -24,6 +24,19 @@ export type RatesConfig = {
   gold14kFlatAdjustment: number;
   gold9kFlatAdjustment: number;
 
+  /**
+   * Lower purities as a fraction of the 24K rate.
+   *
+   * NOT karat/24. The trade does not price that way — 22K and 18K carry more
+   * margin than their metal content implies, and the gap widens as purity
+   * falls. Measured against the rates Baba Jewellers actually quotes:
+   * strict 18/24 came out ₹496/g short even after matching 24K exactly.
+   */
+  goldPurityFactor22k: number;
+  goldPurityFactor18k: number;
+  goldPurityFactor14k: number;
+  goldPurityFactor9k: number;
+
   silverMarkupPercentage: number;
   silverFlatAdjustment: number;
 
@@ -44,14 +57,21 @@ export type RatesConfig = {
  * figure sits well below what any Indian jeweller quotes. The markups below
  * close that gap.
  *
- *   Reference on 13 Aug 2026     spot (raw)   Indian market   implied markup
- *   24K gold                     ₹13,512/g    ₹15,470/g       +14.5%
- *   Silver 999                   ₹200/g       ₹255.10/g       +27.6%
+ * Calibrated against Aarti Traders (aartitraders.in), the Pune bullion dealer
+ * Baba Jewellers actually prices from, cross-checked against the rates the
+ * shop quoted at the counter on 15 Aug 2026.
  *
- * Gold is almost entirely the import duty, which the government raised from
- * 6% to 15% on 13 May 2026 — hence 15 below, which lands within 0.4% of the
- * quoted market rate. Silver carries that same duty PLUS a wide domestic
- * physical premium, so it needs roughly 27.5%.
+ *   Aarti board, 15 Aug     gold $4,377/oz · silver $64.74/oz · USDINR 95.415
+ *   -> raw spot gold        ₹13,427/g
+ *   -> their GOLD COSTING   ₹15,459/g   = spot +15.13%
+ *   -> our 15%              ₹15,441/g   — 18/g apart, 0.12%
+ *
+ *   Shop's counter rates    24K ₹15,365 · 22K ₹14,225 · 18K ₹12,020 · silver ₹240
+ *
+ * Gold's 15% is almost entirely the import duty, raised from 6% on 13 May
+ * 2026. Silver does NOT carry the same premium the retail press quotes —
+ * measured against the shop's ₹240 it is +20.85%, not the +27.5% an earlier
+ * pass took from a news site.
  *
  * THESE ARE CALIBRATION CONSTANTS, NOT CONSTANTS OF NATURE. The duty changed
  * once already this year and the silver premium moves with physical supply.
@@ -71,7 +91,17 @@ export const ratesConfig: RatesConfig = {
   gold14kFlatAdjustment: 0,
   gold9kFlatAdjustment: 0,
 
-  silverMarkupPercentage: 27.5,
+  // 22K and 18K measured from the shop's own quoted rates (see note above).
+  goldPurityFactor22k: 0.9258,
+  goldPurityFactor18k: 0.7823,
+  // UNVERIFIED — strict karat/24, because the shop has not quoted these two.
+  // If Baba Jewellers deals in 14K/9K, get their rates and measure the real
+  // factors; if they do not, drop the rows from MetalRates rather than
+  // publishing a convention nobody confirmed.
+  goldPurityFactor14k: 0.5833,
+  goldPurityFactor9k: 0.375,
+
+  silverMarkupPercentage: 20.85,
   silverFlatAdjustment: 0,
 
   goldRoundingIncrement: 1,
