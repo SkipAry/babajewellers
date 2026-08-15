@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { site, telLink, whatsappLink } from "@/data/site";
 import { trackEvent } from "@/lib/analytics";
+import RatesMenu from "./RatesMenu";
 
 const navLinks = [
   { href: "#home", label: "Home" },
@@ -106,6 +107,7 @@ export default function Header() {
               {link.label}
             </a>
           ))}
+          <RatesMenu variant="desktop" />
           <a
             href={whatsappLink}
             target="_blank"
@@ -117,11 +119,13 @@ export default function Header() {
           </a>
         </nav>
 
-        {/* Mobile toggle */}
-        <button
+        {/* Rates + menu, phone and tablet */}
+        <div className="flex items-center gap-1.5 lg:hidden">
+          <RatesMenu variant="mobile" onOpen={closeMenu} />
+          <button
           ref={toggleRef}
           type="button"
-          className="flex h-11 w-11 shrink-0 items-center justify-center lg:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center"
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -144,7 +148,8 @@ export default function Header() {
               }`}
             />
           </span>
-        </button>
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}

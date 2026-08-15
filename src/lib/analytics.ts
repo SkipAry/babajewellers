@@ -14,6 +14,7 @@ type AnalyticsEvent =
   | "collection_filter"
   | "piece_open"
   | "reel_play"
+  | "rates_open"
   | "form_submit_success"
   | "form_submit_error";
 

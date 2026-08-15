@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  ratesCopy,
-  STALE_AFTER_HOURS,
-  type PublishedRates,
-} from "@/data/rates-config";
+import { ratesCopy, STALE_AFTER_HOURS } from "@/data/rates-config";
+import { formatUpdated, inr, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 
@@ -20,56 +16,8 @@ import SectionHeading from "./SectionHeading";
  * loading and nothing below it shifts when the numbers land.
  */
 
-const ROWS = [
-  { key: "24k", label: "24K Gold", metal: "gold" },
-  { key: "22k", label: "22K Gold", metal: "gold" },
-  { key: "18k", label: "18K Gold", metal: "gold" },
-  { key: "999", label: "Silver 999", metal: "silver" },
-] as const;
-
-const inr = (n: number) =>
-  `₹${new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(n)}`;
-
-/** "Thursday, 13 August 2026 at 10:30 AM" in India time. */
-function formatUpdated(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(d);
-}
-
-type State =
-  | { phase: "loading" }
-  | { phase: "ready"; data: PublishedRates }
-  | { phase: "unavailable" };
-
 export default function MetalRates() {
-  const [state, setState] = useState<State>({ phase: "loading" });
-
-  useEffect(() => {
-    let live = true;
-    // cache: no-store so a returning visitor sees the morning's update
-    // rather than yesterday's copy held by the browser.
-    fetch("/rates.json", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((data: PublishedRates) => {
-        if (!live) return;
-        const ok = data?.gold?.["24k"] > 0 && data?.silver?.["999"] > 0;
-        setState(ok ? { phase: "ready", data } : { phase: "unavailable" });
-      })
-      .catch(() => live && setState({ phase: "unavailable" }));
-    return () => {
-      live = false;
-    };
-  }, []);
+  const state = useRates();
 
   const data = state.phase === "ready" ? state.data : null;
   const updated = data ? formatUpdated(data.updatedAt) : null;
@@ -102,17 +50,12 @@ export default function MetalRates() {
                   aria-busy={state.phase === "loading"}
                   className="m-0 divide-y divide-maroon/10"
                 >
-                  {ROWS.map((row) => {
-                    const value = data
-                      ? row.metal === "gold"
-                        ? data.gold[row.key as keyof PublishedRates["gold"]]
-                        : data.silver["999"]
-                      : null;
+                  {[...RATE_ROWS, { key: "999", label: "Silver 999" } as const].map((row) => {
+                    const value = data ? rateFor(data, row.key) : null;
                     const stale =
                       data &&
-                      (row.metal === "gold"
-                        ? data.goldStatus
-                        : data.silverStatus) === "stale";
+                      (row.key === "999" ? data.silverStatus : data.goldStatus) ===
+                        "stale";
                     return (
                       <div
                         key={row.key}
