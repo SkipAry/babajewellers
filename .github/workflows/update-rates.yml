@@ -1,11 +1,27 @@
 name: Update gold & silver rates
 
-# 05:00 UTC = 10:30 IST. GitHub schedules in UTC only.
-# GitHub may delay scheduled runs by a few minutes under load; the script
-# is idempotent per India date, so a late or repeated run is harmless.
+# 04:15 UTC = 09:45 IST. GitHub schedules in UTC only.
+#
+# Deliberately 45 minutes before the 10:30 the shop cares about, because
+# GitHub does not honour cron punctually — it queues scheduled jobs behind
+# every other repo's, and the top of the hour is the worst moment to ask.
+# Measured on this repo:
+#
+#   13 Aug  05:00 -> 06:13   +73 min
+#   14 Aug  05:00 -> 06:10   +70 min
+#   15 Aug  05:00 -> 05:20   +20 min
+#   16 Aug  05:00 -> 05:23   +23 min
+#
+# An on-the-hour 05:00 therefore landed between 10:50 and 11:43 IST — always
+# after the moment it was aimed at. Asking at :15 past avoids the hourly
+# crush, and the 45-minute head start absorbs the rest. Runs are idempotent
+# per India date, so arriving early costs nothing.
+#
+# GitHub can also skip a scheduled run entirely under load. If the rate is
+# ever missing for a day, that is the likely cause — trigger it by hand.
 on:
   schedule:
-    - cron: "0 5 * * *"
+    - cron: "15 4 * * *"
   workflow_dispatch:
     inputs:
       force:
