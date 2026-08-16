@@ -85,6 +85,18 @@ export function formatUpdated(iso: string) {
   }).format(d);
 }
 
+/**
+ * True when the quote is materially older than the last refresh — i.e. the
+ * market was shut when we fetched. 20h, so an ordinary overnight gap between
+ * a late close and a 10:30 fetch does not trip it, but a weekend does.
+ */
+export function marketClosed(data: PublishedRates): boolean {
+  if (!data.quotedAt) return false;
+  const quoted = new Date(data.quotedAt).getTime();
+  if (Number.isNaN(quoted)) return false;
+  return (Date.now() - quoted) / 36e5 > 20;
+}
+
 export function rateFor(data: PublishedRates, key: string) {
   return key === "999"
     ? data.silver["999"]

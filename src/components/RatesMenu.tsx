@@ -5,6 +5,7 @@ import { ratesCopy } from "@/data/rates-config";
 import {
   formatUpdated,
   inr,
+  marketClosed,
   RATE_ROWS,
   rateFor,
   useRates,
@@ -55,7 +56,8 @@ export default function RatesMenu({ onOpen, variant }: Props) {
   }, [open, close]);
 
   const data = state.phase === "ready" ? state.data : null;
-  const updated = data ? formatUpdated(data.updatedAt) : null;
+  const updated = data ? formatUpdated(data.quotedAt ?? data.updatedAt) : null;
+  const closed = data ? marketClosed(data) : false;
 
   return (
     <div ref={wrapRef} className="relative">
@@ -160,9 +162,15 @@ export default function RatesMenu({ onOpen, variant }: Props) {
                   className="inline-block h-[1em] w-44 animate-pulse rounded bg-maroon/10 align-middle"
                 />
               ) : updated ? (
-                <>Updated {updated}</>
+                <>Rate as of {updated}</>
               ) : null}
             </p>
+
+            {closed ? (
+              <p className="m-0 mt-2 text-center text-[11.5px] leading-relaxed text-ink/70">
+                Markets closed — last traded rate.
+              </p>
+            ) : null}
 
             {/* The full section carries the disclaimer and the "ask in store"
                 line. Link to it rather than repeating a shortened version that

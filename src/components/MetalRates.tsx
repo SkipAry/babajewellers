@@ -1,7 +1,7 @@
 "use client";
 
 import { ratesCopy, STALE_AFTER_HOURS } from "@/data/rates-config";
-import { formatUpdated, inr, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
+import { formatUpdated, inr, marketClosed, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 
@@ -20,7 +20,11 @@ export default function MetalRates() {
   const state = useRates();
 
   const data = state.phase === "ready" ? state.data : null;
-  const updated = data ? formatUpdated(data.updatedAt) : null;
+  /* Show when the PRICE was struck, not when we fetched it. Over a weekend
+     those differ by two days, and "updated today" on a Friday price is what
+     made an unchanged rate look like a broken feed. */
+  const updated = data ? formatUpdated(data.quotedAt ?? data.updatedAt) : null;
+  const closed = data ? marketClosed(data) : false;
 
   const hoursOld = data
     ? (Date.now() - new Date(data.updatedAt).getTime()) / 36e5
@@ -99,9 +103,15 @@ export default function MetalRates() {
                   {state.phase === "loading" ? (
                     <span className="inline-block h-[1em] w-56 animate-pulse rounded bg-maroon/10 align-middle" />
                   ) : updated ? (
-                    <>Updated on {updated}</>
+                    <>Rate as of {updated}</>
                   ) : null}
                 </p>
+
+                {closed ? (
+                  <p className="m-0 mt-2 text-center text-[12.5px] leading-relaxed text-ink/70">
+                    {ratesCopy.marketClosed}
+                  </p>
+                ) : null}
 
                 {delayed ? (
                   <p className="m-0 mt-3 text-center text-[13px] font-medium text-maroon">

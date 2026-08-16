@@ -134,8 +134,15 @@ export type PublishedRates = {
   gold: { "24k": number; "22k": number; "18k": number };
   silver: { "999": number };
   unit: "INR per gram";
-  /** ISO 8601 with +05:30 offset. */
+  /** ISO 8601 with +05:30 offset. When WE last refreshed successfully. */
   updatedAt: string;
+  /**
+   * When the MARKET struck this price, from the source's own timestamp.
+   * Diverges from updatedAt whenever spot is shut — weekends and holidays —
+   * which is precisely when two days show an identical rate and the feed
+   * looks broken. Null if the source did not supply a usable timestamp.
+   */
+  quotedAt?: string | null;
   goldStatus: "fresh" | "stale" | "error";
   silverStatus: "fresh" | "stale" | "error";
   source: "goldapi.io";
@@ -152,6 +159,8 @@ export const ratesCopy = {
   disclaimer:
     "Rates are indicative and may vary at the time of purchase. GST, making charges and other applicable charges may be additional.",
   delayed: "Rate update delayed — showing the last confirmed rates.",
+  marketClosed:
+    "Bullion markets are closed — this is the last traded rate. It will move when they reopen.",
   unavailable:
     "Rates are temporarily unavailable. Please contact the showroom.",
 };

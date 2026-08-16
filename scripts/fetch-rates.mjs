@@ -174,6 +174,26 @@ function perGram(payload) {
   return null;
 }
 
+/**
+ * When the QUOTE was struck, from the API's own timestamp — not when we asked.
+ *
+ * Spot markets are shut at weekends and on holidays, so a Sunday fetch returns
+ * Friday's close. Stamping such a rate "updated Sunday 7:02 am" tells a
+ * customer the price is current when it is two days old, and makes an
+ * unchanged rate look like a broken feed. GoldAPI returns unix seconds.
+ */
+function sourceTimestamp(payload) {
+  const t = payload?.timestamp;
+  if (!Number.isFinite(t) || t <= 0) return null;
+  const ms = t > 1e11 ? t : t * 1000; // tolerate seconds or milliseconds
+  const d = new Date(ms);
+  if (Number.isNaN(d.getTime())) return null;
+  // Reject anything absurd (clock skew, a bad field) rather than trusting it.
+  const skewHours = (Date.now() - ms) / 36e5;
+  if (skewHours < -24 || skewHours > 24 * 14) return null;
+  return istISO(d);
+}
+
 /** Reject a rate that moved more than 20% from the last good one. */
 function anomalous(next, prev) {
   if (!positive(prev)) return false;
@@ -254,7 +274,7 @@ async function main() {
       raw.gold24k = g24;
       raw.gold22k = g24 * cfg.goldPurityFactor22k;
       raw.gold18k = g24 * cfg.goldPurityFactor18k;
-      raw.goldSourceUpdatedAt = istISO();
+      raw.goldSourceUpdatedAt = sourceTimestamp(g) ?? istISO();
       goldStatus = "fresh";
     }
   } else {
@@ -272,7 +292,7 @@ async function main() {
       );
     } else {
       raw.silver999 = s999;
-      raw.silverSourceUpdatedAt = istISO();
+      raw.silverSourceUpdatedAt = sourceTimestamp(s) ?? istISO();
       silverStatus = "fresh";
     }
   } else {
@@ -311,10 +331,20 @@ async function main() {
     unit: "INR per gram",
     // Only advance the visible timestamp when something actually refreshed,
     // otherwise a run of failures would look like a successful update.
+    // updatedAt = when WE last refreshed. It drives the "update delayed"
+    // warning, so it must not move just because a market was shut.
     updatedAt:
       goldStatus === "fresh" || silverStatus === "fresh"
         ? istISO()
         : published?.updatedAt ?? istISO(),
+    // quotedAt = when the MARKET struck this price. Over a weekend this stays
+    // on Friday's close while updatedAt moves daily, which is exactly the
+    // distinction a customer needs when two days show the same number.
+    quotedAt:
+      [raw.goldSourceUpdatedAt, raw.silverSourceUpdatedAt]
+        .filter(Boolean)
+        .sort()
+        .pop() ?? null,
     goldStatus,
     silverStatus,
     source: "goldapi.io",
@@ -416,6 +446,18 @@ function selftest() {
   const spot = 13511.9042;
   assert.equal(calculatePublishedRate(spot, 15, 0, false, 3, 1), 15539);
   assert.equal(calculatePublishedRate(199.9744, 27.5, 0, false, 3, 1), 255);
+
+  /* Quote timestamps. The weekend case is the reason this exists: a Sunday
+     fetch returns Friday's close, and stamping it "Sunday" is a lie. */
+  const nowSec = Math.floor(Date.now() / 1000);
+  assert.ok(sourceTimestamp({ timestamp: nowSec }), "a current unix-seconds stamp is accepted");
+  assert.ok(sourceTimestamp({ timestamp: nowSec * 1000 }), "milliseconds are tolerated too");
+  assert.equal(sourceTimestamp({ timestamp: nowSec - 60 * 60 * 24 * 30 }), null, "a month-old stamp is rejected");
+  assert.equal(sourceTimestamp({ timestamp: nowSec + 60 * 60 * 48 }), null, "a future stamp is rejected");
+  assert.equal(sourceTimestamp({}), null, "a missing stamp falls back");
+  assert.equal(sourceTimestamp({ timestamp: "x" }), null, "a non-numeric stamp falls back");
+  // Friday close read on Sunday must survive: still inside the 14-day window.
+  assert.ok(sourceTimestamp({ timestamp: nowSec - 60 * 60 * 48 }), "a 48h-old weekend quote is kept");
 
   console.log("self-check passed");
 }
