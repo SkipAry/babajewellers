@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import { faqs, site, stores } from "@/data/site";
 import "./globals.css";
 
+const cloudflareWebAnalyticsToken = "3db45ae729dd4879a51c5f294d5a5d29";
+
 /* Self-hosted variable fonts — reliable on every network.
    Cormorant (300–700) for display headings, Google Sans Flex for body. */
 const cormorant = localFont({
@@ -136,6 +138,13 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({
+            token: cloudflareWebAnalyticsToken,
+          })}
         />
       </body>
     </html>

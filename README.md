@@ -42,13 +42,25 @@ Assets:
 - `public/models/` — model photography (WebP)
 - `public/reels/` — compressed reel videos + posters
 
+## Analytics
+
+Cloudflare Web Analytics measures aggregate visits, page views, referral
+sources, countries, and page performance. The privacy-first beacon is loaded
+globally from `src/app/layout.tsx`; it does not use analytics cookies or track
+individual visitors. The Cloudflare site token is public and belongs to the
+`babajewellers.co.in` Web Analytics site.
+
+Search Console clicks remain a separate search-performance metric. The
+existing event hooks in `src/lib/analytics.ts` are not transmitted because no
+Google Tag Manager container is loaded.
+
 ## Before launch checklist
 
 1. **Form integration** — enquiries submit to the active Formspree
    endpoint configured in `site.formEndpoint` in `src/data/site.ts`.
 2. ~~**Domain**~~ — done. `site.url` is `https://babajewellers.co.in`,
    which is live and serving.
-3. **Analytics** — CTA clicks, reel plays and form submits already push
-   to `window.dataLayer`; add a GA4/GTM snippet in `src/app/layout.tsx`.
+3. ~~**Analytics**~~ — Cloudflare Web Analytics is installed globally without
+   analytics cookies or a consent popup.
 4. **Lifetime exchange wording** — confirm the exact exchange terms with
    the store owner; the FAQ and terms pages keep it general on purpose.

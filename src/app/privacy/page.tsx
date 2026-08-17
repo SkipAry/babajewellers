@@ -37,10 +37,38 @@ export default function PrivacyPage() {
           If you would like your information removed from our records, call us
           on {site.phoneDisplay} and we will act on your request.
         </p>
+        <section aria-labelledby="analytics-heading" className="space-y-3">
+          <h2
+            id="analytics-heading"
+            className="font-display text-2xl font-bold text-maroon-deep"
+          >
+            Privacy-first website analytics
+          </h2>
+          <p>
+            We use Cloudflare Web Analytics to understand aggregate visits,
+            page views, referral sources, general country information and page
+            performance. Cloudflare states that this service does not use
+            analytics cookies, collect visitors&apos; personal data or track
+            individual visitors across websites.
+          </p>
+          <p>
+            The analytics beacon does not receive your name, phone number,
+            enquiry message or other form details. Learn more in the{" "}
+            <a
+              href="https://www.cloudflare.com/privacypolicy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-maroon underline underline-offset-4"
+            >
+              Cloudflare Privacy Policy
+            </a>
+            .
+          </p>
+        </section>
         <p>
-          This website may use basic analytics to understand how visitors use
-          the site. Analytics data is aggregated and does not personally
-          identify you.
+          Cloudflare may set necessary security cookies to protect this website
+          from automated abuse. These cookies are required for the site’s
+          security and are separate from Cloudflare Web Analytics.
         </p>
       </div>
     </main>
