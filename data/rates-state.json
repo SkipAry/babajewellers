@@ -1,22 +1,29 @@
 {
   "raw": {
-    "gold24k": 13499.1854,
-    "gold22k": 12497.54584332,
-    "gold18k": 10560.41273842,
+    "gold24k": 13516.3314,
+    "gold22k": 12513.419610119998,
+    "gold18k": 10573.826054219999,
     "gold14k": 7832.1075,
     "gold9k": 5034.9262875,
-    "goldSourceUpdatedAt": "2026-08-17T10:28:55+05:30",
-    "silver999": 201.1222,
-    "silverSourceUpdatedAt": "2026-08-17T10:29:05+05:30"
+    "goldSourceUpdatedAt": "2026-08-18T10:22:57+05:30",
+    "silver999": 200.5789,
+    "silverSourceUpdatedAt": "2026-08-18T10:22:57+05:30"
   },
   "usage": {
     "month": "2026-08",
-    "requestCount": 14,
-    "lastAttemptAt": "2026-08-17T10:29:09+05:30",
-    "lastSuccessAt": "2026-08-17T10:29:09+05:30"
+    "requestCount": 16,
+    "lastAttemptAt": "2026-08-18T10:22:58+05:30",
+    "lastSuccessAt": "2026-08-18T10:22:58+05:30"
   },
-  "lastRunDate": "2026-08-17",
+  "lastRunDate": "2026-08-18",
   "history": [
+    {
+      "date": "2026-08-18",
+      "24k": 15544,
+      "22k": 14390,
+      "18k": 12160,
+      "silver999": 242
+    },
     {
       "date": "2026-08-17",
       "24k": 15524,

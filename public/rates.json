@@ -1,15 +1,15 @@
 {
   "gold": {
-    "24k": 15524,
-    "22k": 14372,
-    "18k": 12144
+    "24k": 15544,
+    "22k": 14390,
+    "18k": 12160
   },
   "silver": {
-    "999": 243
+    "999": 242
   },
   "unit": "INR per gram",
-  "updatedAt": "2026-08-17T10:29:09+05:30",
-  "quotedAt": "2026-08-17T10:29:05+05:30",
+  "updatedAt": "2026-08-18T10:22:58+05:30",
+  "quotedAt": "2026-08-18T10:22:57+05:30",
   "goldStatus": "fresh",
   "silverStatus": "fresh",
   "source": "goldapi.io"
