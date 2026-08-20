@@ -125,7 +125,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${googleSansFlex.variable}`}>
+    <html lang="en-IN" className={`${cormorant.variable} ${googleSansFlex.variable}`}>
       <body>
         {children}
         {storeSchemas.map((schema, i) => (
