@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: "Baba Jewellers | Gold & Silver Jewellery Store in Shikrapur, Pune",
   description:
-    "Baba Jewellers offers 100% BIS Hallmarked gold and silver jewellery in Shikrapur, Pune since 2008 — bridal sets, necklaces, bangles, jhumkas and more with transparent pricing and 15-day returns.",
+    "BIS Hallmarked gold & silver jewellery in Shikrapur, Pune since 2008. Bridal sets, necklaces, bangles & jhumkas. Transparent pricing, 15-day returns.",
   keywords: [
     "Jewellers in Shikrapur",
     "Gold jewellery Shikrapur",
