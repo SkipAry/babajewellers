@@ -173,8 +173,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-IN" className={`${cormorant.variable} ${googleSansFlex.variable}`}>
-      <body>
-        {children}
+      <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -190,6 +189,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
+      </head>
+      <body>
+        {children}
         <script
           defer
           src="https://static.cloudflareinsights.com/beacon.min.js"
