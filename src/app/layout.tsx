@@ -110,8 +110,6 @@ const storeSchemas = stores.map((store) => ({
   logo: `${site.url}/icon-512.png`,
   telephone: store.callE164,
   url: site.url,
-  founder: { "@type": "Person", name: site.founder },
-  slogan: site.tagline,
   address: {
     "@type": "PostalAddress",
     streetAddress: `${store.line1}, ${store.line2}`.replace(/, Shikrapur$/, ""),
