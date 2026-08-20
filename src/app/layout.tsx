@@ -110,7 +110,6 @@ const storeSchemas = stores.map((store) => ({
   logo: `${site.url}/icon-512.png`,
   telephone: store.callE164,
   url: site.url,
-  foundingDate: "2008-06-09",
   founder: { "@type": "Person", name: site.founder },
   slogan: site.tagline,
   address: {
@@ -148,6 +147,7 @@ const storeSchemas = stores.map((store) => ({
       name,
     })),
   },
+  ...(store.foundingDate && { foundingDate: store.foundingDate }),
   ...(store.geo && {
     geo: {
       "@type": "GeoCoordinates",

@@ -44,6 +44,8 @@ export type Store = {
   geo: { lat: number; lng: number } | null;
   /** Google Business Profile URL. null until the profile is claimed. */
   gbpUrl: string | null;
+  /** When this branch opened. null when only the year is known. */
+  foundingDate: string | null;
 };
 
 export const stores: Store[] = [
@@ -61,6 +63,7 @@ export const stores: Store[] = [
     schemaName: "Baba Jewellers — Karanje Complex, Shikrapur",
     geo: null,
     gbpUrl: null,
+    foundingDate: "2008-06-09",
   },
   {
     id: "baba-complex",
@@ -76,6 +79,7 @@ export const stores: Store[] = [
     schemaName: "Baba Jewellers — Baba Complex, Shikrapur",
     geo: null,
     gbpUrl: null,
+    foundingDate: null,
   },
 ];
 
