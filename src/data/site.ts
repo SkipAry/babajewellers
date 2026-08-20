@@ -97,6 +97,27 @@ export const whatsappLink = `https://wa.me/${site.whatsappNumber}?text=${encodeU
 
 export const telLink = `tel:${site.phoneE164}`;
 
+/** Towns and villages the stores realistically serve — used for schema areaServed. */
+export const areaServed = [
+  "Shikrapur",
+  "Shirur",
+  "Ranjangaon",
+  "Talegaon Dhamdhere",
+  "Kendur",
+  "Pune",
+];
+
+/** Product categories carried, used for schema hasOfferCatalog. */
+export const offerCatalog = [
+  "Bridal Jewellery Sets",
+  "Gold Necklaces and Chokers",
+  "Mangalsutra",
+  "Bangles",
+  "Earrings and Jhumkas",
+  "Rings",
+  "Silver Jewellery",
+];
+
 /* ── The six Baba Jewellers promises ────────────────────────── */
 export const promises = [
   {

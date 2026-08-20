@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { faqs, site, stores } from "@/data/site";
+import {
+  areaServed,
+  faqs,
+  site,
+  stores,
+} from "@/data/site";
 import "./globals.css";
 
 const cloudflareWebAnalyticsToken = "3db45ae729dd4879a51c5f294d5a5d29";
@@ -72,7 +77,26 @@ export const viewport: Viewport = {
   themeColor: "#3B0108",
 };
 
-/* Structured data: JewelryStore (one per location) + FAQ */
+/* Structured data: Organization + JewelryStore (one per location) + FAQ */
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${site.url}/#organization`,
+  name: site.name,
+  alternateName: "Baba Jewellers Shikrapur",
+  url: site.url,
+  logo: `${site.url}/icon-512.png`,
+  image: `${site.url}/models/hero-model.webp`,
+  description:
+    "BIS Hallmarked gold and silver jewellery retailer in Shikrapur, Pune, serving the Shirur and Pune–Nagar Road belt since 2008.",
+  foundingDate: "2008-06-09",
+  founder: { "@type": "Person", name: site.founder },
+  slogan: site.tagline,
+  telephone: site.phoneE164,
+  areaServed: areaServed.map((name) => ({ "@type": "City", name })),
+  sameAs: [site.instagram],
+};
+
 const storeSchemas = stores.map((store, i) => ({
   "@context": "https://schema.org",
   "@type": "JewelryStore",
@@ -128,6 +152,10 @@ export default function RootLayout({
     <html lang="en-IN" className={`${cormorant.variable} ${googleSansFlex.variable}`}>
       <body>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         {storeSchemas.map((schema, i) => (
           <script
             key={i}
