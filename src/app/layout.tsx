@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import {
   areaServed,
   faqs,
+  mapsLinkFor,
+  offerCatalog,
   site,
   stores,
 } from "@/data/site";
@@ -97,11 +99,13 @@ const organizationSchema = {
   sameAs: [site.instagram],
 };
 
-const storeSchemas = stores.map((store, i) => ({
+const storeSchemas = stores.map((store) => ({
   "@context": "https://schema.org",
   "@type": "JewelryStore",
-  "@id": `${site.url}/#store-${i + 1}`,
-  name: site.name,
+  "@id": `${site.url}/#store-${store.id}`,
+  name: store.schemaName,
+  parentOrganization: { "@id": `${site.url}/#organization` },
+  description: `BIS Hallmarked gold and silver jewellery at ${store.line1}, ${store.line2}. Bridal sets, necklaces, bangles and jhumkas with transparent pricing and 15-day returns.`,
   image: `${site.url}/models/hero-model.webp`,
   logo: `${site.url}/icon-512.png`,
   telephone: store.callE164,
@@ -132,7 +136,26 @@ const storeSchemas = stores.map((store, i) => ({
     closes: "21:00",
   },
   paymentAccepted: "Cash, UPI, Credit Card, Debit Card, EMI, Bank Transfer",
-  sameAs: [site.instagram],
+  priceRange: "₹₹",
+  currenciesAccepted: "INR",
+  areaServed: areaServed.map((name) => ({ "@type": "City", name })),
+  hasMap: mapsLinkFor(store),
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Jewellery Collections",
+    itemListElement: offerCatalog.map((name) => ({
+      "@type": "OfferCatalog",
+      name,
+    })),
+  },
+  ...(store.geo && {
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: store.geo.lat,
+      longitude: store.geo.lng,
+    },
+  }),
+  sameAs: [site.instagram, ...(store.gbpUrl ? [store.gbpUrl] : [])],
 }));
 
 const faqSchema = {
