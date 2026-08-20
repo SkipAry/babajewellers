@@ -38,6 +38,12 @@ export type Store = {
   callE164: string;
   whatsappDisplay: string;
   whatsappNumber: string;
+  /** Schema.org display name for this specific branch. */
+  schemaName: string;
+  /** Exact coordinates from Google Maps. null until the owner supplies them. */
+  geo: { lat: number; lng: number } | null;
+  /** Google Business Profile URL. null until the profile is claimed. */
+  gbpUrl: string | null;
 };
 
 export const stores: Store[] = [
@@ -52,6 +58,9 @@ export const stores: Store[] = [
     callE164: "+917397965958",
     whatsappDisplay: "9096082163",
     whatsappNumber: "919096082163",
+    schemaName: "Baba Jewellers — Karanje Complex, Shikrapur",
+    geo: null,
+    gbpUrl: null,
   },
   {
     id: "baba-complex",
@@ -64,6 +73,9 @@ export const stores: Store[] = [
     callE164: "+918530175311",
     whatsappDisplay: "8379985958",
     whatsappNumber: "918379985958",
+    schemaName: "Baba Jewellers — Baba Complex, Shikrapur",
+    geo: null,
+    gbpUrl: null,
   },
 ];
 
