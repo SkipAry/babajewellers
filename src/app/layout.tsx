@@ -114,7 +114,7 @@ const storeSchemas = stores.map((store) => ({
   slogan: site.tagline,
   address: {
     "@type": "PostalAddress",
-    streetAddress: `${store.line1}, ${store.line2}`,
+    streetAddress: `${store.line1}, ${store.line2}`.replace(/, Shikrapur$/, ""),
     addressLocality: "Shikrapur",
     addressRegion: "Maharashtra",
     postalCode: "412208",
