@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ratesCopy, STALE_AFTER_HOURS } from "@/data/rates-config";
 import { formatUpdated, inr, marketClosed, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
 import Reveal from "./Reveal";
@@ -125,6 +126,16 @@ export default function MetalRates() {
               </>
             )}
           </div>
+
+          <p className="m-0 mt-6 text-center">
+            <Link
+              href="/gold-rate-shikrapur/"
+              className="text-[13.5px] font-semibold text-maroon underline underline-offset-4 transition-colors hover:text-maroon-soft"
+            >
+              {ratesCopy.breakdown}
+              <span aria-hidden="true"> &rarr;</span>
+            </Link>
+          </p>
         </Reveal>
       </div>
     </section>

@@ -163,4 +163,5 @@ export const ratesCopy = {
     "Bullion markets are closed — this is the last traded rate. It will move when they reopen.",
   unavailable:
     "Rates are temporarily unavailable. Please contact the showroom.",
+  breakdown: "See today's full rate breakdown",
 };
