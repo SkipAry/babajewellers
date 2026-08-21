@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import {
   findPlan,
@@ -231,6 +232,16 @@ export default function BenefitCalculator() {
 
             <p className="m-0 mt-6 text-center text-[13px] leading-relaxed text-ink/70">
               {savingsScheme.disclaimer}
+            </p>
+
+            <p className="m-0 mt-5 text-center">
+              <Link
+                href="/elite-plan/"
+                className="text-[13.5px] font-semibold text-maroon underline underline-offset-4 transition-colors hover:text-maroon-soft"
+              >
+                योजनेची संपूर्ण माहिती
+                <span aria-hidden="true"> &rarr;</span>
+              </Link>
             </p>
           </div>
         </Reveal>
