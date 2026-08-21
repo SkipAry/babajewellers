@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { collectionFilters, pieces, type Piece } from "@/data/site";
 import { trackEvent } from "@/lib/analytics";
@@ -138,6 +139,15 @@ export default function Collections() {
         <Reveal className="mt-12 text-center">
           <p className="text-sm text-ink/70">
             Looking for something specific? Message us — we will help you find it.
+          </p>
+          <p className="m-0 mt-4">
+            <Link
+              href="/bridal-jewellery/"
+              className="text-[13.5px] font-semibold text-maroon underline underline-offset-4 transition-colors hover:text-maroon-soft"
+            >
+              Planning a wedding? See our bridal jewellery
+              <span aria-hidden="true"> &rarr;</span>
+            </Link>
           </p>
         </Reveal>
       </div>
