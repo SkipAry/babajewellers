@@ -14,9 +14,21 @@ npm run build    # static export to ./out
 ## Deployment
 
 Pushing to `main` deploys automatically — DigitalOcean App Platform builds
-the static export and serves it at https://babajewellers.co.in behind
-Cloudflare. Live about a minute after the push. There is nothing to upload
-by hand, and no deploy config in this repo.
+the static export and serves it at https://babajewellers.co.in. Live about a
+minute after the push. There is nothing to upload by hand, and no deploy
+config in this repo.
+
+Responses carry `Server: cloudflare` and a `cf-cache-status` header, but that
+is **DigitalOcean's** CDN, which runs on Cloudflare — not a Cloudflare account
+we control. DNS is at GoDaddy (`ns33`/`ns34.domaincontrol.com`), and the
+domain appears in our own Cloudflare only as a registrar entry with no zone,
+so there are no cache rules, page rules or WAF settings to reach. The one
+thing we do own on Cloudflare is the Web Analytics site (see below).
+
+A consequence worth knowing: the CDN caches per full URL, so `/?fbclid=…` and
+`/?utm_source=…` each miss the cache and hit the origin — roughly 1.1s versus
+90ms for a clean URL. It only affects visitors arriving from ads or social
+links. Fixing it would mean moving DNS to Cloudflare and proxying the zone.
 
 The deploy leaves no trace on GitHub: no Actions run, no deployment or
 commit status, Pages off. `.github/workflows/` holds only `update-rates.yml`,
