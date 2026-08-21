@@ -176,7 +176,7 @@ export default function RatesMenu({ onOpen, variant }: Props) {
                 line. Link to it rather than repeating a shortened version that
                 could read as the complete terms. */}
             <a
-              href="#rates"
+              href="/#rates"
               onClick={() => close()}
               className="mt-3 block rounded-sm bg-maroon px-4 py-2.5 text-center text-sm font-semibold text-gold-light transition-colors hover:bg-maroon-deep"
             >

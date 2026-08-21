@@ -8,12 +8,12 @@ import { trackEvent } from "@/lib/analytics";
 import RatesMenu from "./RatesMenu";
 
 const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#promises", label: "Our Promises" },
-  { href: "#about", label: "About" },
-  { href: "#collections", label: "Collections" },
-  { href: "#stores", label: "Visit Us" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#home", label: "Home" },
+  { href: "/#promises", label: "Our Promises" },
+  { href: "/#about", label: "About" },
+  { href: "/#collections", label: "Collections" },
+  { href: "/#stores", label: "Visit Us" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Header() {
@@ -73,7 +73,7 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-site items-center justify-between px-4 sm:px-6 md:h-20 lg:px-8">
         <Link
           ref={brandRef}
-          href="#home"
+          href="/#home"
           className="flex min-w-0 items-center gap-3"
           aria-label="Baba Jewellers — back to top"
           onClick={closeMenu}

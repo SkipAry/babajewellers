@@ -2,12 +2,12 @@ import Image from "next/image";
 import { mapsLinkFor, site, stores, telLink } from "@/data/site";
 
 const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#promises", label: "Our Promises" },
-  { href: "#about", label: "About" },
-  { href: "#collections", label: "Collections" },
-  { href: "#stores", label: "Visit Us" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#home", label: "Home" },
+  { href: "/#promises", label: "Our Promises" },
+  { href: "/#about", label: "About" },
+  { href: "/#collections", label: "Collections" },
+  { href: "/#stores", label: "Visit Us" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Footer() {
