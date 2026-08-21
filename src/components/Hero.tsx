@@ -1,20 +1,44 @@
-import Image from "next/image";
 import { site } from "@/data/site";
 import TrackedLink from "./TrackedLink";
+
+/* The hero is the LCP element, and it is the one image on this site that
+   does NOT go through next/image.
+
+   The static export turns Next's optimizer off (images.unoptimized), so
+   <Image> emits a bare src and no srcset — every phone was downloading the
+   full 1200x1800 file. A per-image `loader` prop does not help: unoptimized
+   short-circuits it, verified by building with one attached. A global custom
+   loader would work, but it would also hang a redundant srcset on all eleven
+   product images.
+
+   So this one image is a plain <img> with a hand-written srcset. It keeps
+   width/height for CLS and uses fetchPriority to replace the preload that
+   `priority` used to emit. Please do not switch it back to <Image> without
+   re-checking the above.
+
+   Both instances share one `sizes` expression on purpose. They are never
+   visible at the same time, but the hidden one is still fetched, so if the
+   two resolved to different widths a phone would download two files. One
+   shared expression means one download whichever is showing. */
 
 export default function Hero() {
   return (
     <section id="home" className="relative overflow-hidden bg-maroon-deep">
       {/* Mobile: full-bleed portrait behind content. Desktop: right column image. */}
       <div className="absolute inset-0 lg:hidden">
-        <Image
-          src="/models/hero-model.webp"
+        <img
+          src="/models/hero-model-1200.webp"
+          srcSet="/models/hero-model-600.webp 600w,
+                  /models/hero-model-900.webp 900w,
+                  /models/hero-model-1200.webp 1200w"
+          sizes="(min-width: 1024px) 45vw, 100vw"
+          width={1200}
+          height={1800}
           alt=""
           role="presentation"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-top"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-top"
         />
         <div
           className="absolute inset-0 bg-gradient-to-t from-maroon-deep via-maroon-deep/70 to-maroon-deep/20"
@@ -75,13 +99,18 @@ export default function Hero() {
         {/* Desktop portrait — top edge aligns with the headline */}
         <div className="relative hidden min-h-[34rem] lg:mt-[4.55rem] lg:block">
           <div className="absolute inset-0 overflow-hidden rounded-t-[10rem]">
-            <Image
-              src="/models/hero-model.webp"
+            <img
+              src="/models/hero-model-1200.webp"
+              srcSet="/models/hero-model-600.webp 600w,
+                      /models/hero-model-900.webp 900w,
+                      /models/hero-model-1200.webp 1200w"
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              width={1200}
+              height={1800}
               alt="Model wearing a traditional gold choker, long necklace and jhumkas from Baba Jewellers with a red silk saree"
-              fill
-              priority
-              sizes="(min-width: 1024px) 45vw, 0vw"
-              className="object-cover object-top"
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover object-top"
             />
             <div
               className="absolute inset-0 bg-gradient-to-t from-maroon-deep/40 to-transparent"
