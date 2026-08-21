@@ -149,6 +149,15 @@ export default function Collections() {
               <span aria-hidden="true"> &rarr;</span>
             </Link>
           </p>
+          <p className="m-0 mt-2">
+            <Link
+              href="/necklaces/"
+              className="text-[13.5px] font-semibold text-maroon underline underline-offset-4 transition-colors hover:text-maroon-soft"
+            >
+              Browse gold necklaces
+              <span aria-hidden="true"> &rarr;</span>
+            </Link>
+          </p>
         </Reveal>
       </div>
 
