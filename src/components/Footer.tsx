@@ -21,7 +21,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <Image
-                src="/icon-512.png"
+                src="/logo-128.webp"
                 alt="Baba Jewellers BJ monogram"
                 width={48}
                 height={48}

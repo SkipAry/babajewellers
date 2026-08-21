@@ -79,7 +79,7 @@ export default function Header() {
           onClick={closeMenu}
         >
           <Image
-            src="/icon-512.png"
+            src="/logo-128.webp"
             alt="Baba Jewellers BJ monogram"
             width={44}
             height={44}
