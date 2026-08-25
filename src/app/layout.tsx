@@ -35,15 +35,10 @@ export const metadata: Metadata = {
   title: "Baba Jewellers | Gold & Silver Jewellery Store in Shikrapur, Pune",
   description:
     "BIS Hallmarked gold & silver jewellery in Shikrapur, Pune since 2008. Bridal sets, necklaces, bangles & jhumkas. Transparent pricing, 15-day returns.",
-  keywords: [
-    "Jewellers in Shikrapur",
-    "Gold jewellery Shikrapur",
-    "Jewellery shop Pune Nagar Road",
-    "BIS Hallmarked gold Pune",
-    "Bridal jewellery Shikrapur",
-    "Silver jewellery Shikrapur",
-    "Gold shop near Talegaon Dhamdhere",
-  ],
+  /* No `keywords` here on purpose. Google stopped reading the meta keywords
+     tag in 2009 and Bing treats stuffing it as a spam signal, so the list that
+     used to sit here changed nothing. We rank for a term by having a page that
+     genuinely answers it — see /gold-rate-shikrapur/ and /bridal-jewellery/. */
   alternates: { canonical: site.url },
   openGraph: {
     type: "website",
