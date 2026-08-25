@@ -156,15 +156,11 @@ const storeSchemas = stores.map((store) => ({
   sameAs: [site.instagram, ...(store.gbpUrl ? [store.gbpUrl] : [])],
 }));
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
-  })),
-};
+/* FAQPage lives on the homepage, not here. Google requires structured data
+   to describe content the visitor can actually see, and the FAQ section only
+   renders on `/` — emitting it from the layout claimed every route was an
+   FAQ page. Organization and JewelryStore are different: they describe the
+   business rather than the page, so they belong site-wide. */
 
 export default function RootLayout({
   children,
@@ -184,10 +180,6 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
           />
         ))}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
         <script
           defer
           src="https://static.cloudflareinsights.com/beacon.min.js"

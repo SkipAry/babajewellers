@@ -13,6 +13,21 @@ import PromiseBand from "@/components/PromiseBand";
 import Promises from "@/components/Promises";
 import Reels from "@/components/Reels";
 import Stores from "@/components/Stores";
+import { faqs } from "@/data/site";
+
+/* Declared here rather than in the layout: this is the only page that renders
+   the questions, and Google expects FAQPage markup to describe content the
+   visitor can see. Built from the same `faqs` array the FAQ section reads, so
+   the two cannot drift. */
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
 
 export default function Home() {
   return (
@@ -37,6 +52,10 @@ export default function Home() {
       <Footer />
       <MobileActions />
       <HashScroll />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
     </>
   );
 }
