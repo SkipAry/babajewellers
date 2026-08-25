@@ -29,6 +29,7 @@ export default function Hero() {
         <img
           src="/models/hero-model-1200.webp"
           srcSet="/models/hero-model-600.webp 600w,
+                  /models/hero-model-750.webp 750w,
                   /models/hero-model-900.webp 900w,
                   /models/hero-model-1200.webp 1200w"
           sizes="(min-width: 1024px) 45vw, 100vw"
@@ -102,6 +103,7 @@ export default function Hero() {
             <img
               src="/models/hero-model-1200.webp"
               srcSet="/models/hero-model-600.webp 600w,
+                      /models/hero-model-750.webp 750w,
                       /models/hero-model-900.webp 900w,
                       /models/hero-model-1200.webp 1200w"
               sizes="(min-width: 1024px) 45vw, 100vw"
