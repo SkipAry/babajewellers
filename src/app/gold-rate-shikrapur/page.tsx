@@ -204,6 +204,17 @@ export default function GoldRatePage() {
                 making charges and the GST — with no hidden costs. You are
                 welcome to ask for a complete breakup before you buy.
               </p>
+              <p>
+                Weight matters most on the heavier pieces, which is why it is
+                worth knowing the rate before a wedding purchase. Our{" "}
+                <Link
+                  href="/bridal-jewellery/"
+                  className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
+                >
+                  bridal jewellery page
+                </Link>{" "}
+                sets out what a full set usually includes.
+              </p>
             </div>
 
             <h2 className="mt-12 font-display text-3xl font-bold text-maroon-deep">

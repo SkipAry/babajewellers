@@ -211,7 +211,14 @@ export default function ElitePlanPage() {
                 aside a manageable amount each month than find a large sum at
                 once. Buying gradually also means your purchase is spread
                 across the year&apos;s rates instead of resting on a single
-                day&apos;s price.
+                day&apos;s price. If it is a wedding you are saving for,{" "}
+                <Link
+                  href="/bridal-jewellery/"
+                  className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
+                >
+                  our bridal jewellery page
+                </Link>{" "}
+                covers how a full set comes together.
               </p>
               <p>
                 Every ornament you finally choose is 100% BIS Hallmarked, with
