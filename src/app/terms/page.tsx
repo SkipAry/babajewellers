@@ -4,7 +4,8 @@ import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Terms of Use | Baba Jewellers",
-  description: "Terms of use for the Baba Jewellers website.",
+  description:
+    "Terms of use for the Baba Jewellers website — how the gold and silver rates, product images and enquiry form may be used, and the limits that apply.",
   alternates: { canonical: `${site.url}/terms/` },
 };
 

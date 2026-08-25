@@ -5,7 +5,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "Privacy Policy | Baba Jewellers",
   description:
-    "How Baba Jewellers handles the information you share through this website.",
+    "How Baba Jewellers handles the information you share through this website — enquiry form data, privacy-first analytics, and how to have yours removed.",
   alternates: { canonical: `${site.url}/privacy/` },
 };
 
