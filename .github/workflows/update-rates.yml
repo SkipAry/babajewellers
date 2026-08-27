@@ -17,11 +17,30 @@ name: Update gold & silver rates
 # crush, and the 45-minute head start absorbs the rest. Runs are idempotent
 # per India date, so arriving early costs nothing.
 #
-# GitHub can also skip a scheduled run entirely under load. If the rate is
-# ever missing for a day, that is the likely cause — trigger it by hand.
+# GitHub can also skip a scheduled run entirely under load, or delay one far
+# beyond anything the head start can absorb. Measured 27 Aug 2026:
+#
+#   27 Aug  04:15 -> 15:15   +660 min   -> published at 20:45 IST
+#
+# Every other day that month landed between 10:20 and 10:32 IST. That one
+# run put an evening international spot price on the shop's board — not
+# wrong data, but not the number the counter quotes in the morning either.
+#
+# HENCE THE TWO BACKSTOPS BELOW. They are not retries of a failed run; they
+# are independent queue entries, so a backlog that swallows one does not
+# necessarily swallow the next. On a normal day they cost NOTHING: the
+# script keys idempotency on (India date + config hash), so a backstop that
+# fires after a successful run prints "Already updated for <date>" and exits
+# before touching the API. Quota is only ever spent on a day the earlier
+# run did not land.
+#
+# Ordered so the last chance still beats the 10:30 the shop cares about
+# under the +35..+47 min delay that is normal here.
 on:
   schedule:
-    - cron: "15 4 * * *"
+    - cron: "15 4 * * *"   # 09:45 IST — primary
+    - cron: "20 3 * * *"   # 08:50 IST — early backstop
+    - cron: "10 5 * * *"   # 10:40 IST — late backstop
   workflow_dispatch:
     inputs:
       force:
