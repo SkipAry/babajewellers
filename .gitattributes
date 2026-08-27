@@ -1,0 +1,35 @@
+# Normalise line endings in the repo; check out native on each machine.
+#
+# WHY THIS EXISTS. This repo is edited from Windows (in a OneDrive folder)
+# and written to by a Linux GitHub Actions runner every morning. Without
+# this file the two disagree about line endings, and every file either
+# side touches comes back as a whole-file diff.
+#
+# Measured on 27 Aug 2026, before this file existed:
+#
+#   src/app/bridal-jewellery/page.tsx   522 insertions, 522 deletions
+#   src/app/elite-plan/page.tsx         554 insertions, 554 deletions
+#   data/rates-state.json               117 changed lines
+#   public/rates.json                    16 changed lines
+#
+#   Real content changes in all four: ZERO. Verified by parsing both
+#   versions of the JSON and comparing, and by `git diff --ignore-cr-at-eol`
+#   coming back empty.
+#
+# That is not a cosmetic annoyance. It means a genuine one-line edit and a
+# line-ending change look identical in `git status`, so a real change can
+# be reviewed as noise and discarded — or noise committed as though it
+# were a change.
+* text=auto eol=lf
+
+# Binary assets: never normalise, never diff.
+*.webp binary
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.avif binary
+*.ico  binary
+*.mp4  binary
+*.woff binary
+*.woff2 binary
+*.pdf  binary
