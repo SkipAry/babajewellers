@@ -13,7 +13,40 @@ import type { PublishedRates } from "@/data/rates-config";
  *
  * cache: "no-store" so a returning visitor sees the morning's update instead
  * of yesterday's copy held by the browser.
+ *
+ * THE CACHE BUST IS NOT BELT-AND-BRACES. It is the actual fix for a bug that
+ * showed the shop a two-day-old price.
+ *
+ * `cache: "no-store"` only governs the BROWSER cache. The site is served by
+ * DigitalOcean App Platform, whose built-in CDN runs on Cloudflare, and which
+ * stamps every static file with:
+ *
+ *     cache-control: public, max-age=10, s-maxage=86400
+ *
+ * `s-maxage=86400` pins the file at the edge for 24 hours. The edge does not
+ * care what the client asked for — same URL, same cached bytes. Measured 29
+ * Aug 2026: the origin had that morning's file (last-modified 06:27 UTC)
+ * while the edge was still serving the 27th, `cf-cache-status: HIT`, `age:
+ * 6287`. The GitHub Action had been publishing on time the whole while.
+ *
+ * Appending the IST hour makes each hour a distinct URL, so the edge must go
+ * to the origin at most an hour after a publish. It is deliberately the HOUR
+ * and not a timestamp: a per-request buster would defeat caching entirely and
+ * send every visitor to the origin, on a page whose visitors are on mid-tier
+ * mobile data.
+ *
+ * This lives in code rather than in a dashboard setting on purpose — it is in
+ * version control, it survives someone rebuilding the hosting, and it needs
+ * nobody to remember it. Setting a correct `cache-control` in the DigitalOcean
+ * app spec would be the tidier fix and this could then go; until that exists,
+ * this is the one that actually holds.
  */
+
+/** Current hour in IST, as YYYY-MM-DDTHH — stable within the hour. */
+function istHourStamp(): string {
+  const ist = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+  return ist.toISOString().slice(0, 13);
+}
 
 export type RatesState =
   | { phase: "loading" }
@@ -23,7 +56,7 @@ export type RatesState =
 let inflight: Promise<PublishedRates> | null = null;
 
 function load(): Promise<PublishedRates> {
-  inflight ??= fetch("/rates.json", { cache: "no-store" })
+  inflight ??= fetch(`/rates.json?h=${istHourStamp()}`, { cache: "no-store" })
     .then((r) => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
