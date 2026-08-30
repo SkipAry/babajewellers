@@ -17,30 +17,44 @@ name: Update gold & silver rates
 # crush, and the 45-minute head start absorbs the rest. Runs are idempotent
 # per India date, so arriving early costs nothing.
 #
-# GitHub can also skip a scheduled run entirely under load, or delay one far
-# beyond anything the head start can absorb. Measured 27 Aug 2026:
+# ── THEN IT GOT MUCH WORSE, AND THE FIX ABOVE STOPPED WORKING ────────
 #
-#   27 Aug  04:15 -> 15:15   +660 min   -> published at 20:45 IST
+# From 27 Aug 2026 this repo's scheduled queue degraded badly:
 #
-# Every other day that month landed between 10:20 and 10:32 IST. That one
-# run put an evening international spot price on the shop's board — not
-# wrong data, but not the number the counter quotes in the morning either.
+#   27 Aug  1 cron    04:15 -> 15:15                      +11h
+#   28 Aug  3 crons   -> ran 20:59, 22:09, 22:51 IST      +12h  (all three)
+#   29 Aug  3 crons   -> ran 15:43, 16:36, 17:06 IST      +7h   (all three)
+#   30 Aug  3 crons   -> nothing by 13:52 IST             skipped or pending
 #
-# HENCE THE TWO BACKSTOPS BELOW. They are not retries of a failed run; they
-# are independent queue entries, so a backlog that swallows one does not
-# necessarily swallow the next. On a normal day they cost NOTHING: the
-# script keys idempotency on (India date + config hash), so a backstop that
-# fires after a successful run prints "Already updated for <date>" and exits
-# before touching the API. Quota is only ever spent on a day the earlier
-# run did not land.
+# Two backstop schedules were added on 28 Aug on the theory that GitHub's
+# delays are independent per entry, so three entries would mean three
+# chances. THAT THEORY WAS WRONG. The delays are correlated: the whole
+# repo's schedule queue backs up by the same amount, so all three runs
+# drift together. Three equally-late runs is not resilience.
 #
-# Ordered so the last chance still beats the 10:30 the shop cares about
-# under the +35..+47 min delay that is normal here.
+# The backstops are therefore removed. They cost nothing (the idempotency
+# guard makes a duplicate exit before the API call) but they bought
+# nothing either, and leaving them in would imply a safety net that does
+# not exist.
+#
+# ── WHAT ACTUALLY RUNS THIS NOW ──────────────────────────────────────
+#
+# An external cron service calls the GitHub API `workflow_dispatch`
+# endpoint at 09:45 IST. Manually dispatched runs are NOT queued the way
+# scheduled ones are — every manual run on this repo has started within
+# seconds, including on the days when the scheduled runs were 12 hours
+# late. That is the whole reason this works.
+#
+#   POST /repos/SkipAry/babajewellers/actions/workflows/update-rates.yml/dispatches
+#   body: {"ref":"main"}
+#
+# The single `schedule` below is kept ONLY as a dead-man's fallback: if
+# the external trigger ever stops (expired token, service down, someone
+# deletes the job), GitHub will still run this eventually — late, but the
+# board will not sit frozen for a week. It is a floor, not the mechanism.
 on:
   schedule:
-    - cron: "15 4 * * *"   # 09:45 IST — primary
-    - cron: "20 3 * * *"   # 08:50 IST — early backstop
-    - cron: "10 5 * * *"   # 10:40 IST — late backstop
+    - cron: "15 4 * * *"   # 09:45 IST — fallback only; see above
   workflow_dispatch:
     inputs:
       force:
