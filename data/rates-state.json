@@ -5,18 +5,25 @@
     "gold18k": 10689.65886832,
     "gold14k": 7832.1075,
     "gold9k": 5034.9262875,
-    "goldSourceUpdatedAt": "2026-08-29T14:36:46+05:30",
+    "goldSourceUpdatedAt": "2026-08-30T14:52:24+05:30",
     "silver999": 203.1959,
-    "silverSourceUpdatedAt": "2026-08-29T14:36:22+05:30"
+    "silverSourceUpdatedAt": "2026-08-30T14:51:51+05:30"
   },
   "usage": {
     "month": "2026-08",
-    "requestCount": 40,
-    "lastAttemptAt": "2026-08-29T14:37:15+05:30",
-    "lastSuccessAt": "2026-08-29T14:37:15+05:30"
+    "requestCount": 42,
+    "lastAttemptAt": "2026-08-30T14:53:26+05:30",
+    "lastSuccessAt": "2026-08-30T14:53:27+05:30"
   },
-  "lastRunDate": "2026-08-29",
+  "lastRunDate": "2026-08-30",
   "history": [
+    {
+      "date": "2026-08-30",
+      "24k": 15714,
+      "22k": 14548,
+      "18k": 12293,
+      "silver999": 246
+    },
     {
       "date": "2026-08-29",
       "24k": 15714,
