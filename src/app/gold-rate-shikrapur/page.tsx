@@ -23,18 +23,55 @@ import { inr, site, stores } from "@/data/site";
  * the JSON does.
  */
 
+/**
+ * SEO: the title and description carry TODAY'S DATE, generated at build.
+ *
+ * This is not decoration. Searched "gold rate today Pune" on 1 Sep 2026, the
+ * entire first page was national finance portals — 5paisa, Groww, Bajaj
+ * Finserv, PolicyBazaar, Kotak Neo, Goodreturns, Kalyan. Every one of them
+ * puts the date in the title ("...01 September 2026"). Two things follow:
+ *
+ *   1. The date is what matches the word "today" in the query. A title
+ *      without it competes on the word "today" alone, which every page in
+ *      the category also claims.
+ *   2. It only stays true because the page is rebuilt daily by the rates
+ *      job. A hardcoded date would rot into a lie within 24 hours, which is
+ *      worse than no date — Google demotes stale "today" pages.
+ *
+ * We are NOT trying to outrank those portals; a single shop cannot, and
+ * pretending otherwise would shape the whole site wrongly. The target is
+ * "gold rate Shikrapur / Shirur / near me", where the incumbents are
+ * auto-generated pincode pages with no shop behind them.
+ */
+const IST_TODAY = new Intl.DateTimeFormat("en-IN", {
+  timeZone: "Asia/Kolkata",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date());
+
 export const metadata: Metadata = {
-  title: "Today's Gold Rate in Shikrapur, Pune | Baba Jewellers",
+  title: `Gold Rate Today in Shikrapur, Pune (${IST_TODAY}) — 24K, 22K, 18K | Baba Jewellers`,
   description:
-    "Today's 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune. Updated daily by Baba Jewellers — BIS Hallmarked, transparent pricing.",
+    `Gold rate today in Shikrapur, Pune — ${IST_TODAY}. Live 24K, 22K and 18K gold rate ` +
+    `and silver rate per gram at Baba Jewellers, Pune–Nagar Road. Updated every morning. ` +
+    `BIS Hallmarked, transparent pricing. आजचा सोन्याचा भाव शिक्रापूर.`,
+  /* No `keywords` meta: dropped deliberately in 7d436b6 because search
+     engines ignore it, and re-adding it here would have quietly undone
+     that call. The target terms live in the title, h1, body and Marathi
+     line instead, where they actually count:
+       gold rate today shikrapur · gold rate shirur · 22k gold rate
+       shikrapur · silver rate shikrapur · आजचा सोन्याचा भाव · jewellers
+       near me shikrapur */
   alternates: { canonical: `${site.url}/gold-rate-shikrapur/` },
   openGraph: {
     type: "website",
     url: `${site.url}/gold-rate-shikrapur/`,
     siteName: site.name,
-    title: "Today's Gold Rate in Shikrapur, Pune",
+    title: `Gold Rate Today in Shikrapur, Pune — ${IST_TODAY}`,
     description:
-      "Today's 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune — updated daily by Baba Jewellers.",
+      `Live 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune. ` +
+      `Updated every morning by Baba Jewellers.`,
     locale: "en_IN",
   },
 };
@@ -86,8 +123,64 @@ export default function GoldRatePage() {
      the homepage card follows, so the two surfaces never disagree. */
   const updated = data ? formatUpdated(data.quotedAt ?? data.updatedAt) : null;
 
+  /**
+   * SCHEMA. This page had none at all, which was the largest single gap:
+   * a page whose entire value is being CURRENT was giving Google no
+   * machine-readable signal that it changes.
+   *
+   * `dateModified` is the important field. It comes from the real quote
+   * timestamp, not from Date.now(), so it cannot claim freshness the data
+   * does not have — if the rates job fails, the date stops advancing and
+   * says so honestly.
+   *
+   * Deliberately NOT using Product/Offer markup. The figures are the day's
+   * metal rate, not the price of a purchasable item — making charges and
+   * GST sit on top. Marking them as Offers would be richer-looking and
+   * wrong, and Google penalises structured data that misrepresents price.
+   */
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${site.url}/gold-rate-shikrapur/#webpage`,
+        url: `${site.url}/gold-rate-shikrapur/`,
+        name: `Gold Rate Today in Shikrapur, Pune — ${IST_TODAY}`,
+        description:
+          "Daily 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune.",
+        inLanguage: "en-IN",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: { "@id": `${site.url}/#store` },
+        ...(data?.quotedAt || data?.updatedAt
+          ? { dateModified: data.quotedAt ?? data.updatedAt }
+          : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: `${site.url}/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Gold Rate Today in Shikrapur",
+            item: `${site.url}/gold-rate-shikrapur/`,
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       <a href="#main" className="skip-link">
         Skip to main content
       </a>
@@ -98,13 +191,27 @@ export default function GoldRatePage() {
             <p className="text-center text-xs font-semibold uppercase tracking-caps text-maroon-soft">
               {ratesCopy.label}
             </p>
+            {/* h1 carries the query as people type it: "gold rate today"
+                + the town. The old wording ("Today's Gold Rate in
+                Shikrapur") missed the exact phrase and the district, both
+                of which the competing pages carry. */}
             <h1 className="mx-auto mt-4 max-w-3xl text-center font-display text-[clamp(2rem,5vw,3.25rem)] font-bold leading-tight text-maroon-deep">
-              Today&apos;s Gold Rate in Shikrapur
+              Gold Rate Today in Shikrapur, Pune
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-center text-base leading-relaxed text-ink/75">
-              Gold and silver rates per gram at Baba Jewellers, Shikrapur —
-              updated every morning. Ask in store for the exact rate at the
-              time of purchase.
+              Live 24K, 22K and 18K gold rate and silver rate per gram at Baba
+              Jewellers, Pune–Nagar Road, Shikrapur — updated every morning.
+              Ask in store for the exact rate at the time of purchase.
+            </p>
+            {/* Marathi line. Shikrapur and Shirur customers search in
+                Devanagari as often as in English, and the site had no
+                Marathi anywhere — a whole class of local queries it could
+                not match. */}
+            <p
+              lang="mr"
+              className="mx-auto mt-3 max-w-2xl text-center text-base leading-relaxed text-ink/70"
+            >
+              आजचा सोन्याचा आणि चांदीचा भाव — शिक्रापूर, पुणे. दररोज सकाळी अद्ययावत.
             </p>
 
             <div className="mx-auto mt-12 max-w-2xl">
