@@ -62,6 +62,10 @@ export const stores: Store[] = [
     whatsappNumber: "919096082163",
     schemaName: "Baba Jewellers — Karanje Complex, Shikrapur",
     geo: null,
+    /* ⚠ NEEDED: this branch's own Google Business Profile share link.
+       Both branches are real and separately listed, so each needs its own
+       `sameAs`. Without it Google has no way to connect this address to
+       the site. */
     gbpUrl: null,
     foundingDate: "2008-06-09",
   },
@@ -78,7 +82,13 @@ export const stores: Store[] = [
     whatsappNumber: "918379985958",
     schemaName: "Baba Jewellers — Baba Complex, Shikrapur",
     geo: null,
-    gbpUrl: null,
+    /* Owner-supplied share link, 2 Sep 2026. Resolves to the Google
+       listing titled "Baba jewellers Talegaon Dhamdhere" (kgmid
+       /g/11wpzpkksr), which is this branch — Baba Complex sits on the
+       Shikrapur–Talegaon Dhamdhere road. Emitted as `sameAs`, which is
+       what tells Google the website and the Business Profile are one
+       entity rather than two unrelated things mentioning the same name. */
+    gbpUrl: "https://share.google/wOrhT7zmMp1OtpGG5",
     foundingDate: null,
   },
 ];

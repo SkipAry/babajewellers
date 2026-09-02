@@ -148,6 +148,17 @@ const storeSchemas = stores.map((store) => ({
       longitude: store.geo.lng,
     },
   }),
+  /* sameAs — the entity link between this site and the branch's Google
+     Business Profile. This line was always correct; `gbpUrl` was simply
+     null for both branches, so it emitted Instagram alone and the site
+     and the Maps listing were never connected. The fix was data, not code.
+
+     It matters more than any on-page tweak. Local ranking is an entity
+     problem: Google must be sure the site, the Maps listing and the
+     directory entries are ONE business. Measured 2 Sep 2026 they disagree
+     — this shop appears as "Baba jewellers", "Baba Jwellers", "Baba
+     Jeweller" and "Baba Jewellers" across Maps, Justdial and magicpin,
+     carrying six different phone numbers between them. */
   sameAs: [site.instagram, ...(store.gbpUrl ? [store.gbpUrl] : [])],
 }));
 
