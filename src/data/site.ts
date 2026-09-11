@@ -132,6 +132,64 @@ export const offerCatalog = [
   "Silver Jewellery",
 ];
 
+/* ── Running offers (the sliding banners under the hero) ──────
+   NOT to be confused with `offerCatalog` above, which is the list of
+   product categories used for schema hasOfferCatalog.
+
+   Each entry is one of the shop's own printed ad creatives plus a plain
+   text version of the same claim. The text is not decoration: the banner
+   is an image with the offer baked into it, so without `headline` the
+   offer is invisible to Google and to screen readers, and unreadable on a
+   narrow phone where a 3:1 banner is only ~125px tall.
+
+   `validTill` is an ISO date. Expired offers are dropped at BUILD time —
+   which is fine here because the daily rates workflow commits to main
+   every morning and that redeploys the site, so an expired banner
+   disappears within a day. Set to null for an offer with no end date.  */
+export type Offer = {
+  id: string;
+  /** Banner creative, 3:1. Lives in public/offers/. */
+  image: string;
+  /** Full description of the banner for screen readers. */
+  alt: string;
+  /** The offer in Marathi, as printed on the banner. */
+  headlineMr: string;
+  /** The same offer in English. */
+  headline: string;
+  /** ISO date, or null for no end date. */
+  validTill: string | null;
+};
+
+const allOffers: Offer[] = [
+  {
+    id: "gold-making-charges-6-percent",
+    image: "/offers/gold-making-charges-6-percent.webp",
+    alt: "Baba Jewellers offer — only 6% making charges on all gold jewellery, valid until 15 November 2026.",
+    headlineMr: "सोन्याच्या दागिन्यांच्या घडणावळीवर फक्त ६%",
+    headline: "Only 6% making charges on all gold jewellery",
+    validTill: "2026-11-15",
+  },
+  {
+    id: "silver-making-charges-flat-50",
+    image: "/offers/silver-making-charges-flat-50.webp",
+    alt: "Baba Jewellers Ganeshotsav offer — flat 50% off making charges on silver jewellery.",
+    headlineMr: "चांदीच्या दागिन्यांच्या मेकिंग चार्जेसवर फ्लॅट ५०% सूट",
+    headline: "Flat 50% off making charges on silver jewellery",
+    // Not printed on the banner; confirmed by the shop on 11 Sep 2026.
+    validTill: "2026-09-27",
+  },
+];
+
+/* Build-time expiry. Compared date-only in IST so an offer lasts through
+   the whole of its final day rather than expiring at midnight UTC. */
+const TODAY_IST = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Kolkata",
+}).format(new Date());
+
+export const offers: Offer[] = allOffers.filter(
+  (o) => o.validTill === null || o.validTill >= TODAY_IST
+);
+
 /* ── The six Baba Jewellers promises ────────────────────────── */
 export const promises = [
   {

@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MetalRates from "@/components/MetalRates";
 import MobileActions from "@/components/MobileActions";
+import Offers from "@/components/Offers";
 import PromiseBand from "@/components/PromiseBand";
 import Promises from "@/components/Promises";
 import Reels from "@/components/Reels";
@@ -38,6 +39,7 @@ export default function Home() {
       <Header />
       <main id="main" tabIndex={-1}>
         <Hero />
+        <Offers />
         <Promises />
         <About />
         <MetalRates />

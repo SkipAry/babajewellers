@@ -127,8 +127,8 @@ export default function Hero() {
 
       {/* Scroll cue */}
       <a
-        href="#promises"
-        aria-label="Scroll to our promises"
+        href="#offers"
+        aria-label="Scroll to current offers"
         className="absolute bottom-4 left-1/2 hidden h-11 w-11 -translate-x-1/2 items-center justify-center md:flex"
       >
         <span className="flex h-10 w-6 items-start justify-center rounded-full border border-gold/50 p-1.5">
