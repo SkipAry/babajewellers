@@ -150,7 +150,11 @@ export default function GoldRatePage() {
           "Daily 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune.",
         inLanguage: "en-IN",
         isPartOf: { "@id": `${site.url}/#website` },
-        about: { "@id": `${site.url}/#store` },
+        /* The layout publishes one JewelryStore per branch — #store-karanje
+           and #store-baba-complex — so there has never been a bare #store to
+           point at. This page is about the business, not one counter of it,
+           so it hangs off the Organization. */
+        about: { "@id": `${site.url}/#organization` },
         ...(data?.quotedAt || data?.updatedAt
           ? { dateModified: data.quotedAt ?? data.updatedAt }
           : {}),

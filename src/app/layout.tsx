@@ -5,6 +5,7 @@ import {
   faqs,
   mapsLinkFor,
   offerCatalog,
+  offers,
   site,
   stores,
 } from "@/data/site";
@@ -74,7 +75,22 @@ export const viewport: Viewport = {
   themeColor: "#3B0108",
 };
 
-/* Structured data: Organization + JewelryStore (one per location) + FAQ */
+/* Structured data: WebSite + Organization + JewelryStore (one per location).
+
+   The WebSite node exists because page-level schema refers to it: the rate
+   page's WebPage declares `isPartOf: #website`, and a reference to an @id
+   nothing defines is a dangling edge — the WebPage simply fails to join the
+   graph, which is the opposite of what the markup is for. */
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${site.url}/#website`,
+  url: site.url,
+  name: site.name,
+  inLanguage: "en-IN",
+  publisher: { "@id": `${site.url}/#organization` },
+};
+
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -140,6 +156,25 @@ const storeSchemas = stores.map((store) => ({
       name,
     })),
   },
+  /* The discounts actually running, as opposed to `hasOfferCatalog` above,
+     which is the list of product categories carried. Both branches run the
+     same offers, so each JewelryStore claims them.
+
+     `offers` is filtered by validTill at build time, so an expired campaign
+     leaves the markup on the next deploy rather than lingering as a claim
+     the shop no longer honours. No price/priceCurrency: these are discounts
+     on making charges, and the payable figure depends on the day's metal
+     rate and the weight of the piece. The detail lives on /offers/, which
+     is where `url` points. */
+  ...(offers.length && {
+    makesOffer: offers.map((offer) => ({
+      "@type": "Offer",
+      "@id": `${site.url}/offers/#offer-${offer.id}`,
+      name: offer.headline,
+      url: `${site.url}/offers/`,
+      ...(offer.validTill && { validThrough: offer.validTill }),
+    })),
+  }),
   ...(store.foundingDate && { foundingDate: store.foundingDate }),
   ...(store.geo && {
     geo: {
@@ -175,6 +210,10 @@ export default function RootLayout({
     <html lang="en-IN" className={`${cormorant.variable} ${googleSansFlex.variable}`}>
       <body>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

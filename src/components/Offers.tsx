@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { offers } from "@/data/site";
 
@@ -126,24 +127,34 @@ export default function Offers() {
 
                     Plain <img>, matching Hero: images.unoptimized means
                     next/image would add nothing but weight here. */}
-                <picture>
-                  <source
-                    media="(max-width: 639px)"
-                    srcSet={offer.imageMobile}
-                    width={1200}
-                    height={600}
-                  />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={offer.image}
-                    alt={offer.alt}
-                    width={1602}
-                    height={534}
-                    loading="lazy"
-                    decoding="async"
-                    className="aspect-[2/1] w-full object-cover sm:aspect-[3/1] sm:rounded-sm"
-                  />
-                </picture>
+                {/* The banner links to /offers/, where the same offer is
+                    written out as text. A tap during a swipe does not fire
+                    a click, so this does not fight the scroll gesture. */}
+                <Link
+                  href="/offers/"
+                  aria-label={`${offer.headline} — see offer details`}
+                  className="block"
+                >
+                  <picture>
+                    <source
+                      media="(max-width: 639px)"
+                      srcSet={offer.imageMobile}
+                      width={1200}
+                      height={600}
+                    />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={offer.image}
+                      alt={offer.alt}
+                      width={1602}
+                      height={534}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                      className="aspect-[2/1] w-full object-cover sm:aspect-[3/1] sm:rounded-sm"
+                    />
+                  </picture>
+                </Link>
               </li>
             ))}
           </ul>
