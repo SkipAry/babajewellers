@@ -113,18 +113,37 @@ export default function Offers() {
                 aria-roledescription={many ? "slide" : undefined}
                 aria-label={many ? `${i + 1} of ${offers.length}` : undefined}
               >
-                {/* Plain <img>, matching Hero: images.unoptimized means
+                {/* Two creatives, not one cropped one: the 3:1 banner is
+                    only ~125px tall on a 375px phone, so the shop had the
+                    same offer re-laid-out at 2:1 for narrow screens. The
+                    aspect ratio of the box matches the file in both cases,
+                    so object-cover never actually crops anything.
+
+                    <picture> rather than CSS: a phone downloads only the
+                    2:1 file and a desktop only the 3:1 one. The breakpoint
+                    is 639px to sit just under Tailwind's `sm`, so the
+                    artwork swaps on exactly the same pixel as the layout.
+
+                    Plain <img>, matching Hero: images.unoptimized means
                     next/image would add nothing but weight here. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={offer.image}
-                  alt={offer.alt}
-                  width={1602}
-                  height={534}
-                  loading="lazy"
-                  decoding="async"
-                  className="aspect-[3/1] w-full object-cover sm:rounded-sm"
-                />
+                <picture>
+                  <source
+                    media="(max-width: 639px)"
+                    srcSet={offer.imageMobile}
+                    width={1200}
+                    height={600}
+                  />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={offer.image}
+                    alt={offer.alt}
+                    width={1602}
+                    height={534}
+                    loading="lazy"
+                    decoding="async"
+                    className="aspect-[2/1] w-full object-cover sm:aspect-[3/1] sm:rounded-sm"
+                  />
+                </picture>
               </li>
             ))}
           </ul>

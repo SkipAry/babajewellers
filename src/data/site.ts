@@ -150,6 +150,11 @@ export type Offer = {
   id: string;
   /** Banner creative, 3:1. Lives in public/offers/. */
   image: string;
+  /** The same offer re-laid-out for narrow screens, 2:1. A 3:1 banner is
+      only ~125px tall on a 375px phone, which leaves the text baked into
+      the artwork unreadable; this is a separate creative, not a crop, so
+      nothing is lost. Served below 640px. */
+  imageMobile: string;
   /** Full description of the banner for screen readers. */
   alt: string;
   /** The offer in Marathi, as printed on the banner. */
@@ -164,6 +169,7 @@ const allOffers: Offer[] = [
   {
     id: "gold-making-charges-6-percent",
     image: "/offers/gold-making-charges-6-percent.webp",
+    imageMobile: "/offers/gold-making-charges-6-percent-mobile.webp",
     alt: "Baba Jewellers offer — only 6% making charges on all gold jewellery, valid until 15 November 2026.",
     headlineMr: "सोन्याच्या दागिन्यांच्या घडणावळीवर फक्त ६%",
     headline: "Only 6% making charges on all gold jewellery",
@@ -172,6 +178,7 @@ const allOffers: Offer[] = [
   {
     id: "silver-making-charges-flat-50",
     image: "/offers/silver-making-charges-flat-50.webp",
+    imageMobile: "/offers/silver-making-charges-flat-50-mobile.webp",
     alt: "Baba Jewellers Ganeshotsav offer — flat 50% off making charges on silver jewellery.",
     headlineMr: "चांदीच्या दागिन्यांच्या मेकिंग चार्जेसवर फ्लॅट ५०% सूट",
     headline: "Flat 50% off making charges on silver jewellery",
