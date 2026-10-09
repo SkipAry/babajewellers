@@ -188,10 +188,24 @@ const allOffers: Offer[] = [
 ];
 
 /* Build-time expiry. Compared date-only in IST so an offer lasts through
-   the whole of its final day rather than expiring at midnight UTC. */
-const TODAY_IST = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Kolkata",
-}).format(new Date());
+   the whole of its final day rather than expiring at midnight UTC.
+
+   Do NOT compute this with Intl.DateTimeFormat("en-CA"). It reads as the
+   obvious way to get YYYY-MM-DD, and it works on any Node with full ICU —
+   including every machine we test on. On a small-icu build, which some CI
+   and deploy images still ship, "en-CA" silently falls back to US format
+   and returns "10/9/2026". The comparison below then runs
+   "2026-09-27" >= "10/9/2026", which is TRUE because "2" sorts after "1",
+   so every expired offer survives instead of being dropped.
+
+   That is not hypothetical: the Ganeshotsav silver offer expired
+   27 Sep 2026 and was still advertising 50% off on the live site on
+   9 Oct, through twelve daily rebuilds, because of exactly this.
+
+   Shifting the epoch and slicing the ISO string has no locale or ICU
+   dependency and cannot return anything but YYYY-MM-DD. */
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+const TODAY_IST = new Date(Date.now() + IST_OFFSET_MS).toISOString().slice(0, 10);
 
 export const offers: Offer[] = allOffers.filter(
   (o) => o.validTill === null || o.validTill >= TODAY_IST
