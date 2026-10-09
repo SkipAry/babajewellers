@@ -50,12 +50,61 @@ const IST_TODAY = new Intl.DateTimeFormat("en-IN", {
   year: "numeric",
 }).format(new Date());
 
-export const metadata: Metadata = {
-  title: `Gold Rate Today in Shikrapur, Pune (${IST_TODAY}) — 24K, 22K, 18K | Baba Jewellers`,
-  description:
-    `Gold rate today in Shikrapur, Pune — ${IST_TODAY}. Live 24K, 22K and 18K gold rate ` +
+/**
+ * THE PRICE GOES IN THE SNIPPET.
+ *
+ * Search Console, 90 days to 9 Oct 2026, this page's queries:
+ *
+ *   gold rate today shikrapur              130 impr · 2 clicks · pos 6.4
+ *   gold rate today near shikrapur, mah.   125 impr · 2 clicks · pos 7.4
+ *   today gold rate shikrapur               75 impr · 0 clicks · pos 5.5
+ *   आज सोन्याचा दर शिक्रापूर, महाराष्ट्र      107 impr · 9 clicks · pos 4.6
+ *
+ * The English queries sit on page one and convert at ~1.2%. Expected CTR
+ * at position 6 is 5–7%, so roughly five clicks in six are being lost —
+ * and they are lost at the SERP, not on the page, because the visitor
+ * never arrives. The Marathi query at a similar position converts at 8.4%,
+ * which rules out "this position just doesn't get clicks".
+ *
+ * The likely cause is that someone searching a gold rate wants the NUMBER,
+ * and the old title offered the date and the karats but never the price.
+ * Every aggregator ranking alongside us puts the figure in the snippet.
+ * So does this now.
+ *
+ * Two guards:
+ *   - Prices appear only when goldStatus is "fresh". A stale or errored
+ *     feed falls back to the previous date-only title rather than
+ *     advertising a number we cannot stand behind in the shop.
+ *   - The title is rebuilt by the daily rates job, same as the date was.
+ *     A hardcoded price would rot in 24 hours, which is far worse than
+ *     none — it is a price promise we would not honour.
+ */
+const ratesForMeta = readRates();
+const metaRatesFresh = ratesForMeta?.goldStatus === "fresh";
+
+const metaTitle = metaRatesFresh
+  ? /* Front-loaded: Google renders ~60 characters, so the two figures a
+       searcher came for must clear that budget before the brand does. */
+    `Gold Rate Today Shikrapur: 22K ${inr(ratesForMeta!.gold["22k"])}, ` +
+    `24K ${inr(ratesForMeta!.gold["24k"])}/g | Baba Jewellers`
+  : `Gold Rate Today in Shikrapur, Pune (${IST_TODAY}) — 24K, 22K, 18K | Baba Jewellers`;
+
+/* Kept under ~155 rendered characters on purpose: that is roughly where
+   Google truncates, and everything that earns the click — four figures,
+   the town, the date — has to land before the cut. The old description
+   buried "BIS Hallmarked" and the Marathi line past it, so they were
+   never shown. */
+const metaDescription = metaRatesFresh
+  ? `24K ${inr(ratesForMeta!.gold["24k"])} · 22K ${inr(ratesForMeta!.gold["22k"])} · ` +
+    `18K ${inr(ratesForMeta!.gold["18k"])} · Silver ${inr(ratesForMeta!.silver["999"])} per gram ` +
+    `— Shikrapur, Pune, ${IST_TODAY}. Updated daily. BIS Hallmarked. आजचा सोन्याचा भाव.`
+  : `Gold rate today in Shikrapur, Pune — ${IST_TODAY}. Live 24K, 22K and 18K gold rate ` +
     `and silver rate per gram at Baba Jewellers, Pune–Nagar Road. Updated every morning. ` +
-    `BIS Hallmarked, transparent pricing. आजचा सोन्याचा भाव शिक्रापूर.`,
+    `BIS Hallmarked, transparent pricing. आजचा सोन्याचा भाव शिक्रापूर.`;
+
+export const metadata: Metadata = {
+  title: metaTitle,
+  description: metaDescription,
   /* No `keywords` meta: dropped deliberately in 7d436b6 because search
      engines ignore it, and re-adding it here would have quietly undone
      that call. The target terms live in the title, h1, body and Marathi
@@ -68,10 +117,15 @@ export const metadata: Metadata = {
     type: "website",
     url: `${site.url}/gold-rate-shikrapur/`,
     siteName: site.name,
-    title: `Gold Rate Today in Shikrapur, Pune — ${IST_TODAY}`,
-    description:
-      `Live 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune. ` +
-      `Updated every morning by Baba Jewellers.`,
+    title: metaRatesFresh
+      ? `Gold Rate Today Shikrapur — 22K ${inr(ratesForMeta!.gold["22k"])}/g, 24K ${inr(ratesForMeta!.gold["24k"])}/g`
+      : `Gold Rate Today in Shikrapur, Pune — ${IST_TODAY}`,
+    description: metaRatesFresh
+      ? `24K ${inr(ratesForMeta!.gold["24k"])} · 22K ${inr(ratesForMeta!.gold["22k"])} · ` +
+        `Silver ${inr(ratesForMeta!.silver["999"])} per gram, ${IST_TODAY}. Updated every ` +
+        `morning by Baba Jewellers, Shikrapur.`
+      : `Live 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune. ` +
+        `Updated every morning by Baba Jewellers.`,
     locale: "en_IN",
   },
 };
