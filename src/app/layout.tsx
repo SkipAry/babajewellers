@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import {
   areaServed,
   faqs,
@@ -11,7 +12,34 @@ import {
 } from "@/data/site";
 import "./globals.css";
 
+/* ── Analytics ────────────────────────────────────────────────────────
+ * Every value here is a public identifier — they all ship in the HTML
+ * anyway — so they are plain constants rather than env vars, matching how
+ * this file already worked. Each one is null-guarded: an unset value
+ * renders nothing at all, so a half-configured service never emits a
+ * broken tag.
+ *
+ * ⚠ The Cloudflare token below does NOT belong to the account at
+ * codeninja4545@gmail.com. Verified 9 Oct 2026: that account's Web
+ * Analytics shows "No active websites found", so this beacon has been
+ * reporting into a void since it was added on 17 Aug 2026. It is left in
+ * place only because the history may live under another Cloudflare login.
+ * Either replace the token or delete the beacon — right now it costs a
+ * script fetch on every page view and returns nothing.
+ */
 const cloudflareWebAnalyticsToken = "3db45ae729dd4879a51c5f294d5a5d29";
+
+/* GA4 Measurement ID, "G-XXXXXXXXXX".
+   Admin → Data Streams → web stream, at analytics.google.com.
+   ⚠ GA4 sets cookies. Before setting this, the privacy policy needs a
+   line naming Google Analytics, and consent handling needs a decision —
+   DPDP Act in India, GDPR for any EU visitor. Cloudflare's beacon needed
+   neither, which is why none exists yet. */
+const gaMeasurementId: string | null = null;
+
+/* Google Search Console verification, the `content` value from the
+   HTML-tag method. Cookieless, no consent implication. */
+const googleSiteVerification: string | null = null;
 
 /* Self-hosted variable fonts — reliable on every network.
    Cormorant (300–700) for display headings, Google Sans Flex for body. */
@@ -66,6 +94,11 @@ export const metadata: Metadata = {
     images: ["/models/hero-model.webp"],
   },
   robots: { index: true, follow: true },
+  /* Omitted entirely when unset — an empty verification tag is worse than
+     no tag, because Search Console reads it as a failed check. */
+  ...(googleSiteVerification
+    ? { verification: { google: googleSiteVerification } }
+    : {}),
 };
 
 export const viewport: Viewport = {
@@ -232,6 +265,25 @@ export default function RootLayout({
             token: cloudflareWebAnalyticsToken,
           })}
         />
+
+        {/* GA4. Renders nothing until gaMeasurementId is set, so there is
+            no cookie and no consent obligation in the meantime.
+            `afterInteractive` is deliberate: analytics must never compete
+            with the hero image for bandwidth on a mid-tier phone. */}
+        {gaMeasurementId ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaMeasurementId}', { anonymize_ip: true });`}
+            </Script>
+          </>
+        ) : null}
       </body>
     </html>
   );
