@@ -5,7 +5,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "Privacy Policy | Baba Jewellers",
   description:
-    "How Baba Jewellers handles the information you share through this website — enquiry form data, privacy-first analytics, and how to have yours removed.",
+    "How Baba Jewellers handles the information you share through this website — enquiry form data, website analytics and cookies, and how to have yours removed.",
   alternates: { canonical: `${site.url}/privacy/` },
 };
 
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
             id="analytics-heading"
             className="font-display text-2xl font-bold text-maroon-deep"
           >
-            Privacy-first website analytics
+            Website analytics
           </h2>
           <p>
             We use Cloudflare Web Analytics to understand aggregate visits,
@@ -50,6 +50,41 @@ export default function PrivacyPage() {
             performance. Cloudflare states that this service does not use
             analytics cookies, collect visitors&apos; personal data or track
             individual visitors across websites.
+          </p>
+          <p>
+            We also use Google Analytics 4. Unlike the Cloudflare beacon,
+            Google Analytics <strong>does set cookies</strong> on your device
+            and uses them to recognise a returning visitor, so that we can tell
+            how many separate people visit rather than only how many visits
+            occur. It records the pages you view, the approximate location your
+            visit comes from, the device and browser you use, and which actions
+            you take on the site — for example tapping a call, WhatsApp or
+            directions button. It does not receive your name, phone number or
+            the contents of an enquiry you send us. IP addresses are
+            anonymised before storage.
+          </p>
+          <p>
+            If you would rather not be counted, you can block cookies in your
+            browser settings, use your browser&apos;s private mode, or install
+            Google&apos;s{" "}
+            <a
+              href="https://tools.google.com/dlpage/gaoptout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-maroon underline underline-offset-4"
+            >
+              Analytics opt-out add-on
+            </a>
+            . You can read how Google handles this data in the{" "}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-maroon underline underline-offset-4"
+            >
+              Google Privacy Policy
+            </a>
+            .
           </p>
           <p>
             The analytics beacon does not receive your name, phone number,

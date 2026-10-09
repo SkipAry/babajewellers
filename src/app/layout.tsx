@@ -35,7 +35,7 @@ const cloudflareWebAnalyticsToken = "3db45ae729dd4879a51c5f294d5a5d29";
    line naming Google Analytics, and consent handling needs a decision —
    DPDP Act in India, GDPR for any EU visitor. Cloudflare's beacon needed
    neither, which is why none exists yet. */
-const gaMeasurementId: string | null = null;
+const gaMeasurementId: string | null = "G-B110Y76HZZ";
 
 /* Google Search Console verification, the `content` value from the
    HTML-tag method. Cookieless, no consent implication. */
