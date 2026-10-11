@@ -279,7 +279,7 @@ export const pieces: Piece[] = [
      year men buy gold for themselves. */
   {
     id: "mens-woven-curb-bracelet",
-    title: "Woven Link Bracelet",
+    title: "Mens Bracelet",
     category: "Bracelets",
     image: "/products/12-mens-woven-curb-bracelet.webp",
     alt: "Men's gold bracelet of densely woven links with leaf-cut texturing, engraved tapered end caps and an S-hook clasp",
@@ -287,14 +287,14 @@ export const pieces: Piece[] = [
   },
   {
     id: "mens-box-link-bracelet",
-    title: "Box Link Bracelet",
+    title: "Mens Bracelet",
     category: "Bracelets",
     image: "/products/13-mens-box-link-bracelet.webp",
     alt: "Men's gold bracelet of rectangular ribbed panels with round centre studs, linked into a flat band with an S-hook clasp",
   },
   {
     id: "mens-curb-bracelet-faceted",
-    title: "Faceted Curb Bracelet",
+    title: "Mens Bracelet",
     category: "Bracelets",
     image: "/products/14-mens-curb-bracelet-faceted.webp",
     alt: "Heavy men's gold curb-link bracelet with diamond-cut faceted links, an engraved end cap and an S-hook clasp",
