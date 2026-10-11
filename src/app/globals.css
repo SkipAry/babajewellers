@@ -174,9 +174,15 @@ summary:focus-visible,
    second copy lands where the first began and the loop restarts with no
    visible seam. Translating by anything other than -50% shows a jump.
 
-   40s is deliberately slow. A ticker fast enough to feel lively is too
-   fast to read a four-digit price off, and reading the price is the
-   entire point of this strip.
+   25s per full pass, set by the shop after seeing 40s run. Roughly
+   50px/s — brisk but still well under a TV news crawl, which is where a
+   four-digit price stops being readable. The diamond separators earn
+   this pace: they break the line into segments the eye can anchor on,
+   which a continuous run of text could not take.
+
+   Note this is a DURATION, not a speed. Narrow the content — shortening
+   the timestamp, say — and the same 25s moves it more slowly, so the
+   number needs revisiting if the strip's text changes much.
 
    transform only — never `left` or `margin` — so it runs on the
    compositor and costs no layout work on a mid-range phone. */
@@ -194,7 +200,7 @@ summary:focus-visible,
 }
 
 .rate-ticker-track {
-  animation: rate-ticker-scroll 40s linear infinite;
+  animation: rate-ticker-scroll 25s linear infinite;
   will-change: transform;
 }
 
