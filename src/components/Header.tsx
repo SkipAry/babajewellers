@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { site, telLink, whatsappLink } from "@/data/site";
 import { trackEvent } from "@/lib/analytics";
 import RatesMenu from "./RatesMenu";
+import RateTicker from "./RateTicker";
 
 const navLinks = [
   { href: "/#home", label: "Home" },
@@ -70,6 +71,11 @@ export default function Header() {
           : "bg-maroon-deep/80 shadow-[0_1px_0_0_rgba(212,166,72,0.12)] backdrop-blur-sm"
       }`}
     >
+      {/* Above the nav, inside the same fixed block, so the two move as
+          one element. A separately-positioned bar would need the header
+          offset by the ticker's exact height - a number that changes the
+          moment the type size does. */}
+      <RateTicker />
       <div className="mx-auto flex h-16 max-w-site items-center justify-between px-4 sm:px-6 md:h-20 lg:px-8">
         <Link
           ref={brandRef}

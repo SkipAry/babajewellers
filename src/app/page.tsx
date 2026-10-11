@@ -12,7 +12,6 @@ import MobileActions from "@/components/MobileActions";
 import Offers from "@/components/Offers";
 import PromiseBand from "@/components/PromiseBand";
 import Promises from "@/components/Promises";
-import RateTicker from "@/components/RateTicker";
 import Reels from "@/components/Reels";
 import Stores from "@/components/Stores";
 import { faqs } from "@/data/site";
@@ -40,7 +39,6 @@ export default function Home() {
       <Header />
       <main id="main" tabIndex={-1}>
         <Hero />
-        <RateTicker />
         <Offers />
         <Promises />
         <About />

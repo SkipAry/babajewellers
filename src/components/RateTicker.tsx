@@ -40,10 +40,24 @@ import {
 export default function RateTicker() {
   const state = useRates();
 
-  /* Render nothing at all while loading or on failure. A ticker is
-     ambient furniture; an empty scrolling bar, or one reading "—", looks
-     broken in a way a missing one does not. */
-  if (state.phase !== "ready") return null;
+  /* Height is reserved during loading but NOT on failure, and the two
+     cases are deliberately different.
+     - loading: the bar renders empty for the ~200ms of the fetch. It sits
+       inside the fixed header, so returning null here and appearing later
+       would shove the whole nav down as rates arrive — a layout shift on
+       first paint, on the element the visitor is most likely reaching for.
+     - unavailable: render nothing. A permanently empty maroon strip reads
+       as broken in a way a missing one does not. */
+  if (state.phase === "unavailable") return null;
+
+  if (state.phase === "loading") {
+    return (
+      <div
+        aria-hidden="true"
+        className="h-9 border-b border-gold/20 bg-maroon"
+      />
+    );
+  }
 
   const { data } = state;
   const updated = formatUpdated(data.quotedAt ?? data.updatedAt);
@@ -67,10 +81,10 @@ export default function RateTicker() {
     >
       {items.map((item) => (
         <span key={item.label} className="flex items-baseline gap-2 whitespace-nowrap">
-          <span className="text-[11px] font-semibold uppercase tracking-caps text-gold-light/70">
+          <span className="text-[10px] font-semibold uppercase tracking-caps text-gold-light/70">
             {item.label}
           </span>
-          <span className="font-display text-lg font-bold text-gold-light">
+          <span className="font-display text-[15px] font-bold text-gold-light">
             {item.value}
           </span>
         </span>
@@ -85,21 +99,15 @@ export default function RateTicker() {
             ? `Updated ${updated}`
             : "Updated every morning"}
       </span>
-      <span aria-hidden="true" className="text-gold/40">
-        ◆
-      </span>
-      <span className="whitespace-nowrap text-[11px] uppercase tracking-caps text-ivory/55">
-        Indicative · ask in store for the exact rate
-      </span>
     </div>
   );
 
   return (
     <section
       aria-label="Today's gold and silver rates"
-      className="rate-ticker border-y border-gold/20 bg-maroon-deep py-3"
+      className="rate-ticker h-9 border-b border-gold/20 bg-maroon"
     >
-      <div className="rate-ticker-track flex w-max">
+      <div className="rate-ticker-track flex h-9 w-max items-center">
         {sequence(false)}
         {sequence(true)}
       </div>

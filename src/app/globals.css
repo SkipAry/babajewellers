@@ -12,7 +12,9 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  /* Fixed block is now ticker (36px) + nav (64-80px). At 5rem an anchor
+     target landed underneath the header. */
+  scroll-padding-top: 7.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
