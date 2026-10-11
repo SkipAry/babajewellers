@@ -167,6 +167,53 @@ summary:focus-visible,
   animation: cue 2s ease-in-out infinite;
 }
 
+/* ── Rate ticker ───────────────────────────────────────────────
+   The track holds the rate row twice and travels exactly -50%, so the
+   second copy lands where the first began and the loop restarts with no
+   visible seam. Translating by anything other than -50% shows a jump.
+
+   40s is deliberately slow. A ticker fast enough to feel lively is too
+   fast to read a four-digit price off, and reading the price is the
+   entire point of this strip.
+
+   transform only — never `left` or `margin` — so it runs on the
+   compositor and costs no layout work on a mid-range phone. */
+@keyframes rate-ticker-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.rate-ticker {
+  overflow: hidden;
+}
+
+.rate-ticker-track {
+  animation: rate-ticker-scroll 40s linear infinite;
+  will-change: transform;
+}
+
+/* The shop asked for no pause control. This is the concession: anyone
+   whose OS requests less motion gets the rates as a centred static strip
+   instead of a moving one. The global reduced-motion block above sets
+   animation-duration to 0.01ms, which would otherwise leave the track
+   frozen mid-travel at -50% and clip the first copy out of view. */
+@media (prefers-reduced-motion: reduce) {
+  .rate-ticker-track {
+    animation: none !important;
+    width: 100% !important;
+    justify-content: center;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  .rate-ticker-track > [aria-hidden="true"] {
+    display: none;
+  }
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
