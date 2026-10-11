@@ -68,7 +68,14 @@ export default function Collections() {
         <SectionHeading
           label="The Collection"
           title="Crafted for Every Occasion"
-          intro="A glimpse of our gold jewellery — photographed in store. Visit us to explore the full collection of gold and silver ornaments."
+          /* Was "photographed in store". Changed 11 Oct 2026 when the three
+             men's bracelets were added: those are rendered images, not
+             photographs of stock, so the old line had become untrue the
+             moment they went in. Wording now covers both — the eleven real
+             in-store photographs and the three rendered designs — without
+             claiming either is the other. If the bracelets are ever
+             reshot from actual stock, the stronger claim can come back. */
+          intro="A glimpse of our gold jewellery and representative designs. Visit either store to see what we currently have — and ask us about anything you see here."
         />
 
         {/* Filters */}

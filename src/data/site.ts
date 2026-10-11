@@ -251,21 +251,55 @@ export type PromiseIcon = (typeof promises)[number]["icon"];
 export type Piece = {
   id: string;
   title: string;
-  category: "Necklaces" | "Earrings" | "Bangles" | "Rings";
+  category: "Necklaces" | "Earrings" | "Bangles" | "Rings" | "Bracelets";
   image: string;
   alt: string;
   tall?: boolean;
 };
 
+/* "Bracelets" is its own filter rather than being folded into Bangles.
+   The three pieces under it are heavy men's chain bracelets, and a man
+   looking for one does not filter by "Bangles" — in Indian retail that
+   word means women's. Collapsing the two would hide the only men's
+   jewellery on the site behind a label its buyer will never tap. */
 export const collectionFilters = [
   "All",
   "Necklaces",
   "Earrings",
   "Bangles",
+  "Bracelets",
   "Rings",
 ] as const;
 
 export const pieces: Piece[] = [
+  /* ── Men's bracelets, added 11 Oct 2026 ──────────────────────
+     Shot on red satin inside a gold rule, unlike the older pieces which
+     sit on maroon velvet. Deliberately listed first: they are the only
+     men's jewellery on the site, and Dhanteras (6 Nov) is the one time of
+     year men buy gold for themselves. */
+  {
+    id: "mens-woven-curb-bracelet",
+    title: "Woven Link Bracelet",
+    category: "Bracelets",
+    image: "/products/12-mens-woven-curb-bracelet.webp",
+    alt: "Men's gold bracelet of densely woven links with leaf-cut texturing, engraved tapered end caps and an S-hook clasp",
+    tall: true,
+  },
+  {
+    id: "mens-box-link-bracelet",
+    title: "Box Link Bracelet",
+    category: "Bracelets",
+    image: "/products/13-mens-box-link-bracelet.webp",
+    alt: "Men's gold bracelet of rectangular ribbed panels with round centre studs, linked into a flat band with an S-hook clasp",
+  },
+  {
+    id: "mens-curb-bracelet-faceted",
+    title: "Faceted Curb Bracelet",
+    category: "Bracelets",
+    image: "/products/14-mens-curb-bracelet-faceted.webp",
+    alt: "Heavy men's gold curb-link bracelet with diamond-cut faceted links, an engraved end cap and an S-hook clasp",
+  },
+
   {
     id: "gold-choker",
     title: "Bridal Gold Choker",
