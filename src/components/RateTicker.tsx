@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import {
   formatUpdated,
   inr,
@@ -71,34 +72,56 @@ export default function RateTicker() {
     { label: "Silver 999", value: `${inr(rateFor(data, "999"))}/g` },
   ];
 
+  /* Every cell in one list — the four rates, then the timestamp — so the
+     diamond separators can be interleaved uniformly instead of being
+     hand-placed.
+     A diamond LEADS each cell and there is deliberately none at the end.
+     The strip is an endless loop, so the next copy's leading diamond is
+     what closes the previous run: "…9:45 am ◆ 24K GOLD…". Adding a
+     closing one as well puts a doubled "◆ ◆" at every seam. */
+  const cells = [
+    ...items.map((item) => (
+      <span key={item.label} className="flex items-baseline gap-2 whitespace-nowrap">
+        <span className="text-[10px] font-semibold uppercase tracking-caps text-gold-light/70">
+          {item.label}
+        </span>
+        <span className="font-display text-[15px] font-bold text-gold-light">
+          {item.value}
+        </span>
+      </span>
+    )),
+    <span
+      key="updated"
+      className="whitespace-nowrap text-[11px] uppercase tracking-caps text-ivory/55"
+    >
+      {closed
+        ? "Market closed · last published rate"
+        : updated
+          ? `Updated ${updated}`
+          : "Updated every morning"}
+    </span>,
+  ];
+
+  const diamond = (key: string) => (
+    <span key={key} aria-hidden="true" className="text-gold/40">
+      ◆
+    </span>
+  );
+
   /* One sequence, repeated. Kept as a function so both copies are
      guaranteed identical — a hand-written second copy drifts the moment
      anyone edits the first. */
   const sequence = (hidden: boolean) => (
     <div
-      className="flex shrink-0 items-center gap-8 pr-8 sm:gap-12 sm:pr-12"
+      className="flex shrink-0 items-center gap-4 pr-4 sm:gap-6 sm:pr-6"
       aria-hidden={hidden || undefined}
     >
-      {items.map((item) => (
-        <span key={item.label} className="flex items-baseline gap-2 whitespace-nowrap">
-          <span className="text-[10px] font-semibold uppercase tracking-caps text-gold-light/70">
-            {item.label}
-          </span>
-          <span className="font-display text-[15px] font-bold text-gold-light">
-            {item.value}
-          </span>
-        </span>
+      {cells.map((cell, i) => (
+        <Fragment key={i}>
+          {diamond(`d${i}`)}
+          {cell}
+        </Fragment>
       ))}
-      <span aria-hidden="true" className="text-gold/40">
-        ◆
-      </span>
-      <span className="whitespace-nowrap text-[11px] uppercase tracking-caps text-ivory/55">
-        {closed
-          ? "Market closed · last published rate"
-          : updated
-            ? `Updated ${updated}`
-            : "Updated every morning"}
-      </span>
     </div>
   );
 
