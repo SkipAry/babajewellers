@@ -98,8 +98,22 @@ export default function Header() {
             </span>
             {/* Below 360px the rates button leaves the brand ~144px, not enough
                 for name + tagline inside the 64px bar. Name wins, tagline waits. */}
-            <span className="hidden text-[11px] uppercase tracking-[0.08em] text-ivory/75 min-[360px]:block md:text-xs md:tracking-caps">
-              Since 2008 · Shikrapur, Pune
+            {/* Measured at 393px wide: the brand block gets 150px here. At
+                11px/0.08em this line needs 197px, so it wrapped to two and
+                made the header look top-heavy.
+
+                Fitting the full string on one line would mean 9px with no
+                tracking (145px) — too small for a tracked uppercase label
+                to stay legible. Dropping ", Pune" instead keeps a readable
+                10px and lands at 135px, with room to spare.
+
+                Nothing is lost by it: "Pune" still appears in the page
+                title, the stores section, and both JewelryStore schema
+                blocks. A header tagline is not where that term earns
+                anything. Desktop keeps the full line. */}
+            <span className="hidden whitespace-nowrap text-[10px] uppercase tracking-[0.04em] text-ivory/75 min-[360px]:block md:text-xs md:tracking-caps">
+              Since 2008 · Shikrapur
+              <span className="hidden md:inline">, Pune</span>
             </span>
           </span>
         </Link>
