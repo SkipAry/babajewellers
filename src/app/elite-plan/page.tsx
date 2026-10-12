@@ -52,6 +52,16 @@ export const metadata: Metadata = {
     description:
       "Save monthly, receive an additional benefit on maturity, and buy gold jewellery at Baba Jewellers, Shikrapur.",
     locale: "en_IN",
+    /* Was missing, so scheme links shared on WhatsApp previewed bare.
+       Same image as the homepage — see the note on the rate page. */
+    images: [
+      {
+        url: "/models/hero-model.webp",
+        width: 1200,
+        height: 1800,
+        alt: "Traditional gold jewellery from Baba Jewellers, Shikrapur",
+      },
+    ],
   },
 };
 

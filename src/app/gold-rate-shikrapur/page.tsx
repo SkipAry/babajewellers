@@ -126,6 +126,19 @@ export const metadata: Metadata = {
         `morning by Baba Jewellers, Shikrapur.`
       : `Live 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune. ` +
         `Updated every morning by Baba Jewellers.`,
+    /* This page had no og:image, so every WhatsApp forward of the day's
+       rate rendered as a bare link. Shared image with the homepage rather
+       than a bespoke one — a purpose-built 1200x630 would preview better
+       on Facebook and X, but WhatsApp crops to a square anyway and that is
+       where a Shikrapur rate link actually travels. */
+    images: [
+      {
+        url: "/models/hero-model.webp",
+        width: 1200,
+        height: 1800,
+        alt: "Traditional gold jewellery from Baba Jewellers, Shikrapur",
+      },
+    ],
     locale: "en_IN",
   },
 };

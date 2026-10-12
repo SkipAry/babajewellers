@@ -1,11 +1,18 @@
 import Image from "next/image";
 import { mapsLinkFor, site, stores, telLink } from "@/data/site";
 
+/* Every other entry is a homepage anchor; /offers/ and the rate page are
+   real routes. Both are included because the footer appears on all seven
+   pages, which makes it the cheapest sitewide internal link available —
+   and /offers/ was the most weakly linked page on the site, reachable
+   only from the two homepage banners. */
 const navLinks = [
   { href: "/#home", label: "Home" },
   { href: "/#promises", label: "Our Promises" },
   { href: "/#about", label: "About" },
   { href: "/#collections", label: "Collections" },
+  { href: "/offers/", label: "Offers" },
+  { href: "/gold-rate-shikrapur/", label: "Today's Gold Rate" },
   { href: "/#stores", label: "Visit Us" },
   { href: "/#contact", label: "Contact" },
 ];

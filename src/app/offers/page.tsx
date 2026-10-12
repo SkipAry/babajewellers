@@ -41,11 +41,20 @@ const offerSummary = offers.map((o) => o.headline).join(". ");
 
 export const metadata: Metadata = {
   title: "Gold & Silver Jewellery Offers in Shikrapur, Pune | Baba Jewellers",
+  /* Google renders ~155 characters. The old description ran to 251 with
+     two offers live, so the stores, "BIS Hallmarked" and the Marathi line
+     all sat past the cut and were never shown.
+
+     The length is not fixed — `offerSummary` is built from whatever
+     offers are running, so it grows with each one. The tail is therefore
+     kept deliberately short, and the Marathi line comes BEFORE the fluff
+     rather than after it: with one offer live the whole string fits, and
+     with two or three the thing that drops off the end is "BIS
+     Hallmarked", not the offers or the local-language phrase that earns
+     the best CTR of any query on this site. */
   description:
     (offerSummary ? `${offerSummary}. ` : "") +
-    "Current gold and silver jewellery offers at Baba Jewellers, Shikrapur — " +
-    "Pune–Nagar Road and Talegaon Dhamdhere Road. BIS Hallmarked, transparent " +
-    "pricing. सोन्या-चांदीच्या दागिन्यांवर ऑफर — शिक्रापूर, पुणे.",
+    "Shikrapur, Pune. सोन्या-चांदीच्या दागिन्यांवर ऑफर. BIS Hallmarked.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",

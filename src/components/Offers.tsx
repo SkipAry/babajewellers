@@ -90,6 +90,21 @@ export default function Offers() {
           Running Offers
         </h2>
 
+        {/* A descriptive text link alongside the banners. The banners do
+            link to /offers/, but their anchor text is the alt attribute —
+            Google reads an image link far more weakly than "see all offers
+            and terms", and /offers/ was the least-linked page on the
+            site. */}
+        <p className="mt-2 px-4 text-center text-sm sm:px-0">
+          <Link
+            href="/offers/"
+            className="font-semibold text-maroon underline underline-offset-4 transition-colors hover:text-maroon-soft"
+          >
+            See all offers and terms
+            <span aria-hidden="true"> &rarr;</span>
+          </Link>
+        </p>
+
         <div
           className="relative mt-6"
           aria-roledescription={many ? "carousel" : undefined}
