@@ -163,6 +163,24 @@ export type Offer = {
   headline: string;
   /** ISO date, or null for no end date. */
   validTill: string | null;
+  /**
+   * Festival artwork that temporarily replaces the banner while the offer
+   * itself carries on unchanged.
+   *
+   * This exists so a seasonal creative does NOT become a second offer.
+   * Adding Dussehra as its own entry would have put two banners for the
+   * same 6% discount in the carousel at once, emitted a duplicate `Offer`
+   * into the schema, and listed it twice on /offers/. One offer, swappable
+   * artwork, is the honest shape: the terms never changed, only the dress.
+   */
+  seasonal?: {
+    image: string;
+    imageMobile: string;
+    alt: string;
+    /** Last day the festival artwork shows. After this the standard
+        banner returns, while `validTill` keeps governing the offer. */
+    until: string;
+  };
 };
 
 const allOffers: Offer[] = [
@@ -174,6 +192,14 @@ const allOffers: Offer[] = [
     headlineMr: "सोन्याच्या दागिन्यांच्या घडणावळीवर फक्त ६%",
     headline: "Only 6% making charges on all gold jewellery",
     validTill: "2026-11-15",
+    /* Dussehra dress for the same 6% offer. Reverts to the standard
+       banner on 22 Oct; the offer itself runs to 15 Nov regardless. */
+    seasonal: {
+      image: "/offers/dussehra-gold-6-percent.webp",
+      imageMobile: "/offers/dussehra-gold-6-percent-mobile.webp",
+      alt: "Baba Jewellers Dussehra offer — only 6% making charges on all gold jewellery.",
+      until: "2026-10-21",
+    },
   },
   {
     id: "silver-making-charges-flat-50",
@@ -207,9 +233,25 @@ const allOffers: Offer[] = [
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 const TODAY_IST = new Date(Date.now() + IST_OFFSET_MS).toISOString().slice(0, 10);
 
-export const offers: Offer[] = allOffers.filter(
-  (o) => o.validTill === null || o.validTill >= TODAY_IST
-);
+/* Expiry first, then artwork. Both resolved at build time against the same
+   TODAY_IST, so the banner, the /offers/ page and the schema can never
+   disagree about which creative is running.
+
+   `seasonal` is dropped from the returned object once resolved — every
+   consumer then sees a plain Offer with the correct artwork already
+   chosen, and none of them needs to know festivals exist. */
+export const offers: Offer[] = allOffers
+  .filter((o) => o.validTill === null || o.validTill >= TODAY_IST)
+  .map(({ seasonal, ...offer }) =>
+    seasonal && seasonal.until >= TODAY_IST
+      ? {
+          ...offer,
+          image: seasonal.image,
+          imageMobile: seasonal.imageMobile,
+          alt: seasonal.alt,
+        }
+      : offer
+  );
 
 /* ── The six Baba Jewellers promises ────────────────────────── */
 export const promises = [
