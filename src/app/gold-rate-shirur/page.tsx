@@ -192,10 +192,10 @@ export default function GoldRateShirurPage() {
                 Shirur" deserves to know in the first breath that the shop is
                 in Shikrapur rather than discovering it after a drive. */}
             <p className="mx-auto mt-6 max-w-2xl text-center text-base leading-relaxed text-ink/80">
-              Baba Jewellers is in <strong>Shikrapur</strong>, on the
-              Pune–Nagar road — the same road that runs through Shirur taluka.
-              We do not have a Shirur branch. The rate below is the rate you
-              will be quoted at either of our showrooms.
+              Baba Jewellers is in <strong>Shikrapur</strong>, about 35 km
+              from Shirur along the Pune–Nagar road. We do not have a Shirur
+              branch. The rate below is the rate you will be quoted at either
+              of our showrooms.
             </p>
 
             {data ? (
@@ -281,10 +281,11 @@ export default function GoldRateShirurPage() {
             </h2>
             <div className="mt-6 space-y-5 text-base leading-relaxed text-ink/80">
               <p>
-                Our original showroom — {roadsideStore.line1} — is on the
-                Pune–Nagar road at Shikrapur, so it is directly on the route if
-                you are heading toward Pune. It has been open since 9 June
-                2008.
+                It is about 35 km down the Pune–Nagar road, roughly
+                three-quarters of an hour. Our original showroom —{" "}
+                {roadsideStore.line1} — sits on that road at Shikrapur, so it
+                is directly on your route if you are heading toward Pune. It
+                has been open since 9 June 2008.
               </p>
               <p>
                 Our second showroom at Baba Complex is on the
