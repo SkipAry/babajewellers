@@ -410,6 +410,21 @@ export default function GoldRatePage() {
                 We refresh this page every morning. For the exact rate at the
                 moment you buy, call us or visit either showroom.
               </p>
+              {/* Reciprocal link to the Shirur page. Without it that page is
+                  reachable only from the footer and the sitemap, and a
+                  location page with one inbound link looks exactly like the
+                  doorway pages Google discounts. */}
+              <p>
+                Coming from further along the Pune–Nagar road? The same rates,
+                written for readers in{" "}
+                <Link
+                  href="/gold-rate-shirur/"
+                  className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
+                >
+                  Shirur taluka
+                </Link>
+                .
+              </p>
             </div>
           </div>
         </section>
