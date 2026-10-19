@@ -164,6 +164,23 @@ export type Offer = {
   /** ISO date, or null for no end date. */
   validTill: string | null;
   /**
+   * Festival or occasion this offer belongs to — "Diwali", "Dussehra".
+   *
+   * Exists for search, not decoration. Festival demand is a three-week
+   * spike that disappears, and an evergreen title like "Gold & Silver
+   * Jewellery Offers" matches nobody typing "diwali offer jewellery
+   * shikrapur". When an occasion offer is live, /offers/ puts its name in
+   * the title, the h1 and the description; when it expires the page
+   * reverts to evergreen on the next build with no one touching it.
+   *
+   * `occasionMr` is the Marathi form. Not optional in practice: the
+   * Marathi rate query converts at 8.4% against 1.2% for its English
+   * equivalent, which is the clearest signal in this site's Search
+   * Console that local searches happen in Marathi.
+   */
+  occasion?: string;
+  occasionMr?: string;
+  /**
    * Body copy for /offers/. Optional: when absent the page falls back to
    * its making-charges explanation, which fits a straight discount.
    *
@@ -218,6 +235,8 @@ const allOffers: Offer[] = [
     headlineMr: "दिवाळी सुवर्णोत्सव — खरेदी करा आणि जिंका बक्षिसे!",
     headline: "Buy this Diwali and win — scooter, TV, fridge, phone or a gold coin",
     validTill: "2026-11-16",
+    occasion: "Diwali",
+    occasionMr: "दिवाळी",
     /* Deliberately vague on the draw mechanics — how entries are counted,
        when it is drawn, how winners are told. We were not given those and
        they must not be invented: a prize draw is a promise, and guessing

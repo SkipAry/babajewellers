@@ -39,8 +39,27 @@ const PAGE_URL = `${site.url}/offers/`;
    actually running, rather than a sentence that rots after a campaign. */
 const offerSummary = offers.map((o) => o.headline).join(". ");
 
+/* The live occasion, if any offer carries one. Festival demand is a short
+   spike — "diwali offer jewellery shikrapur" is worth nothing in January
+   and a great deal for three weeks — so the title, h1 and description all
+   name it while it runs and fall back to evergreen the moment it ends.
+   First match wins; offers are listed campaign-first. */
+const liveOccasion = offers.find((o) => o.occasion)?.occasion ?? null;
+const liveOccasionMr = offers.find((o) => o.occasionMr)?.occasionMr ?? null;
+
+/* Keyword first, town second, brand last — the same front-loading the
+   rate page uses, because Google renders ~60 characters and "Diwali" has
+   to clear that budget. Measured below in the commit. */
+const pageTitle = liveOccasion
+  ? `${liveOccasion} Offers on Gold Jewellery in Shikrapur | Baba Jewellers`
+  : "Gold & Silver Jewellery Offers in Shikrapur, Pune | Baba Jewellers";
+
+const pageHeading = liveOccasion
+  ? `${liveOccasion} Offers on Gold Jewellery in Shikrapur`
+  : "Gold & Silver Jewellery Offers in Shikrapur, Pune";
+
 export const metadata: Metadata = {
-  title: "Gold & Silver Jewellery Offers in Shikrapur, Pune | Baba Jewellers",
+  title: pageTitle,
   /* Google renders ~155 characters. The old description ran to 251 with
      two offers live, so the stores, "BIS Hallmarked" and the Marathi line
      all sat past the cut and were never shown.
@@ -54,13 +73,15 @@ export const metadata: Metadata = {
      the best CTR of any query on this site. */
   description:
     (offerSummary ? `${offerSummary}. ` : "") +
-    "Shikrapur, Pune. सोन्या-चांदीच्या दागिन्यांवर ऑफर. BIS Hallmarked.",
+    `Shikrapur, Pune. ${liveOccasionMr ? liveOccasionMr + " " : ""}सोन्या-चांदीच्या दागिन्यांवर ऑफर. BIS Hallmarked.`,
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",
     url: PAGE_URL,
     siteName: site.name,
-    title: "Running Offers on Gold & Silver Jewellery — Shikrapur, Pune",
+    title: liveOccasion
+      ? `${liveOccasion} Offers on Gold Jewellery — Baba Jewellers, Shikrapur`
+      : "Running Offers on Gold & Silver Jewellery — Shikrapur, Pune",
     description:
       offerSummary ||
       "Current gold and silver jewellery offers at Baba Jewellers, Shikrapur.",
@@ -139,7 +160,7 @@ export default function OffersPage() {
               Running Offers
             </p>
             <h1 className="mx-auto mt-4 max-w-3xl text-center font-display text-[clamp(2rem,5vw,3.25rem)] font-bold leading-tight text-maroon-deep">
-              Gold &amp; Silver Jewellery Offers in Shikrapur, Pune
+              {pageHeading}
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-center text-base leading-relaxed text-ink/75">
               What is running right now at both our Shikrapur showrooms — on
@@ -151,6 +172,7 @@ export default function OffersPage() {
               lang="mr"
               className="mx-auto mt-3 max-w-2xl text-center text-base leading-relaxed text-ink/70"
             >
+              {liveOccasionMr ? `${liveOccasionMr} विशेष — ` : ""}
               सोन्या-चांदीच्या दागिन्यांवरील सध्याच्या ऑफर — शिक्रापूर, पुणे.
             </p>
           </div>
