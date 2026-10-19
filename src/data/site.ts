@@ -164,6 +164,17 @@ export type Offer = {
   /** ISO date, or null for no end date. */
   validTill: string | null;
   /**
+   * Body copy for /offers/. Optional: when absent the page falls back to
+   * its making-charges explanation, which fits a straight discount.
+   *
+   * Needed the moment an offer is NOT a making-charges discount. The
+   * Diwali draw proved it — the fallback would have rendered "Applies to
+   * buy this Diwali and win a scooter… Making charges are the cost of the
+   * craftsmanship, so this is a direct saving on the price you pay",
+   * which describes a discount that offer does not give.
+   */
+  detail?: string;
+  /**
    * Festival artwork that temporarily replaces the banner while the offer
    * itself carries on unchanged.
    *
@@ -184,6 +195,42 @@ export type Offer = {
 };
 
 const allOffers: Offer[] = [
+  {
+    /* Diwali Suvarnotsav. Listed first: it is the headline campaign of the
+       year and should lead the carousel.
+
+       Its headline leads with the PRIZE DRAW, not the 6%, and that is
+       deliberate. The shop confirmed (20 Oct) the making charge is a flat
+       6% — the same terms as the offer below — so if both banners opened
+       with "6% making charges" a customer would see two near-identical
+       promises and reasonably ask which one applied to them. Leading with
+       the draw makes the pair read as what they actually are: a discount,
+       and a draw you enter by buying.
+
+       The banner reads "६% पासून" (from 6%), which is looser than the real
+       terms. Confirmed with the shop rather than assumed — the site says
+       "flat 6%" because that is what is honoured at the counter. If the
+       artwork is ever reprinted, "फक्त ६%" matches reality better. */
+    id: "diwali-suvarnotsav-2026",
+    image: "/offers/diwali-suvarnotsav.webp",
+    imageMobile: "/offers/diwali-suvarnotsav-mobile.webp",
+    alt: "Baba Jewellers Diwali Suvarnotsav — buy gold jewellery at a flat 6% making charge and enter a prize draw for a scooter, refrigerator, television, mobile phone or gold coin. Offer until 16 November 2026.",
+    headlineMr: "दिवाळी सुवर्णोत्सव — खरेदी करा आणि जिंका बक्षिसे!",
+    headline: "Buy this Diwali and win — scooter, TV, fridge, phone or a gold coin",
+    validTill: "2026-11-16",
+    /* Deliberately vague on the draw mechanics — how entries are counted,
+       when it is drawn, how winners are told. We were not given those and
+       they must not be invented: a prize draw is a promise, and guessing
+       at its rules on the shop's own website is the kind of detail a
+       customer later holds them to. Stated plainly, then pointed in
+       store. Replace this the moment the real terms are known. */
+    detail:
+      "Buy gold jewellery at a flat 6% making charge this Diwali and your " +
+      "purchase enters our Suvarnotsav draw — prizes include a scooter, a " +
+      "refrigerator, a television, a mobile phone and a gold coin. Running " +
+      "at both Baba Jewellers showrooms in Shikrapur until 16 November 2026. " +
+      "Ask in store for the full draw terms before you buy.",
+  },
   {
     id: "gold-making-charges-6-percent",
     image: "/offers/gold-making-charges-6-percent.webp",

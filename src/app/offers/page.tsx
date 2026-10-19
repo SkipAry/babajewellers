@@ -210,13 +210,27 @@ export default function OffersPage() {
                         />
                       </picture>
 
+                      {/* An offer carrying its own `detail` uses it; the
+                          fallback below only makes sense for a making-charges
+                          discount, and would misdescribe anything else. */}
+                      {offer.detail ? (
+                        <p className="mt-6 text-base leading-relaxed text-ink/80">
+                          {offer.detail}
+                        </p>
+                      ) : null}
                       <p className="mt-6 text-base leading-relaxed text-ink/80">
-                        Applies to {offer.headline.toLowerCase()} at both Baba
-                        Jewellers showrooms in Shikrapur. Making charges are the
-                        cost of the craftsmanship, charged on top of the
-                        day&apos;s metal rate — so this is a direct saving on
-                        the price you pay. Ask in store for a full breakup
-                        before you buy, or see{" "}
+                        {offer.detail ? (
+                          <>Today&apos;s metal rate is shown openly alongside it — see{" "}</>
+                        ) : (
+                          <>
+                            Applies to {offer.headline.toLowerCase()} at both Baba
+                            Jewellers showrooms in Shikrapur. Making charges are the
+                            cost of the craftsmanship, charged on top of the
+                            day&apos;s metal rate — so this is a direct saving on
+                            the price you pay. Ask in store for a full breakup
+                            before you buy, or see{" "}
+                          </>
+                        )}
                         <Link
                           href="/gold-rate-shikrapur/"
                           className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
