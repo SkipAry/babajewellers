@@ -117,6 +117,8 @@ export const areaServed = [
   "Shirur",
   "Ranjangaon",
   "Talegaon Dhamdhere",
+  "Sanaswadi",
+  "Wagholi",
   "Kendur",
   "Pune",
 ];

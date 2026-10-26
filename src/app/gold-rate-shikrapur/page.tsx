@@ -410,21 +410,41 @@ export default function GoldRatePage() {
                 We refresh this page every morning. For the exact rate at the
                 moment you buy, call us or visit either showroom.
               </p>
-              {/* Reciprocal link to the Shirur page. Without it that page is
-                  reachable only from the footer and the sitemap, and a
-                  location page with one inbound link looks exactly like the
-                  doorway pages Google discounts. */}
+            </div>
+
+            {/* Hub for the town pages. Each needs an inbound link with real
+                anchor text — a location page reachable only from a sitemap
+                is indistinguishable from the doorway pages Google discounts.
+                Distances are shown because they are the honest answer to the
+                only question these readers have: how far is it. */}
+            <h2 className="mt-12 font-display text-3xl font-bold text-maroon-deep">
+              Gold rates for nearby towns
+            </h2>
+            <div className="mt-6 text-base leading-relaxed text-ink/80">
               <p>
-                Coming from further along the Pune–Nagar road? The same rates,
-                written for readers in{" "}
-                <Link
-                  href="/gold-rate-shirur/"
-                  className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
-                >
-                  Shirur taluka
-                </Link>
-                .
+                The metal rate is the same everywhere — these pages answer
+                what each town actually asks, from how far we are to what a
+                monthly plan looks like.
               </p>
+              <ul className="mt-5 space-y-2">
+                {[
+                  ["talegaon-dhamdhere", "Talegaon Dhamdhere", "4 km"],
+                  ["sanaswadi", "Sanaswadi", "5 km"],
+                  ["ranjangaon", "Ranjangaon", "14 km"],
+                  ["wagholi", "Wagholi", "20 km"],
+                  ["shirur", "Shirur", "35 km"],
+                ].map(([slug, name, km]) => (
+                  <li key={slug}>
+                    <Link
+                      href={`/gold-rate-${slug}/`}
+                      className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
+                    >
+                      Gold rate today for {name}
+                    </Link>
+                    <span className="text-ink/55"> — {km} away</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
