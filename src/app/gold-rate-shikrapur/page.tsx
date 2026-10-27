@@ -7,7 +7,12 @@ import Header from "@/components/Header";
 import MobileActions from "@/components/MobileActions";
 import type { PublishedRates } from "@/data/rates-config";
 import { ratesCopy } from "@/data/rates-config";
-import { inr, site, stores } from "@/data/site";
+import { inr, makingChargeOffer, site, stores } from "@/data/site";
+import { locationMetaCtrTest } from "@/components/LocationRatePage";
+import PriceCalculator from "@/components/PriceCalculator";
+import RateTrend from "@/components/RateTrend";
+import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
+import { readRateHistory } from "@/lib/rateHistory";
 
 /**
  * TODAY'S GOLD RATE IN SHIKRAPUR.
@@ -82,25 +87,18 @@ const IST_TODAY = new Intl.DateTimeFormat("en-IN", {
 const ratesForMeta = readRates();
 const metaRatesFresh = ratesForMeta?.goldStatus === "fresh";
 
-const metaTitle = metaRatesFresh
-  ? /* Front-loaded: Google renders ~60 characters, so the two figures a
-       searcher came for must clear that budget before the brand does. */
-    `Gold Rate Today Shikrapur: 22K ${inr(ratesForMeta!.gold["22k"])}, ` +
-    `24K ${inr(ratesForMeta!.gold["24k"])}/g | Baba Jewellers`
-  : `Gold Rate Today in Shikrapur, Pune (${IST_TODAY}) — 24K, 22K, 18K | Baba Jewellers`;
+/* CTR TEST GROUP — see locationMetaCtrTest in LocationRatePage.tsx for
+   the reasoning. In short: the previous title and description listed all
+   four rates, which answers the query inside the SERP and leaves nothing
+   to click for. Search Console 18-24 Oct: 49 impressions, 0 clicks on
+   "gold rate today shikrapur".
 
-/* Kept under ~155 rendered characters on purpose: that is roughly where
-   Google truncates, and everything that earns the click — four figures,
-   the town, the date — has to land before the cut. The old description
-   buried "BIS Hallmarked" and the Marathi line past it, so they were
-   never shown. */
-const metaDescription = metaRatesFresh
-  ? `24K ${inr(ratesForMeta!.gold["24k"])} · 22K ${inr(ratesForMeta!.gold["22k"])} · ` +
-    `18K ${inr(ratesForMeta!.gold["18k"])} · Silver ${inr(ratesForMeta!.silver["999"])} per gram ` +
-    `— Shikrapur, Pune, ${IST_TODAY}. Updated daily. BIS Hallmarked. आजचा सोन्याचा भाव.`
-  : `Gold rate today in Shikrapur, Pune — ${IST_TODAY}. Live 24K, 22K and 18K gold rate ` +
-    `and silver rate per gram at Baba Jewellers, Pune–Nagar Road. Updated every morning. ` +
-    `BIS Hallmarked, transparent pricing. आजचा सोन्याचा भाव शिक्रापूर.`;
+   This keeps ONE rate for relevance and spends the rest on the live
+   making-charge offer, the 7-day trend and the calculator. The other four
+   town pages keep the old pattern as a control. */
+const ctr = locationMetaCtrTest("Shikrapur", "gold-rate-shikrapur");
+const metaTitle = ctr.title;
+const metaDescription = ctr.description;
 
 export const metadata: Metadata = {
   title: metaTitle,
@@ -113,19 +111,19 @@ export const metadata: Metadata = {
        shikrapur · silver rate shikrapur · आजचा सोन्याचा भाव · jewellers
        near me shikrapur */
   alternates: { canonical: `${site.url}/gold-rate-shikrapur/` },
+  /* Was inheriting the generic homepage card ("Where Trust Meets
+     Tradition"), so every share of this page advertised the wrong thing. */
+  twitter: {
+    card: "summary_large_image",
+    title: metaTitle,
+    description: metaDescription,
+  },
   openGraph: {
     type: "website",
     url: `${site.url}/gold-rate-shikrapur/`,
     siteName: site.name,
-    title: metaRatesFresh
-      ? `Gold Rate Today Shikrapur — 22K ${inr(ratesForMeta!.gold["22k"])}/g, 24K ${inr(ratesForMeta!.gold["24k"])}/g`
-      : `Gold Rate Today in Shikrapur, Pune — ${IST_TODAY}`,
-    description: metaRatesFresh
-      ? `24K ${inr(ratesForMeta!.gold["24k"])} · 22K ${inr(ratesForMeta!.gold["22k"])} · ` +
-        `Silver ${inr(ratesForMeta!.silver["999"])} per gram, ${IST_TODAY}. Updated every ` +
-        `morning by Baba Jewellers, Shikrapur.`
-      : `Live 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune. ` +
-        `Updated every morning by Baba Jewellers.`,
+    title: metaTitle,
+    description: metaDescription,
     /* This page had no og:image, so every WhatsApp forward of the day's
        rate rendered as a bare link. Shared image with the homepage rather
        than a bespoke one — a purpose-built 1200x630 would preview better
@@ -186,6 +184,7 @@ function formatUpdated(iso: string) {
 
 export default function GoldRatePage() {
   const data = readRates();
+  const history = readRateHistory(7);
   /* Show when the price was struck, not when we fetched it — the same rule
      the homepage card follows, so the two surfaces never disagree. */
   const updated = data ? formatUpdated(data.quotedAt ?? data.updatedAt) : null;
@@ -417,6 +416,21 @@ export default function GoldRatePage() {
                 is indistinguishable from the doorway pages Google discounts.
                 Distances are shown because they are the honest answer to the
                 only question these readers have: how far is it. */}
+            <OfferBanner />
+
+            {history.length >= 2 ? (
+              <RateTrend history={history} town="Shikrapur" />
+            ) : null}
+
+            {data ? (
+              <PriceCalculator
+                rates={{ "24k": data.gold["24k"], "22k": data.gold["22k"], "18k": data.gold["18k"] }}
+                defaultMakingPercent={makingChargeOffer?.makingChargePercent ?? 10}
+              />
+            ) : null}
+
+            <WhatsAppRateButton town="Shikrapur" />
+
             <h2 className="mt-12 font-display text-3xl font-bold text-maroon-deep">
               Gold rates for nearby towns
             </h2>

@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LocationRatePage, { locationMeta } from "@/components/LocationRatePage";
-import { site, stores } from "@/data/site";
+import LocationRatePage, {
+  locationMetaCtrTest,
+  readRates,
+} from "@/components/LocationRatePage";
+import PriceCalculator from "@/components/PriceCalculator";
+import RateTrend from "@/components/RateTrend";
+import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
+import { readRateHistory } from "@/lib/rateHistory";
+import { makingChargeOffer, site, stores } from "@/data/site";
 
 /**
  * SHIRUR — 35 km east along the Pune–Nagar road.
@@ -12,12 +19,20 @@ import { site, stores } from "@/data/site";
  * everywhere, so the real variable is making charges and hallmarking.
  */
 
-const meta = locationMeta("Shirur", "gold-rate-shirur");
+/* CTR test group — see locationMetaCtrTest. The other four town pages
+   stay on locationMeta as the control. */
+const meta = locationMetaCtrTest("Shirur", "gold-rate-shirur");
 
 export const metadata: Metadata = {
   title: meta.title,
   description: meta.description,
   alternates: { canonical: `${site.url}/gold-rate-shirur/` },
+  /* Was inheriting the generic homepage card. */
+  twitter: {
+    card: "summary_large_image",
+    title: meta.title,
+    description: meta.description,
+  },
   openGraph: {
     type: "website",
     url: `${site.url}/gold-rate-shirur/`,
@@ -37,6 +52,9 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
+  const history = readRateHistory(7);
+  const rates = readRates();
+
   return (
     <LocationRatePage
       town="Shirur"
@@ -109,6 +127,19 @@ export default function Page() {
           and we will keep pieces ready so the trip is worth making.
         </p>
       </div>
+
+      <OfferBanner />
+
+      {history.length >= 2 ? <RateTrend history={history} town="Shirur" /> : null}
+
+      {rates ? (
+        <PriceCalculator
+          rates={{ "24k": rates.gold["24k"], "22k": rates.gold["22k"], "18k": rates.gold["18k"] }}
+          defaultMakingPercent={makingChargeOffer?.makingChargePercent ?? 10}
+        />
+      ) : null}
+
+      <WhatsAppRateButton town="Shirur" />
     </LocationRatePage>
   );
 }

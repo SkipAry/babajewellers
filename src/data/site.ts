@@ -183,6 +183,17 @@ export type Offer = {
   occasion?: string;
   occasionMr?: string;
   /**
+   * Making-charge percentage, when the offer is a making-charge discount.
+   *
+   * Exists so the rate pages' titles and the price calculator can state
+   * the live figure without hardcoding "6%" in six places — the number is
+   * read from here and disappears on its own when the offer expires.
+   * Absent on offers that are not making-charge discounts (the Diwali
+   * draw, for instance), which is also how `makingChargeOffer` below
+   * picks the right one out of several running at once.
+   */
+  makingChargePercent?: number;
+  /**
    * Body copy for /offers/. Optional: when absent the page falls back to
    * its making-charges explanation, which fits a straight discount.
    *
@@ -260,6 +271,7 @@ const allOffers: Offer[] = [
     headlineMr: "सोन्याच्या दागिन्यांच्या घडणावळीवर फक्त ६%",
     headline: "Only 6% making charges on all gold jewellery",
     validTill: "2026-11-15",
+    makingChargePercent: 6,
     /* Dussehra dress for the same 6% offer. Reverts to the standard
        banner on 22 Oct; the offer itself runs to 15 Nov regardless. */
     seasonal: {
@@ -320,6 +332,19 @@ export const offers: Offer[] = allOffers
         }
       : offer
   );
+
+/**
+ * The live making-charge discount, if one is running.
+ *
+ * Several offers can run at once — the Diwali draw and the 6% discount
+ * currently do — so the rate pages need to pick the one that is actually
+ * a making-charge figure rather than assuming offers[0]. Returns null
+ * when none is live, and every caller must handle that: on 16 Nov this
+ * becomes null on its own and the hooks that mention a percentage have
+ * to disappear with it rather than advertise a dead offer.
+ */
+export const makingChargeOffer =
+  offers.find((o) => typeof o.makingChargePercent === "number") ?? null;
 
 /* ── The six Baba Jewellers promises ────────────────────────── */
 export const promises = [

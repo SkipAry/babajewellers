@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ratesCopy, STALE_AFTER_HOURS } from "@/data/rates-config";
+import type { PublishedRates } from "@/data/rates-config";
 import { formatUpdated, inr, marketClosed, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
@@ -17,10 +18,30 @@ import SectionHeading from "./SectionHeading";
  * loading and nothing below it shifts when the numbers land.
  */
 
-export default function MetalRates() {
+export default function MetalRates({
+  initialRates = null,
+}: {
+  /**
+   * Rates read from public/rates.json at BUILD time and passed down.
+   *
+   * Without this the homepage shipped no rate figures in its server HTML
+   * at all — verified 26 Oct: the only ₹ values in the response were the
+   * Elite Plan table. Googlebot saw loading skeletons on the one section
+   * the page is most likely to be searched for.
+   *
+   * `output: "export"` is set, so there is no ISR and no `revalidate` to
+   * reach for; the equivalent here is the daily rates commit, which
+   * triggers a rebuild and bakes fresh numbers in. The client fetch is
+   * kept on top so a tab left open still refreshes.
+   *
+   * Hydration-safe: the first client render is `phase: "loading"`, which
+   * falls through to this same object, so server and client markup match.
+   */
+  initialRates?: PublishedRates | null;
+}) {
   const state = useRates();
 
-  const data = state.phase === "ready" ? state.data : null;
+  const data = state.phase === "ready" ? state.data : initialRates;
   /* Show when the PRICE was struck, not when we fetched it. Over a weekend
      those differ by two days, and "updated today" on a Friday price is what
      made an unchanged rate look like a broken feed. */

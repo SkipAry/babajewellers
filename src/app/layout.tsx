@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import {
   areaServed,
+  makingChargeOffer,
   faqs,
   mapsLinkFor,
   offerCatalog,
@@ -59,11 +60,28 @@ const googleSansFlex = localFont({
   fallback: ["system-ui", "Segoe UI", "Roboto", "sans-serif"],
 });
 
+/* Both showrooms, the hours and whatever offer is live — the three
+   things a brand searcher is actually checking. Offer clause is read from
+   data and vanishes with it. */
+const homepageDescription = (() => {
+  const offer = makingChargeOffer
+    ? `${makingChargeOffer.makingChargePercent}% making charges on gold now. `
+    : "";
+  return (
+    `BIS Hallmarked gold & silver in Shikrapur since 2008. ${offer}` +
+    `Karanje Complex and Baba Complex, open 8:30 AM-9 PM daily.`
+  );
+})();
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: "Baba Jewellers | Gold & Silver Jewellery Store in Shikrapur, Pune",
-  description:
-    "BIS Hallmarked gold & silver jewellery in Shikrapur, Pune since 2008. Bridal sets, necklaces, bangles & jhumkas. Transparent pricing, 15-day returns.",
+  /* "Baba Jewellers" is a crowded name — there are shops of that name in
+     Toronto (376 reviews), Delhi and elsewhere, and this site did not
+     surface for the bare brand query at all. 50 impressions, 0 clicks,
+     18-24 Oct. Leading with the town disambiguates us from the namesakes
+     for the people who actually mean us. */
+  title: "Baba Jewellers Shikrapur | BIS Hallmarked Gold & Silver Since 2008",
+  description: homepageDescription,
   /* No `keywords` here on purpose. Google stopped reading the meta keywords
      tag in 2009 and Bing treats stuffing it as a spam signal, so the list that
      used to sit here changed nothing. We rank for a term by having a page that

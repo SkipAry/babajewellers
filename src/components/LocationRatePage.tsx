@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import MobileActions from "@/components/MobileActions";
 import type { PublishedRates } from "@/data/rates-config";
 import { ratesCopy } from "@/data/rates-config";
-import { inr, mapsLinkFor, site, stores } from "@/data/site";
+import { inr, makingChargeOffer, mapsLinkFor, site, stores } from "@/data/site";
 
 /**
  * Shared shell for the per-town gold rate pages.
@@ -86,6 +86,79 @@ export function locationMeta(town: string, slug: string) {
       `BIS Hallmarked. आजचा सोन्याचा भाव.`
     : `Gold rate today for ${town} — ${IST_TODAY}. Live 24K, 22K and 18K gold and silver ` +
       `rates per gram from Baba Jewellers, Shikrapur. Updated every morning.`;
+  return { title, description, slug, fresh };
+}
+
+/**
+ * CTR-test metadata. Used ONLY by /gold-rate-shikrapur/ and
+ * /gold-rate-shirur/; the other four towns keep `locationMeta` above and
+ * act as the control group, so any CTR movement can be attributed.
+ *
+ * ── WHY IT DIFFERS ────────────────────────────────────────────────
+ *
+ * The control version lists all four rates in the description. Search
+ * Console, 18–24 Oct: 877 impressions, 17 clicks, 1.9% CTR at average
+ * position 6.1 — and 0 clicks on 85 impressions for "gold rate today
+ * shirur". Showing every rate answers the question inside the SERP, so
+ * there is nothing left to click for.
+ *
+ * This version keeps ONE rate (22K — what Indian jewellery is made in, so
+ * the one a buyer actually wants) for relevance, and spends the remaining
+ * characters on things a snippet cannot deliver: the live making-charge
+ * offer, a 7-day trend, and a calculator.
+ *
+ * Every figure is read from live data. The offer clause disappears on its
+ * own when `makingChargeOffer` goes null, which is why the fallbacks
+ * below exist rather than being dead code.
+ */
+export function locationMetaCtrTest(town: string, slug: string) {
+  const r = readRates();
+  const fresh = r?.goldStatus === "fresh";
+  const pct = makingChargeOffer?.makingChargePercent;
+
+  if (!fresh) {
+    /* No trustworthy rate: fall back to the plain form rather than
+       advertise a stale number in the one place a searcher reads it. */
+    return locationMeta(town, slug);
+  }
+
+  const k22 = inr(r!.gold["22k"]);
+
+  /* Built long, then trimmed. At today's rates the full form is exactly
+     60 for Shikrapur — no headroom — and a six-digit gold rate would
+     silently push it over. Degrade by dropping " Charges" first, then
+     the offer clause, rather than letting Google truncate mid-figure. */
+  const withOffer = pct
+    ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Making Charges`
+    : null;
+  const withOfferShort = pct
+    ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Making`
+    : null;
+  const plain = `Gold Rate Today ${town}: 22K ${k22}/g | Baba Jewellers`;
+
+  const title =
+    withOffer && withOffer.length <= 60
+      ? withOffer
+      : withOfferShort && withOfferShort.length <= 60
+        ? withOfferShort
+        : plain.length <= 60
+          ? plain
+          : `Gold Rate Today ${town}: 22K ${k22}/g`;
+
+  /* 22K only, then three reasons the SERP cannot satisfy. Marathi last
+     but inside the ~155 Google renders — the Marathi rate query converts
+     at 8.4% against 1.2% for its English twin. */
+  const offerClause = pct
+    ? `${pct}% making charges${
+        makingChargeOffer?.validTill
+          ? ` till ${new Date(makingChargeOffer.validTill).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
+          : ""
+      }. `
+    : "";
+  const description =
+    `22K gold ${k22}/g in ${town} today. ${offerClause}` +
+    `See the 7-day trend and work out your exact price. आजचा सोन्याचा भाव.`;
+
   return { title, description, slug, fresh };
 }
 

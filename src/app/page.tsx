@@ -15,6 +15,7 @@ import Promises from "@/components/Promises";
 import Reels from "@/components/Reels";
 import Stores from "@/components/Stores";
 import { faqs } from "@/data/site";
+import { readRates } from "@/components/LocationRatePage";
 
 /* Declared here rather than in the layout: this is the only page that renders
    the questions, and Google expects FAQPage markup to describe content the
@@ -31,6 +32,10 @@ const faqSchema = {
 };
 
 export default function Home() {
+  /* Build-time read so the rates appear in the server HTML. See the note
+     on MetalRates' initialRates prop. */
+  const initialRates = readRates();
+
   return (
     <>
       <a href="#main" className="skip-link">
@@ -42,7 +47,7 @@ export default function Home() {
         <Offers />
         <Promises />
         <About />
-        <MetalRates />
+        <MetalRates initialRates={initialRates} />
         <Collections />
         <Reels />
         <BenefitCalculator />
