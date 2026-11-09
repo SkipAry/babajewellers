@@ -52,9 +52,25 @@ name: Update gold & silver rates
 # the external trigger ever stops (expired token, service down, someone
 # deletes the job), GitHub will still run this eventually — late, but the
 # board will not sit frozen for a week. It is a floor, not the mechanism.
+# ── TIMING, 9 Nov 2026 ─────────────────────────────────────────────
+# Moved 09:45 -> 10:45 IST. The site now tracks PNG Jewellers' board, and
+# PNG stamps its own page with an update time: measured 10:21 AM on 9 Nov.
+# Fetching at 09:45 meant snapshotting spot ~36 min BEFORE they repriced, so
+# the two boards could differ by a whole morning's movement (24K moves a
+# median of ₹106/day) even with the markups calibrated correctly.
+#
+# 10:45 sits after their observed update rather than racing it. This is one
+# day's observation — if the gap still looks wrong in the mornings, check
+# PNG's own "Updated on" stamp for a few days before moving this again.
+#
+# ⚠ CHANGING THIS LINE ALONE DOES ALMOST NOTHING. The `schedule:` below is
+# the slow fallback; the real trigger is the external cron-job.org job that
+# POSTs to workflow_dispatch. Change the time THERE too, or the fetch keeps
+# running at 09:45.
+# ───────────────────────────────────────────────────────────────────
 on:
   schedule:
-    - cron: "15 4 * * *"   # 09:45 IST — fallback only; see above
+    - cron: "15 5 * * *"   # 10:45 IST — fallback only; see above
   workflow_dispatch:
     inputs:
       force:

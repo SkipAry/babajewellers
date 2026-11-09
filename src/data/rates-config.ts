@@ -99,14 +99,24 @@ export type RatesConfig = {
  * 18K within ₹6 of PNG, which is independent confirmation that the August
  * calibration against the shop's own counter rates was sound.
  *
- * ⚠ WHAT THIS NOW TRACKS. Before today the markups were calibrated to Aarti
- * Traders, the bullion dealer the shop actually prices from. They are now
- * pinned to PNG's retail board instead. Those are different things: PNG is a
- * large chain setting its own retail margin, and it can move independently
- * of what Baba Jewellers quotes at the counter. If the counter and the
- * website disagree, the website is now the one that is wrong — and a
- * customer who walks in quoting a rate off the site is a worse problem than
- * being ₹38 off a competitor. Re-check both against the counter monthly.
+ * WHAT THIS TRACKS, AND WHY. Until today the markups followed Aarti Traders,
+ * the bullion dealer the shop prices from. They now follow PNG Jewellers'
+ * retail board — a deliberate decision by the owner (9 Nov 2026): the site
+ * should read within a few rupees of PNG every day, because that is the
+ * board local customers compare against.
+ *
+ * The consequence to keep in mind: PNG sets its own retail margin and can
+ * move it without warning. We are pinned to their RATIO over spot, so we
+ * track them automatically as gold moves — but if they change the margin
+ * itself, we drift and these two numbers need retuning. Re-check monthly
+ * against pngjewellers.com/pages/metal-rates, and compare in the MORNING,
+ * shortly after the 09:45 IST run: later in the day any gap is mostly the
+ * two boards having been snapshotted at different times, not miscalibration.
+ * 24K moves a median of ₹106/day and has moved ₹651 in one day (5 Nov 2026).
+ *
+ * And the counter still wins. If the showroom quotes something different
+ * from the site, fix the site — a customer arriving with a rate off the page
+ * is a worse problem than being a few rupees off a competitor.
  * ───────────────────────────────────────────────────────────────
  */
 export const ratesConfig: RatesConfig = {
