@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import TrackedLink from "@/components/TrackedLink";
+import { site } from "@/data/site";
 import { ratesCopy, STALE_AFTER_HOURS } from "@/data/rates-config";
 import type { PublishedRates } from "@/data/rates-config";
 import { formatUpdated, inr, marketClosed, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
@@ -156,6 +158,23 @@ export default function MetalRates({
               {ratesCopy.breakdown}
               <span aria-hidden="true"> &rarr;</span>
             </Link>
+          </p>
+
+          {/* Someone who just looked at today's rate is the single most likely
+              person on this site to want tomorrow's. The ask belongs here,
+              immediately under the figures, not buried in the footer. */}
+          <p className="m-0 mt-3 text-center">
+            <TrackedLink
+              href={site.whatsappChannel}
+              event="cta_whatsapp_channel"
+              placement="home_rates"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13.5px] font-semibold text-maroon underline underline-offset-4 transition-colors hover:text-maroon-soft"
+            >
+              Get this rate every morning on WhatsApp
+              <span aria-hidden="true"> &rarr;</span>
+            </TrackedLink>
           </p>
         </Reveal>
       </div>

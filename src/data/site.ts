@@ -25,6 +25,20 @@ export const site = {
   formEndpoint: "https://formspree.io/f/mpqveyvp",
   instagram:
     "https://www.instagram.com/babajewellersofficial?igsh=MW51dXJiaXZ0bXBkdg==",
+  /**
+   * WhatsApp channel where the day's gold rate is posted every morning.
+   *
+   * This is the one asset that earns a REPEAT visit. Nobody opens a
+   * jeweller's website twice a year, but people check the gold rate daily
+   * while they are saving towards a wedding purchase — and a channel
+   * follower is reached without depending on Google ranking us that day.
+   *
+   * A channel, not a broadcast list: people subscribe themselves, there are
+   * no numbers to collect or maintain, and nobody can reply into the shop's
+   * inbox. That is why it sits alongside the 1:1 WhatsApp link rather than
+   * replacing it — following is passive, messaging is a real enquiry.
+   */
+  whatsappChannel: "https://whatsapp.com/channel/0029VbEJ7wx3LdQXvkukU132",
 };
 
 export type Store = {

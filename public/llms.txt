@@ -40,6 +40,9 @@ Rates are republished every morning (10:45 AM IST) and are available as JSON:
 
 Rates are indicative; the exact rate at the time of purchase is quoted in store.
 
+The same rate is posted every morning to a public WhatsApp channel:
+https://whatsapp.com/channel/0029VbEJ7wx3LdQXvkukU132
+
 ## Pages
 
 - [Home](https://babajewellers.co.in/): the business, both showrooms, today's rates, FAQs.

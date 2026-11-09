@@ -12,7 +12,16 @@ import { makingChargeOffer, offers, site } from "@/data/site";
  * to delete in November.
  */
 
-/** Prefilled WhatsApp enquiry for the day's rate. */
+/**
+ * The daily-rate WhatsApp channel, with a 1:1 message as the secondary action.
+ *
+ * The channel leads because it is the only thing on this page that earns a
+ * SECOND visit. Someone checking the rate today will check it again tomorrow;
+ * if they follow the channel, tomorrow's check no longer depends on us
+ * ranking in Google that morning. The 1:1 link stays underneath because a
+ * message is a real enquiry and a follow is not — different intents, so they
+ * are tracked as different events.
+ */
 export function WhatsAppRateButton({ town }: { town: string }) {
   const message = `Namaskar Baba Jewellers, please send me today's gold rate. (Enquiry from ${town})`;
   const href = `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -20,22 +29,41 @@ export function WhatsAppRateButton({ town }: { town: string }) {
   return (
     <div className="mt-8 rounded-sm border border-maroon/15 bg-ivory-warm p-5 text-center md:p-6">
       <p className="font-display text-xl font-bold text-maroon-deep">
-        Get today&apos;s rate on WhatsApp
+        Get the rate every morning on WhatsApp
       </p>
       <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink/70">
-        Message us and we will send the day&apos;s rate — useful if you are
-        comparing before a purchase.
+        We post the day&apos;s gold and silver rate to our WhatsApp channel
+        every morning. Follow it and you will have the rate before you need to
+        ask — no need to check back here.
+      </p>
+      <p lang="mr" className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-ink/60">
+        दररोज सकाळी सोन्या-चांदीचा भाव थेट WhatsApp वर मिळवा.
       </p>
       <TrackedLink
-        href={href}
-        event="cta_whatsapp"
+        href={site.whatsappChannel}
+        event="cta_whatsapp_channel"
         placement="rate_page"
         target="_blank"
         rel="noopener noreferrer"
         className="mt-4 inline-flex min-h-11 items-center justify-center rounded-sm bg-maroon px-7 py-3 text-base font-semibold text-gold-light transition-colors hover:bg-maroon-deep"
       >
-        Message us on WhatsApp
+        Follow the daily rate channel
       </TrackedLink>
+
+      <p className="mt-4 text-sm text-ink/70">
+        Want to ask something instead?{" "}
+        <TrackedLink
+          href={href}
+          event="cta_whatsapp"
+          placement="rate_page"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
+        >
+          Message us directly
+        </TrackedLink>
+        .
+      </p>
     </div>
   );
 }

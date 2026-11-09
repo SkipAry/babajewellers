@@ -8,6 +8,10 @@ type AnalyticsEvent =
   | "cta_visit_store"
   | "cta_call"
   | "cta_whatsapp"
+  /* Following the daily-rate WhatsApp channel. Separate from cta_whatsapp
+     on purpose: a follow is a recurring touch, a message is an enquiry.
+     Mark this one as a key event in GA4 too. */
+  | "cta_whatsapp_channel"
   | "cta_directions"
   | "cta_instagram"
   | "cta_explore_collections"
