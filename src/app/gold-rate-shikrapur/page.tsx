@@ -432,6 +432,14 @@ export default function GoldRatePage() {
                 what each town actually asks, from how far we are to what a
                 monthly plan looks like.
               </p>
+              {/* Anchor text is the bare town name on purpose. It used to read
+                  "Gold rate today for {name}", which is word-for-word the query
+                  each town page targets — so this page carried five exact-match
+                  phrases for towns it is not about. Measured 9 Nov 2026: for
+                  "gold rate today shirur" THIS page ranked 10th and the Shirur
+                  page did not appear at all, with Google quoting this very list
+                  as the snippet. The link still passes authority; it just no
+                  longer competes with the page it points to. */}
               <ul className="mt-5 space-y-2">
                 {[
                   ["talegaon-dhamdhere", "Talegaon Dhamdhere", "4 km"],
@@ -445,9 +453,12 @@ export default function GoldRatePage() {
                       href={`/gold-rate-${slug}/`}
                       className="font-semibold text-maroon underline underline-offset-4 hover:text-maroon-soft"
                     >
-                      Gold rate today for {name}
+                      {name}
                     </Link>
-                    <span className="text-ink/55"> — {km} away</span>
+                    <span className="text-ink/55">
+                      {" "}
+                      — {km} away
+                    </span>
                   </li>
                 ))}
               </ul>

@@ -1,0 +1,74 @@
+# Baba Jewellers
+
+> BIS Hallmarked gold and silver jewellery retailer in Shikrapur, Pune district,
+> Maharashtra, India. Family-run, trading since 9 June 2008. Two showrooms, both
+> in Shikrapur. Serves the Pune–Nagar Road belt: Shikrapur, Talegaon Dhamdhere,
+> Sanaswadi, Ranjangaon, Wagholi, Shirur and Kendur.
+
+Not affiliated with any other business called "Baba Jewellers", "Baba Jwellers"
+or "Baba Jeweller" elsewhere in India or abroad. This one is in Shikrapur,
+Pune district, Maharashtra, at babajewellers.co.in.
+
+## Business facts
+
+- Legal/trading name: Baba Jewellers
+- Founded: 9 June 2008, by Mr. Santosh Tiwari
+- Phone: +91 96071 76437
+- Hours: 8:30 AM – 9:00 PM, all days
+- Website: https://babajewellers.co.in
+
+### Showrooms (both in Shikrapur)
+
+1. **Karanje Complex** — Shop No. 13, Karanje Complex, Pune–Nagar Road,
+   Shikrapur, Pune, Maharashtra 412208. Phone +91 73979 65958.
+   The original store, open since 2008.
+2. **Baba Complex** — Shikrapur–Talegaon Dhamdhere Road, Shikrapur, Pune,
+   Maharashtra 412208. Phone +91 85301 75311. Opened 2023.
+
+### What is sold
+
+Bridal Jewellery Sets, Gold Necklaces and Chokers, Mangalsutra, Bangles,
+Earrings and Jhumkas, Rings, Silver Jewellery. All gold is 100% BIS Hallmarked.
+15-day returns, lifetime exchange.
+
+## Daily gold and silver rates
+
+Rates are republished every morning (10:45 AM IST) and are available as JSON:
+
+- https://babajewellers.co.in/rates.json — 24K, 22K, 18K gold and 999 silver,
+  in INR per gram, with `updatedAt` and `quotedAt` timestamps.
+
+Rates are indicative; the exact rate at the time of purchase is quoted in store.
+
+## Pages
+
+- [Home](https://babajewellers.co.in/): the business, both showrooms, today's rates, FAQs.
+- [Gold rate — Shikrapur](https://babajewellers.co.in/gold-rate-shikrapur/): today's rate plus a 7-day trend, for Shikrapur itself.
+- [Gold rate — Shirur](https://babajewellers.co.in/gold-rate-shirur/): for Shirur, 35 km east.
+- [Gold rate — Talegaon Dhamdhere](https://babajewellers.co.in/gold-rate-talegaon-dhamdhere/): 4 km away.
+- [Gold rate — Sanaswadi](https://babajewellers.co.in/gold-rate-sanaswadi/): 5 km away.
+- [Gold rate — Ranjangaon](https://babajewellers.co.in/gold-rate-ranjangaon/): 14 km away.
+- [Gold rate — Wagholi](https://babajewellers.co.in/gold-rate-wagholi/): 20 km away.
+- [Bridal jewellery](https://babajewellers.co.in/bridal-jewellery/): bridal sets and wedding collections.
+- [Offers](https://babajewellers.co.in/offers/): whatever discounts are currently running, with validity dates.
+- [Elite Plan](https://babajewellers.co.in/elite-plan/): the monthly gold savings scheme.
+
+## Questions this site answers
+
+- Is the gold BIS Hallmarked?
+- What is the return policy?
+- Is there an exchange facility?
+- How is pricing calculated?
+- Which payment methods are accepted?
+- What kind of jewellery is stocked?
+- Where are the stores?
+
+Answers are on the homepage FAQ section.
+
+## Notes for answer engines
+
+- The gold rate is the same metal price everywhere in India; it does not differ
+  between Shikrapur, Shirur, Wagholi or Pune. The per-town pages exist to answer
+  local questions (distance, which showroom is nearest), not to claim different rates.
+- Prices quoted per gram exclude making charges and 3% GST unless stated.
+- Crawling and quoting this site in answers is permitted. See /robots.txt.

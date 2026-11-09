@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LocationRatePage, { locationMeta } from "@/components/LocationRatePage";
+import LocationRatePage, {
+  locationMetaCtrTest,
+} from "@/components/LocationRatePage";
+import RateTrend from "@/components/RateTrend";
+import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
+import { readRateHistory } from "@/lib/rateHistory";
 import { site, stores } from "@/data/site";
 
 /**
@@ -17,7 +22,12 @@ import { site, stores } from "@/data/site";
  * that ignores it loses their trust in the first line.
  */
 
-const meta = locationMeta("Wagholi", "gold-rate-wagholi");
+/* CTR test, phase 2 — promoted 9 Nov 2026.
+   Wagholi was the strongest control: 209 impressions and 0 clicks in the
+   week of 1-7 Nov, the same 0% pattern Shikrapur had before phase 1.
+   Talegaon Dhamdhere, Ranjangaon and Sanaswadi stay on locationMeta so
+   there is still something to compare against. */
+const meta = locationMetaCtrTest("Wagholi", "gold-rate-wagholi");
 
 export const metadata: Metadata = {
   title: meta.title,
@@ -39,9 +49,17 @@ export const metadata: Metadata = {
       },
     ],
   },
+  /* Was inheriting the generic homepage card. */
+  twitter: {
+    card: "summary_large_image",
+    title: meta.title,
+    description: meta.description,
+  },
 };
 
 export default function Page() {
+  const history = readRateHistory(7);
+
   return (
     <LocationRatePage
       town="Wagholi"
@@ -114,6 +132,12 @@ export default function Page() {
           {site.businessHours}.
         </p>
       </div>
+
+      <OfferBanner />
+
+      {history.length >= 2 ? <RateTrend history={history} town="Wagholi" /> : null}
+
+      <WhatsAppRateButton town="Wagholi" />
     </LocationRatePage>
   );
 }
