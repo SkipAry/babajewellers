@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LocationRatePage, {
-  locationMetaCtrTest,
-  readRates,
-} from "@/components/LocationRatePage";
-import PriceCalculator from "@/components/PriceCalculator";
+import LocationRatePage, { locationMetaCtrTest } from "@/components/LocationRatePage";
 import RateTrend from "@/components/RateTrend";
 import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
 import { readRateHistory } from "@/lib/rateHistory";
-import { makingChargeOffer, site, stores } from "@/data/site";
+import { site, stores } from "@/data/site";
 
 /**
  * SHIRUR — 35 km east along the Pune–Nagar road.
@@ -53,7 +49,6 @@ export const metadata: Metadata = {
 
 export default function Page() {
   const history = readRateHistory(7);
-  const rates = readRates();
 
   return (
     <LocationRatePage
@@ -131,13 +126,6 @@ export default function Page() {
       <OfferBanner />
 
       {history.length >= 2 ? <RateTrend history={history} town="Shirur" /> : null}
-
-      {rates ? (
-        <PriceCalculator
-          rates={{ "24k": rates.gold["24k"], "22k": rates.gold["22k"], "18k": rates.gold["18k"] }}
-          defaultMakingPercent={makingChargeOffer?.makingChargePercent ?? 10}
-        />
-      ) : null}
 
       <WhatsAppRateButton town="Shirur" />
     </LocationRatePage>

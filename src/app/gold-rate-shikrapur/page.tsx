@@ -7,9 +7,8 @@ import Header from "@/components/Header";
 import MobileActions from "@/components/MobileActions";
 import type { PublishedRates } from "@/data/rates-config";
 import { ratesCopy } from "@/data/rates-config";
-import { inr, makingChargeOffer, site, stores } from "@/data/site";
+import { inr, site, stores } from "@/data/site";
 import { locationMetaCtrTest } from "@/components/LocationRatePage";
-import PriceCalculator from "@/components/PriceCalculator";
 import RateTrend from "@/components/RateTrend";
 import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
 import { readRateHistory } from "@/lib/rateHistory";
@@ -420,13 +419,6 @@ export default function GoldRatePage() {
 
             {history.length >= 2 ? (
               <RateTrend history={history} town="Shikrapur" />
-            ) : null}
-
-            {data ? (
-              <PriceCalculator
-                rates={{ "24k": data.gold["24k"], "22k": data.gold["22k"], "18k": data.gold["18k"] }}
-                defaultMakingPercent={makingChargeOffer?.makingChargePercent ?? 10}
-              />
             ) : null}
 
             <WhatsAppRateButton town="Shikrapur" />

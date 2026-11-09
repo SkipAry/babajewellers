@@ -105,7 +105,7 @@ export function locationMeta(town: string, slug: string) {
  * This version keeps ONE rate (22K — what Indian jewellery is made in, so
  * the one a buyer actually wants) for relevance, and spends the remaining
  * characters on things a snippet cannot deliver: the live making-charge
- * offer, a 7-day trend, and a calculator.
+ * offer and a 7-day trend.
  *
  * Every figure is read from live data. The offer clause disappears on its
  * own when `makingChargeOffer` goes null, which is why the fallbacks
@@ -157,7 +157,7 @@ export function locationMetaCtrTest(town: string, slug: string) {
     : "";
   const description =
     `22K gold ${k22}/g in ${town} today. ${offerClause}` +
-    `See the 7-day trend and work out your exact price. आजचा सोन्याचा भाव.`;
+    `See how it has moved over the last 7 days. आजचा सोन्याचा भाव.`;
 
   return { title, description, slug, fresh };
 }
