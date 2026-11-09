@@ -61,7 +61,11 @@ export const stores: Store[] = [
     whatsappDisplay: "9096082163",
     whatsappNumber: "919096082163",
     schemaName: "Baba Jewellers — Karanje Complex, Shikrapur",
-    geo: null,
+    /* Plus code M4WQ+3G Shikrapur (full: 7JCPM4WQ+3G), supplied by the owner
+       9 Nov 2026 and decoded here. Lands 6 m from the Google Maps listing
+       currently named "Baba Jwellers" at Chok, Shikrapur — which is how we
+       confirmed that listing is this branch. */
+    geo: { lat: 18.6951875, lng: 74.1388125 },
     /* ⚠ NEEDED: this branch's own Google Business Profile share link.
        Both branches are real and separately listed, so each needs its own
        `sameAs`. Without it Google has no way to connect this address to
@@ -81,7 +85,10 @@ export const stores: Store[] = [
     whatsappDisplay: "8379985958",
     whatsappNumber: "918379985958",
     schemaName: "Baba Jewellers — Baba Complex, Shikrapur",
-    geo: null,
+    /* Plus code M4PQ+XF Talegaon Dhamdhere (full: 7JCPM4PQ+XF), supplied by
+       the owner 9 Nov 2026. Lands 6 m from the Maps listing that already
+       carries the website link and the +91 96071 76437 number. */
+    geo: { lat: 18.6874375, lng: 74.1386875 },
     /* Owner-supplied share link, 2 Sep 2026. Resolves to the Google
        listing titled "Baba jewellers Talegaon Dhamdhere" (kgmid
        /g/11wpzpkksr), which is this branch — Baba Complex sits on the
