@@ -79,8 +79,39 @@ export type RatesConfig = {
  * adjustments — nobody but the shop knows that number.
  * ───────────────────────────────────────────────────────────────
  */
+/**
+ * ── RECALIBRATION — 9 November 2026 ───────────────────────────
+ *
+ * Retuned against PNG Jewellers' published board (pngjewellers.com
+ * /pages/metal-rates), measured the same morning:
+ *
+ *   raw spot 24K ₹12,423.96/g  ·  silver ₹160.02/g
+ *
+ *                  PNG        ours @15%/20.85%    gap
+ *     24K      ₹14,326           ₹14,288        -₹38  (0.27% low)
+ *     22K      ₹13,259           ₹13,228        -₹31
+ *     18K      ₹11,213           ₹11,178        -₹35
+ *     silver      ₹191              ₹193         +₹2  (1.05% high)
+ *
+ * Gold sat a consistent 0.27% under across all three purities, which is a
+ * markup gap, not a purity-factor gap — so ONLY the two markup percentages
+ * moved. The purity factors are untouched and still land 22K within ₹4 and
+ * 18K within ₹6 of PNG, which is independent confirmation that the August
+ * calibration against the shop's own counter rates was sound.
+ *
+ * ⚠ WHAT THIS NOW TRACKS. Before today the markups were calibrated to Aarti
+ * Traders, the bullion dealer the shop actually prices from. They are now
+ * pinned to PNG's retail board instead. Those are different things: PNG is a
+ * large chain setting its own retail margin, and it can move independently
+ * of what Baba Jewellers quotes at the counter. If the counter and the
+ * website disagree, the website is now the one that is wrong — and a
+ * customer who walks in quoting a rate off the site is a worse problem than
+ * being ₹38 off a competitor. Re-check both against the counter monthly.
+ * ───────────────────────────────────────────────────────────────
+ */
 export const ratesConfig: RatesConfig = {
-  goldMarkupPercentage: 15,
+  /* 15 -> 15.309: closes the 0.27% gap to PNG's 24K board. */
+  goldMarkupPercentage: 15.309,
   gold24kFlatAdjustment: 0,
   gold22kFlatAdjustment: 0,
   gold18kFlatAdjustment: 0,
@@ -89,7 +120,8 @@ export const ratesConfig: RatesConfig = {
   goldPurityFactor22k: 0.9258,
   goldPurityFactor18k: 0.7823,
 
-  silverMarkupPercentage: 20.85,
+  /* 20.85 -> 19.36: we were ₹2/g OVER PNG on silver. */
+  silverMarkupPercentage: 19.36,
   silverFlatAdjustment: 0,
 
   goldRoundingIncrement: 1,
