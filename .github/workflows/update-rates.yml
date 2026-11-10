@@ -59,9 +59,24 @@ name: Update gold & silver rates
 # the two boards could differ by a whole morning's movement (24K moves a
 # median of ₹106/day) even with the markups calibrated correctly.
 #
-# 10:45 sits after their observed update rather than racing it. This is one
-# day's observation — if the gap still looks wrong in the mornings, check
-# PNG's own "Updated on" stamp for a few days before moving this again.
+# REVISED 10 Nov 2026 -> 10:00 IST. The 10:45 above was set from a SINGLE
+# observation (PNG at 10:21 on 9 Nov) and that was too thin. On 10 Nov PNG
+# published at 09:55 — their time moves — so 10:45 left us consistently
+# LATER than them and therefore consistently higher:
+#
+#   10 Nov   PNG 09:55  24K 14,276   |   ours 10:43  24K 14,327   (+51)
+#
+# Silver matched to the rupee (191 = 191) and both purity ratios still
+# tracked PNG's board, which is how we know that gap was the clock and not
+# the markup. Do NOT shave the markup to close a timing gap: it would make
+# us wrong in the other direction whenever the two boards happen to align.
+#
+# Against the two observed times (09:55, 10:21), 10:00 averages ~13 min of
+# separation versus ~37 min at 10:45, and it lands before them some days and
+# after on others so the error stops being a one-way bias.
+#
+# PNG's publish time varies, so no fixed schedule matches them exactly. On a
+# fast morning expect 20-40 rupees of drift regardless.
 #
 # ⚠ CHANGING THIS LINE ALONE DOES ALMOST NOTHING. The `schedule:` below is
 # the slow fallback; the real trigger is the external cron-job.org job that
@@ -70,7 +85,7 @@ name: Update gold & silver rates
 # ───────────────────────────────────────────────────────────────────
 on:
   schedule:
-    - cron: "15 5 * * *"   # 10:45 IST — fallback only; see above
+    - cron: "30 4 * * *"   # 10:00 IST — fallback only; see above
   workflow_dispatch:
     inputs:
       force:
