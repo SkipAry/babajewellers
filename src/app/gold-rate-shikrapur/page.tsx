@@ -340,6 +340,27 @@ export default function GoldRatePage() {
           </div>
         </section>
 
+        {/* Marathi block. This page builds its own layout rather than using
+            LocationRatePage, so it does not inherit the shared Marathi
+            section the five town pages get — it needs its own copy. Same
+            two facts, in the language the query was typed in. */}
+        <section className="bg-ivory-warm py-14 md:py-16" lang="mr">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6">
+            <h2 className="font-display text-3xl font-bold text-maroon-deep">
+              शिक्रापूर — आजचा सोन्याचा भाव
+            </h2>
+            <p className="mt-5 text-base leading-relaxed text-ink/80">
+              सोन्याचा दर जगभरात एकच असतो आणि तो रोज बदलतो. वरील दर दररोज
+              सकाळी अद्ययावत केला जातो. आमची दोन्ही दुकाने शिक्रापूरमध्ये
+              आहेत.
+            </p>
+            <p className="mt-3 text-base leading-relaxed text-ink/80">
+              १००% BIS हॉलमार्क असलेले सोने. पारदर्शक दर, घडणावळ आधीच
+              सांगितली जाते. दुकान दररोज {site.businessHours} उघडे असते.
+            </p>
+          </div>
+        </section>
+
         <section className="bg-ivory py-16 md:py-20">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
             <h2 className="font-display text-3xl font-bold text-maroon-deep">

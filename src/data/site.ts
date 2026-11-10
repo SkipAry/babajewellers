@@ -204,6 +204,21 @@ export type Offer = {
   occasion?: string;
   occasionMr?: string;
   /**
+   * Last day the OCCASION is worth naming — which is not the last day the
+   * offer runs.
+   *
+   * Measured 10 Nov 2026: the offers page title still read "Diwali Offers
+   * on Gold Jewellery in Shikrapur" two days after Diwali, because the
+   * occasion was driving the title until `validTill` (16 Nov). Nobody
+   * searches "Diwali offers" on the 10th — the page was advertising a
+   * finished festival while the actual hook, 6% making charges, sat
+   * second in the description and past Google's character cut.
+   *
+   * Set this to the festival date. The offer keeps running; it just stops
+   * being described by a festival that has passed.
+   */
+  occasionUntil?: string;
+  /**
    * Making-charge percentage, when the offer is a making-charge discount.
    *
    * Exists so the rate pages' titles and the price calculator can state
@@ -271,6 +286,9 @@ const allOffers: Offer[] = [
     validTill: "2026-11-16",
     occasion: "Diwali",
     occasionMr: "दिवाळी",
+    /* Diwali 2026 fell on 8 November. The offer runs to the 16th, but the
+       word stops earning clicks the moment the festival is over. */
+    occasionUntil: "2026-11-08",
     /* Deliberately vague on the draw mechanics — how entries are counted,
        when it is drawn, how winners are told. We were not given those and
        they must not be invented: a prize draw is a promise, and guessing
@@ -343,6 +361,14 @@ const TODAY_IST = new Date(Date.now() + IST_OFFSET_MS).toISOString().slice(0, 10
    chosen, and none of them needs to know festivals exist. */
 export const offers: Offer[] = allOffers
   .filter((o) => o.validTill === null || o.validTill >= TODAY_IST)
+  /* Drop the festival name once the festival is past, so a still-running
+     offer stops being titled after a finished occasion. Done here rather
+     than on the offers page so every consumer gets the same answer. */
+  .map((o) =>
+    o.occasionUntil && o.occasionUntil < TODAY_IST
+      ? { ...o, occasion: undefined, occasionMr: undefined }
+      : o
+  )
   .map(({ seasonal, ...offer }) =>
     seasonal && seasonal.until >= TODAY_IST
       ? {

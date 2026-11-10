@@ -41,6 +41,7 @@ export default function Page() {
   return (
     <LocationRatePage
       town="Ranjangaon"
+      townMr="रांजणगाव"
       heading="Gold Rate Today for Ranjangaon"
       headingMr="आजचा सोन्याचा आणि चांदीचा भाव — रांजणगाव. दररोज सकाळी अद्ययावत."
       intro={

@@ -41,6 +41,20 @@ export type LocationRatePageProps = {
   /** Marathi line under the h1 — local search here happens in Marathi. */
   headingMr: string;
   /**
+   * The town's name in Devanagari, e.g. "शिरूर".
+   *
+   * Required, not optional, because the Marathi block below is the point
+   * of having it: Marathi queries convert at 8.4% against 1.2% for the
+   * English equivalent — the clearest signal in this site's Search
+   * Console — and a Marathi searcher cannot match a page that spells the
+   * town only in Latin script.
+   *
+   * Spellings verified against Marathi-language sources on 10 Nov 2026.
+   * Note शिरूर (Shirur, Pune district) is NOT शिरपूर (Shirpur, Dhule) —
+   * a different town entirely and not our area.
+   */
+  townMr: string;
+  /**
    * The honest paragraph directly under the heading. MUST state that the
    * showrooms are in Shikrapur and how far away that is. Required, not
    * optional, so it cannot be quietly dropped.
@@ -188,6 +202,7 @@ export default function LocationRatePage({
   town,
   heading,
   headingMr,
+  townMr,
   intro,
   children,
   ctaHeading,
@@ -269,6 +284,39 @@ export default function LocationRatePage({
                 {ratesCopy.unavailable}
               </p>
             )}
+          </div>
+        </section>
+
+        {/* Marathi block. Not a translation of the English above — a
+            Marathi searcher asking "आजचा सोन्याचा भाव" wants the same two
+            facts every town page leads with: the rate does not change by
+            town, and the showrooms are in Shikrapur. Said once, plainly,
+            in the language the query was typed in. */}
+        <section className="bg-ivory-warm py-14 md:py-16" lang="mr">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6">
+            <h2 className="font-display text-3xl font-bold text-maroon-deep">
+              {townMr} — आजचा सोन्याचा भाव
+            </h2>
+            <p className="mt-5 text-base leading-relaxed text-ink/80">
+              {townMr === "शिक्रापूर" ? (
+                <>
+                  सोन्याचा दर जगभरात एकच असतो आणि तो रोज बदलतो. वरील दर
+                  दररोज सकाळी अद्ययावत केला जातो. आमची दोन्ही दुकाने
+                  शिक्रापूरमध्ये आहेत.
+                </>
+              ) : (
+                <>
+                  सोन्याचा दर जगभरात एकच असतो, त्यामुळे {townMr} आणि
+                  शिक्रापूरमध्ये भाव वेगळा नाही. वरील दर दररोज सकाळी
+                  अद्ययावत केला जातो. आमची दोन्ही दुकाने शिक्रापूरमध्ये
+                  आहेत.
+                </>
+              )}
+            </p>
+            <p className="mt-3 text-base leading-relaxed text-ink/80">
+              १००% BIS हॉलमार्क असलेले सोने. पारदर्शक दर, घडणावळ आधीच
+              सांगितली जाते. दुकान दररोज {site.businessHours} उघडे असते.
+            </p>
           </div>
         </section>
 

@@ -46,6 +46,7 @@ export default function Page() {
   return (
     <LocationRatePage
       town="Sanaswadi"
+      townMr="सणसवाडी"
       heading="Gold Rate Today for Sanaswadi"
       headingMr="आजचा सोन्याचा आणि चांदीचा भाव — सणसवाडी. दररोज सकाळी अद्ययावत."
       intro={

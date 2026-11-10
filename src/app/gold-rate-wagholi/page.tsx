@@ -63,6 +63,7 @@ export default function Page() {
   return (
     <LocationRatePage
       town="Wagholi"
+      townMr="वाघोली"
       heading="Gold Rate Today for Wagholi"
       headingMr="आजचा सोन्याचा आणि चांदीचा भाव — वाघोली. दररोज सकाळी अद्ययावत."
       intro={

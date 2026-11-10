@@ -53,6 +53,7 @@ export default function Page() {
   return (
     <LocationRatePage
       town="Shirur"
+      townMr="शिरूर"
       heading="Gold Rate Today for Shirur"
       headingMr="आजचा सोन्याचा आणि चांदीचा भाव — शिरूर तालुका. दररोज सकाळी अद्ययावत."
       intro={

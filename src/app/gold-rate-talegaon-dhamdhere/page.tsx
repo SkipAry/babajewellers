@@ -41,6 +41,7 @@ export default function Page() {
   return (
     <LocationRatePage
       town="Talegaon Dhamdhere"
+      townMr="तळेगाव ढमढेरे"
       storeIndex={1}
       heading="Gold Rate Today for Talegaon Dhamdhere"
       headingMr="आजचा सोन्याचा आणि चांदीचा भाव — तळेगाव ढमढेरे. दररोज सकाळी अद्ययावत."

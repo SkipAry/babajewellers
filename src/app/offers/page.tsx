@@ -3,7 +3,7 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import MobileActions from "@/components/MobileActions";
-import { mapsLinkFor, offers, site, stores } from "@/data/site";
+import { mapsLinkFor, makingChargeOffer, offers, site, stores } from "@/data/site";
 
 /**
  * RUNNING OFFERS — the page that carries the offers as TEXT.
@@ -47,16 +47,62 @@ const offerSummary = offers.map((o) => o.headline).join(". ");
 const liveOccasion = offers.find((o) => o.occasion)?.occasion ?? null;
 const liveOccasionMr = offers.find((o) => o.occasionMr)?.occasionMr ?? null;
 
-/* Keyword first, town second, brand last — the same front-loading the
-   rate page uses, because Google renders ~60 characters and "Diwali" has
-   to clear that budget. Measured below in the commit. */
-const pageTitle = liveOccasion
-  ? `${liveOccasion} Offers on Gold Jewellery in Shikrapur | Baba Jewellers`
-  : "Gold & Silver Jewellery Offers in Shikrapur, Pune | Baba Jewellers";
+/* Lead with the NUMBER, not the occasion.
+   Measured 1-7 Nov 2026: this page took 88 impressions and 0 clicks —
+   during Diwali week, the biggest gold-buying week of the year. The title
+   then read "Diwali Offers on Gold Jewellery in Shikrapur", which says a
+   sale exists without saying what it is. "Only 6% making charges" is a
+   figure a reader can compare against the shop they were going to visit;
+   "Offers" is not.
 
-const pageHeading = liveOccasion
-  ? `${liveOccasion} Offers on Gold Jewellery in Shikrapur`
-  : "Gold & Silver Jewellery Offers in Shikrapur, Pune";
+   This is the same front-loading that took /gold-rate-shikrapur/ from 0%
+   to 3.9% CTR: put the concrete figure where it survives the ~60-character
+   cut, and let the brand fall off the end if something has to. */
+const makingPct = makingChargeOffer?.makingChargePercent ?? null;
+
+const pageTitle = makingPct
+  ? `Gold Jewellery Offers Shikrapur: Only ${makingPct}% Making Charges`
+  : liveOccasion
+    ? `${liveOccasion} Offers on Gold Jewellery in Shikrapur`
+    : "Gold & Silver Jewellery Offers in Shikrapur, Pune";
+
+/* The h1 carries the same hook as the title. A snippet that promises
+   "Only 6% making charges" and a page whose heading says "Offers" is a
+   bounce — the reader has to hunt for the thing they clicked for. */
+const pageHeading = makingPct
+  ? `Only ${makingPct}% Making Charges on Gold Jewellery in Shikrapur`
+  : liveOccasion
+    ? `${liveOccasion} Offers on Gold Jewellery in Shikrapur`
+    : "Gold & Silver Jewellery Offers in Shikrapur, Pune";
+
+const DEV_DIGITS = "०१२३४५६७८९";
+const toDevanagari = (n: number) =>
+  String(n).replace(/\d/g, (d) => DEV_DIGITS[Number(d)]);
+
+const shortDate = (iso: string) =>
+  new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(iso));
+
+const offersDescription = (() => {
+  const lead = makingChargeOffer ?? offers[0] ?? null;
+  if (!lead) {
+    return `Gold and silver jewellery offers at Baba Jewellers, Shikrapur, Pune. सोन्या-चांदीच्या दागिन्यांवर ऑफर.`;
+  }
+  const till = lead.validTill ? ` till ${shortDate(lead.validTill)}` : "";
+  /* Devanagari digits in the Marathi clause. A Marathi reader parses "6%"
+     fine, but "६%" is what the language actually uses, and this line is
+     the part of the snippet doing the heavy lifting on CTR. */
+  const mr = makingPct
+    ? `सोन्याच्या दागिन्यांवर फक्त ${toDevanagari(makingPct)}% घडणावळ.`
+    : "सोन्या-चांदीच्या दागिन्यांवर ऑफर.";
+  const head = makingPct
+    ? `Only ${makingPct}% making charges on all gold jewellery`
+    : lead.headline;
+  return `${head} at Baba Jewellers, Shikrapur${till}. ${mr}`;
+})();
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -71,9 +117,17 @@ export const metadata: Metadata = {
      with two or three the thing that drops off the end is "BIS
      Hallmarked", not the offers or the local-language phrase that earns
      the best CTR of any query on this site. */
-  description:
-    (offerSummary ? `${offerSummary}. ` : "") +
-    `Shikrapur, Pune. ${liveOccasionMr ? liveOccasionMr + " " : ""}सोन्या-चांदीच्या दागिन्यांवर ऑफर. BIS Hallmarked.`,
+  /* Rebuilt 10 Nov 2026. The previous description ran to 188 characters
+     with two offers live, so everything after "Shikrapur, Pune." was cut —
+     including the Marathi line, which is the single best-converting thing
+     on this site (8.4% CTR against 1.2% for the English equivalent).
+     The old comment claimed Marathi came before the fluff; with two offers
+     running, the summary alone ate 115 characters and pushed it past the
+     cut anyway. That design assumed one offer.
+
+     So: lead with the concrete offer and its end date, then Marathi, and
+     stop. Anything else is a luxury this budget does not have. */
+  description: offersDescription,
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",
