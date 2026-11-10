@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LocationRatePage, { locationMeta } from "@/components/LocationRatePage";
+import LocationRatePage, {
+  locationMetaCtrTest,
+} from "@/components/LocationRatePage";
+import RateTrend from "@/components/RateTrend";
+import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
+import { readRateHistory } from "@/lib/rateHistory";
 import { savingsScheme, site, stores } from "@/data/site";
 
 /**
@@ -18,7 +23,14 @@ import { savingsScheme, site, stores } from "@/data/site";
  *                       occasion, not about saving monthly.
  */
 
-const meta = locationMeta("Sanaswadi", "gold-rate-sanaswadi");
+/* CTR test ENDED 10 Nov 2026 — promoted out of the control group.
+   The A/B was cut short deliberately. Measured competition inside the
+   20 km radius: the largest jeweller in Sanaswadi has
+   23 reviews, against 1,034 for MB Ashtekar in Shikrapur. These towns are
+   the thinnest competition on the board, and this page was taking
+   impressions at 0% CTR while we waited for a cleaner read. Taking the
+   ground beat finishing the experiment. */
+const meta = locationMetaCtrTest("Sanaswadi", "gold-rate-sanaswadi");
 
 export const metadata: Metadata = {
   title: meta.title,
@@ -40,9 +52,17 @@ export const metadata: Metadata = {
       },
     ],
   },
+  /* Was inheriting the generic homepage card. */
+  twitter: {
+    card: "summary_large_image",
+    title: meta.title,
+    description: meta.description,
+  },
 };
 
 export default function Page() {
+  const history = readRateHistory(7);
+
   return (
     <LocationRatePage
       town="Sanaswadi"
@@ -114,6 +134,12 @@ export default function Page() {
           with any question before you travel.
         </p>
       </div>
+
+      <OfferBanner />
+
+      {history.length >= 2 ? <RateTrend history={history} town="Sanaswadi" /> : null}
+
+      <WhatsAppRateButton town="Sanaswadi" />
     </LocationRatePage>
   );
 }

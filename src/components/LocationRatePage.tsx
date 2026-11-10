@@ -145,8 +145,15 @@ export function locationMetaCtrTest(town: string, slug: string) {
   const withOffer = pct
     ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Making Charges`
     : null;
+  /* "6% Off Making" and not "6% Making": the old short form cut the phrase
+     mid-way and shipped titles reading "...· 6% Making", which a searcher
+     reads as a bug, not an offer. Caught on Ranjangaon, 10 Nov 2026 — the
+     town name is just long enough to trip the 60-char ladder.
+
+     Every rung must now be a COMPLETE phrase. A dangling word costs more
+     trust than dropping the offer from the title entirely. */
   const withOfferShort = pct
-    ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Making`
+    ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Off Making`
     : null;
   const plain = `Gold Rate Today ${town}: 22K ${k22}/g | Baba Jewellers`;
 

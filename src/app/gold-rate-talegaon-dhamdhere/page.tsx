@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LocationRatePage, { locationMeta } from "@/components/LocationRatePage";
+import LocationRatePage, {
+  locationMetaCtrTest,
+} from "@/components/LocationRatePage";
+import RateTrend from "@/components/RateTrend";
+import { OfferBanner, WhatsAppRateButton } from "@/components/RatePageExtras";
+import { readRateHistory } from "@/lib/rateHistory";
 import { site, stores } from "@/data/site";
 
 /**
@@ -13,7 +18,14 @@ import { site, stores } from "@/data/site";
  * invitation to travel, and points at store[1] rather than the flagship.
  */
 
-const meta = locationMeta("Talegaon Dhamdhere", "gold-rate-talegaon-dhamdhere");
+/* CTR test ENDED 10 Nov 2026 — promoted out of the control group.
+   The A/B was cut short deliberately. Measured competition inside the
+   20 km radius: the largest jeweller in Talegaon Dhamdhere has
+   23 reviews, against 1,034 for MB Ashtekar in Shikrapur. These towns are
+   the thinnest competition on the board, and this page was taking
+   impressions at 0% CTR while we waited for a cleaner read. Taking the
+   ground beat finishing the experiment. */
+const meta = locationMetaCtrTest("Talegaon Dhamdhere", "gold-rate-talegaon-dhamdhere");
 
 export const metadata: Metadata = {
   title: meta.title,
@@ -35,9 +47,17 @@ export const metadata: Metadata = {
       },
     ],
   },
+  /* Was inheriting the generic homepage card. */
+  twitter: {
+    card: "summary_large_image",
+    title: meta.title,
+    description: meta.description,
+  },
 };
 
 export default function Page() {
+  const history = readRateHistory(7);
+
   return (
     <LocationRatePage
       town="Talegaon Dhamdhere"
@@ -113,6 +133,12 @@ export default function Page() {
           if you want something kept aside.
         </p>
       </div>
+
+      <OfferBanner />
+
+      {history.length >= 2 ? <RateTrend history={history} town="Talegaon Dhamdhere" /> : null}
+
+      <WhatsAppRateButton town="Talegaon Dhamdhere" />
     </LocationRatePage>
   );
 }
