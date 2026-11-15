@@ -40,6 +40,37 @@ export type RatesConfig = {
   goldRoundingIncrement: number;
   silverRoundingIncrement: number;
 
+  /* ── Benchmark: mirror PNG Jewellers' published board ──────────
+     The site's goal is to read within ₹10-20 of PNG every day. A markup
+     over spot cannot do that, and five days of measurement proved it:
+     gaps of +51, -49 and -94 as gold fell 5.3%. PNG does not pass on a
+     fall as fast as the market makes it, so no single percentage
+     reconciles the two behaviours — tuning the markup only ever fixes
+     the day you tune it.
+
+     So the published rate is derived from THEIR board when we can read
+     it, and falls back to spot x markup when we cannot. */
+
+  /** Master switch. Off = spot x markup only, the original behaviour. */
+  benchmarkEnabled: boolean;
+  /** Page carrying their board. Server-rendered, so a plain fetch sees it. */
+  benchmarkUrl: string;
+  /** ₹/gram to sit BELOW their 24K. The 22K and 18K follow via the purity
+      factors, which land them ~13 and ~18 below — inside the same band. */
+  benchmarkUndercut24k: number;
+  /** ₹/gram below their silver. Silver is ~₹180, so ₹15 here would be an
+      8% discount; this is deliberately much smaller than the gold figure. */
+  benchmarkUndercutSilver: number;
+  /** How many days old their "Updated on" stamp may be. Must cover a
+      weekend: PNG does not publish on Sundays (verified 15 Nov 2026,
+      their board still read "Saturday, November 14"). Mirroring them
+      means mirroring that cadence rather than drifting away from it. */
+  benchmarkMaxAgeDays: number;
+  /** Reject their figure if it is more than this fraction away from our
+      own spot-derived number. Catches a bad parse, a decimal slip on
+      their side, or the page changing shape under us. */
+  benchmarkMaxDeviation: number;
+
   /** Off by default — do not assume GST on the displayed rate. */
   includeGST: boolean;
   gstPercentage: number;
@@ -137,6 +168,13 @@ export const ratesConfig: RatesConfig = {
   goldRoundingIncrement: 1,
   silverRoundingIncrement: 1,
 
+  benchmarkEnabled: true,
+  benchmarkUrl: "https://www.pngjewellers.com/pages/metal-rates",
+  benchmarkUndercut24k: 15,
+  benchmarkUndercutSilver: 2,
+  benchmarkMaxAgeDays: 4,
+  benchmarkMaxDeviation: 0.15,
+
   includeGST: false,
   gstPercentage: 3,
 };
@@ -187,7 +225,17 @@ export type PublishedRates = {
   quotedAt?: string | null;
   goldStatus: "fresh" | "stale" | "error";
   silverStatus: "fresh" | "stale" | "error";
-  source: "goldapi.io";
+  /**
+   * Which source actually priced this board.
+   *
+   * "benchmark:pngjewellers" — read from PNG's published board and placed
+   * a few rupees under it, the normal path.
+   * "goldapi.io" — the fallback: PNG was unreachable, stale, or failed
+   * validation, so this is spot x markup. If it reads goldapi.io for
+   * several days running the benchmark has broken and the rate has
+   * quietly drifted away from PNG again.
+   */
+  source: "goldapi.io" | "benchmark:pngjewellers";
 };
 
 /** Older than this and the card shows a delayed notice. */

@@ -65,6 +65,10 @@ function readConfig() {
     const m = block.match(new RegExp(`${key}\\s*:\\s*(true|false)`));
     return m ? m[1] === "true" : fallback;
   };
+  const str = (key, fallback) => {
+    const m = block.match(new RegExp(`${key}\\s*:\\s*"([^"]*)"`));
+    return m ? m[1] : fallback;
+  };
   return {
     goldMarkupPercentage: num("goldMarkupPercentage", 0),
     gold24kFlatAdjustment: num("gold24kFlatAdjustment", 0),
@@ -78,6 +82,12 @@ function readConfig() {
     silverRoundingIncrement: num("silverRoundingIncrement", 1),
     includeGST: bool("includeGST", false),
     gstPercentage: num("gstPercentage", 3),
+    benchmarkEnabled: bool("benchmarkEnabled", false),
+    benchmarkUrl: str("benchmarkUrl", ""),
+    benchmarkUndercut24k: num("benchmarkUndercut24k", 0),
+    benchmarkUndercutSilver: num("benchmarkUndercutSilver", 0),
+    benchmarkMaxAgeDays: num("benchmarkMaxAgeDays", 4),
+    benchmarkMaxDeviation: num("benchmarkMaxDeviation", 0.15),
   };
 }
 
@@ -200,6 +210,96 @@ function anomalous(next, prev) {
   return Math.abs(next - prev) / prev > ANOMALY_THRESHOLD;
 }
 
+/* ── benchmark: PNG Jewellers' published board ────────────────
+   Their rates sit in the SERVER HTML (verified 15 Nov 2026 with a plain
+   fetch, no JS), so this needs no browser. Two renderings of the same
+   numbers appear on the page — a list ("24K Gold ₹13657") and a card
+   grid ("24KT **₹13657/g**") — and we read the list form, falling back
+   to the card form.
+
+   ⚠ Everything this returns is UNTRUSTED. It is a third party's page and
+   it can change shape, go blank, or carry a typo. We have already seen
+   their rate widget render blanks and four contradictory numbers across
+   their own site. Nothing here is published until validateBenchmark()
+   has checked it against our own independently-fetched spot price. */
+
+function parseBenchmark(html) {
+  const text = String(html).replace(/<[^>]+>/g, " ").replace(/&nbsp;?/g, " ");
+  const pick = (labels) => {
+    for (const label of labels) {
+      /* Tolerate markup turned into whitespace between the label and the
+         figure, but allow NO digits in the gap — otherwise "24K" could
+         skip past its own price and bind to a later one. */
+      const m = text.match(new RegExp(label + "[^\\d₹]{0,40}₹\\s*([\\d,]+)", "i"));
+      if (m) {
+        const n = Number(m[1].replace(/,/g, ""));
+        if (Number.isFinite(n) && n > 0) return n;
+      }
+    }
+    return null;
+  };
+  const stamp = text.match(
+    /Updated on\s+[A-Za-z]+,\s*([A-Za-z]+ \d{1,2}, \d{4})\s*at\s*([\d:]+\s*[AP]M)/i
+  );
+  return {
+    gold24k: pick(["24KT", "24K"]),
+    gold22k: pick(["22KT", "22K"]),
+    gold18k: pick(["18KT", "18K"]),
+    silver999: pick(["Silver"]),
+    updatedOn: stamp ? `${stamp[1]} ${stamp[2]}` : null,
+    updatedOnDate: stamp ? stamp[1] : null,
+  };
+}
+
+/** Reject anything that is not obviously a sane board. Returns a reason
+    string when the figures must NOT be used, or null when they are good. */
+function validateBenchmark(b, spotDerived, cfg, todayIst) {
+  if (!b) return "no response";
+  for (const k of ["gold24k", "gold22k", "gold18k", "silver999"]) {
+    if (!positive(b[k])) return `missing or unparsable ${k}`;
+  }
+  // Ordering and rough purity sanity — catches reading the wrong numbers.
+  if (!(b.gold24k > b.gold22k && b.gold22k > b.gold18k)) return "purities out of order";
+  const r22 = b.gold22k / b.gold24k;
+  const r18 = b.gold18k / b.gold24k;
+  if (r22 < 0.88 || r22 > 0.97) return `22K/24K ratio ${r22.toFixed(3)} implausible`;
+  if (r18 < 0.72 || r18 > 0.85) return `18K/24K ratio ${r18.toFixed(3)} implausible`;
+  if (b.silver999 > b.gold18k) return "silver above gold";
+
+  // The real guard: their number must be close to OUR independently
+  // fetched spot price. A decimal slip on their side cannot get through.
+  const dev = Math.abs(b.gold24k - spotDerived.gold24k) / spotDerived.gold24k;
+  if (dev > cfg.benchmarkMaxDeviation) {
+    return `24K ₹${b.gold24k} is ${(dev * 100).toFixed(1)}% from our spot-derived ₹${spotDerived.gold24k}`;
+  }
+
+  // Staleness. Their stamp is their own; on a Sunday it legitimately
+  // reads Saturday, and mirroring them means accepting that.
+  if (!b.updatedOnDate) return "no 'Updated on' stamp";
+  const theirs = new Date(`${b.updatedOnDate} 00:00:00Z`);
+  if (Number.isNaN(theirs.getTime())) return `unparsable stamp "${b.updatedOnDate}"`;
+  const ours = new Date(`${todayIst}T00:00:00Z`);
+  const ageDays = Math.round((ours - theirs) / 86400000);
+  if (ageDays < 0) return `stamp is in the future (${b.updatedOnDate})`;
+  if (ageDays > cfg.benchmarkMaxAgeDays) return `stamp ${ageDays} days old (${b.updatedOnDate})`;
+  return null;
+}
+
+async function fetchBenchmark(cfg) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(cfg.benchmarkUrl, {
+      signal: ctrl.signal,
+      headers: { "user-agent": "babajewellers-rates/1.0 (+https://babajewellers.co.in)" },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return parseBenchmark(await res.text());
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /* ── main ───────────────────────────────────────────────────── */
 
 async function main() {
@@ -316,17 +416,64 @@ async function main() {
       v, cfg.goldMarkupPercentage, flat, cfg.includeGST, cfg.gstPercentage, cfg.goldRoundingIncrement
     );
 
+  /* Spot-derived figures. These are published as-is when the benchmark is
+     unavailable, and are ALSO the yardstick the benchmark is validated
+     against, so they are always computed even when PNG answers. */
+  const spotDerived = {
+    gold24k: g(raw.gold24k, cfg.gold24kFlatAdjustment),
+    gold22k: g(raw.gold22k, cfg.gold22kFlatAdjustment),
+    gold18k: g(raw.gold18k, cfg.gold18kFlatAdjustment),
+    silver999: calculatePublishedRate(
+      raw.silver999, cfg.silverMarkupPercentage, cfg.silverFlatAdjustment,
+      cfg.includeGST, cfg.gstPercentage, cfg.silverRoundingIncrement
+    ),
+  };
+
+  /* ── Benchmark pass ──────────────────────────────────────────
+     Sit a few rupees under PNG's board when we can read and trust it.
+     Only the 24K and silver are taken from them: 22K and 18K come from
+     OUR purity factors applied to the undercut 24K, which keeps the
+     relationship between purities ours rather than inheriting whatever
+     rounding they use. Measured 15 Nov 2026 that lands 22K about ₹13
+     and 18K about ₹18 under their board — the same ₹10-20 band. */
+  let rateSource = "goldapi.io";
+  let benchmarkNote = null;
+  let benchmark = null;
+
+  if (cfg.benchmarkEnabled && positive(spotDerived.gold24k)) {
+    try {
+      benchmark = await fetchBenchmark(cfg);
+      const reason = validateBenchmark(benchmark, spotDerived, cfg, today);
+      if (reason) {
+        benchmarkNote = `rejected: ${reason}`;
+        console.warn(`Benchmark rejected (${reason}) — falling back to spot x markup.`);
+      } else {
+        const b24 = roundRate(benchmark.gold24k - cfg.benchmarkUndercut24k, cfg.goldRoundingIncrement);
+        spotDerived.gold24k = b24;
+        spotDerived.gold22k = roundRate(b24 * cfg.goldPurityFactor22k, cfg.goldRoundingIncrement);
+        spotDerived.gold18k = roundRate(b24 * cfg.goldPurityFactor18k, cfg.goldRoundingIncrement);
+        spotDerived.silver999 = roundRate(
+          Math.max(1, benchmark.silver999 - cfg.benchmarkUndercutSilver),
+          cfg.silverRoundingIncrement
+        );
+        rateSource = "benchmark:pngjewellers";
+        benchmarkNote = `matched (their 24K ₹${benchmark.gold24k}, stamp ${benchmark.updatedOn})`;
+        console.log(`Benchmark ok — ${benchmarkNote}`);
+      }
+    } catch (err) {
+      benchmarkNote = `unreachable: ${err.message}`;
+      console.warn(`Benchmark fetch failed (${err.message}) — falling back to spot x markup.`);
+    }
+  }
+
   const out = {
     gold: {
-      "24k": g(raw.gold24k, cfg.gold24kFlatAdjustment),
-      "22k": g(raw.gold22k, cfg.gold22kFlatAdjustment),
-      "18k": g(raw.gold18k, cfg.gold18kFlatAdjustment),
+      "24k": spotDerived.gold24k,
+      "22k": spotDerived.gold22k,
+      "18k": spotDerived.gold18k,
     },
     silver: {
-      "999": calculatePublishedRate(
-        raw.silver999, cfg.silverMarkupPercentage, cfg.silverFlatAdjustment,
-        cfg.includeGST, cfg.gstPercentage, cfg.silverRoundingIncrement
-      ),
+      "999": spotDerived.silver999,
     },
     unit: "INR per gram",
     // Only advance the visible timestamp when something actually refreshed,
@@ -347,12 +494,19 @@ async function main() {
         .pop() ?? null,
     goldStatus,
     silverStatus,
-    source: "goldapi.io",
+    /* Which source actually priced this board. Worth publishing: if it
+       ever reads goldapi.io for days on end, the benchmark is broken and
+       the rate has quietly drifted away from PNG again. */
+    source: rateSource,
   };
 
   writeJSON(PUBLIC_FILE, out);
 
   state.raw = raw;
+  /* Kept so a drift can be diagnosed later without re-fetching their site. */
+  state.benchmark = benchmark
+    ? { ...benchmark, note: benchmarkNote, usedAt: istISO() }
+    : { note: benchmarkNote, usedAt: istISO() };
   state.lastRunDate = today;
   state.configHash = cfgHash;
   if (goldStatus === "fresh" || silverStatus === "fresh") {
@@ -365,8 +519,97 @@ async function main() {
 
   console.log(
     `Published ${today} IST — 24K ₹${out.gold["24k"]}/g (${goldStatus}), ` +
-      `silver ₹${out.silver["999"]}/g (${silverStatus}). ` +
+      `silver ₹${out.silver["999"]}/g (${silverStatus}), source ${rateSource}. ` +
       `Requests this month: ${state.usage.requestCount}/${MONTHLY_LIMIT}.`
+  );
+}
+
+/* ── benchmark self-checks ────────────────────────────────────
+   The parser reads a third party's HTML and the validator is the only
+   thing standing between a bad read and a wrong price on the shop's
+   website. Both get exercised here against a real captured snippet and
+   against the failures that actually worry me. */
+
+function selftestBenchmark() {
+  const assert = (cond, msg) => {
+    if (!cond) {
+      console.error(`FAIL: ${msg}`);
+      process.exitCode = 1;
+      throw new Error(msg);
+    }
+  };
+
+  // Real text captured from their page, 15 Nov 2026.
+  const REAL = `
+    Today's Gold Rates
+    - 24K Gold ₹13657
+    - 22K Gold ₹12640
+    - 18K Gold ₹10689
+    - 14K Gold ₹8175
+    - Platinum ₹6580
+    - Silver ₹179
+    Applicable for online purchase only
+    Updated on Saturday, November 14, 2026 at 10:10 AM
+  `;
+  const b = parseBenchmark(REAL);
+  assert(b.gold24k === 13657, `24K parsed as ${b.gold24k}`);
+  assert(b.gold22k === 12640, `22K parsed as ${b.gold22k}`);
+  assert(b.gold18k === 10689, `18K parsed as ${b.gold18k}`);
+  assert(b.silver999 === 179, `silver parsed as ${b.silver999}`);
+  assert(b.updatedOnDate === "November 14, 2026", `stamp parsed as ${b.updatedOnDate}`);
+
+  // Must not mistake 14K or Platinum for a gold purity we publish.
+  assert(b.gold24k !== 8175 && b.gold18k !== 8175, "14K leaked into a published purity");
+
+  const cfg = {
+    benchmarkMaxDeviation: 0.15,
+    benchmarkMaxAgeDays: 4,
+    goldPurityFactor22k: 0.9258,
+    goldPurityFactor18k: 0.7823,
+  };
+  const spot = { gold24k: 13563, gold22k: 12557, gold18k: 10610, silver999: 176 };
+
+  // Saturday's stamp read on Sunday must be ACCEPTED — PNG does not
+  // publish at weekends and mirroring them means mirroring that.
+  assert(validateBenchmark(b, spot, cfg, "2026-11-15") === null, "valid board was rejected");
+
+  // ...but a fortnight-old stamp must not be.
+  assert(validateBenchmark(b, spot, cfg, "2026-12-01") !== null, "stale stamp was accepted");
+
+  // A decimal slip on their side must be caught by the spot cross-check.
+  assert(
+    validateBenchmark({ ...b, gold24k: 136570 }, spot, cfg, "2026-11-15") !== null,
+    "10x price error was accepted"
+  );
+  assert(
+    validateBenchmark({ ...b, gold24k: 1365 }, spot, cfg, "2026-11-15") !== null,
+    "divide-by-10 error was accepted"
+  );
+
+  // Blank or reordered values — both seen on their own site — must fail.
+  assert(validateBenchmark(parseBenchmark("24K Gold ₹ — 22K Gold ₹ —"), spot, cfg, "2026-11-15") !== null,
+    "blank board was accepted");
+  assert(validateBenchmark({ ...b, gold22k: 13999 }, spot, cfg, "2026-11-15") !== null,
+    "out-of-order purities were accepted");
+  assert(validateBenchmark({ ...b, updatedOnDate: null }, spot, cfg, "2026-11-15") !== null,
+    "missing stamp was accepted");
+
+  // And the undercut must land inside the ₹10-20 band the owner asked for.
+  const undercut = 15;
+  const b24 = roundRate(b.gold24k - undercut, 1);
+  const g22 = roundRate(b24 * cfg.goldPurityFactor22k, 1);
+  const g18 = roundRate(b24 * cfg.goldPurityFactor18k, 1);
+  const within = (ours, theirs) => {
+    const d = theirs - ours;
+    return d >= 5 && d <= 25;
+  };
+  assert(within(b24, b.gold24k), `24K undercut ${b.gold24k - b24} outside band`);
+  assert(within(g22, b.gold22k), `22K undercut ${b.gold22k - g22} outside band`);
+  assert(within(g18, b.gold18k), `18K undercut ${b.gold18k - g18} outside band`);
+
+  console.log(
+    `benchmark self-check passed — would publish 24K ₹${b24} (PNG ₹${b.gold24k}, -${b.gold24k - b24}), ` +
+      `22K ₹${g22} (-${b.gold22k - g22}), 18K ₹${g18} (-${b.gold18k - g18})`
   );
 }
 
@@ -464,6 +707,7 @@ function selftest() {
 
 if (process.argv.includes("--selftest")) {
   selftest();
+  selftestBenchmark();
 } else {
   main().catch((err) => {
     console.error("Fatal:", String(err?.message ?? err));
