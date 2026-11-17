@@ -457,8 +457,21 @@ async function main() {
           cfg.silverRoundingIncrement
         );
         rateSource = "benchmark:pngjewellers";
-        benchmarkNote = `matched (their 24K ₹${benchmark.gold24k}, stamp ${benchmark.updatedOn})`;
-        console.log(`Benchmark ok — ${benchmarkNote}`);
+        /* Their stamp SHOULD be today. When it is not we have run before
+           they published and are mirroring yesterday's board — which is
+           how a ₹114 gap appeared on 17 Nov. Harmless at a weekend, a
+           timing bug on a trading day, so say so loudly either way. */
+        const stampIsToday = benchmark.updatedOnDate
+          ? new Date(`${benchmark.updatedOnDate} 00:00:00Z`).toISOString().slice(0, 10) === today
+          : false;
+        benchmarkNote =
+          `matched (their 24K ₹${benchmark.gold24k}, stamp ${benchmark.updatedOn})` +
+          (stampIsToday ? "" : " — STAMP IS NOT TODAY, we may have run before they published");
+        if (stampIsToday) {
+          console.log(`Benchmark ok — ${benchmarkNote}`);
+        } else {
+          console.warn(`Benchmark STALE — ${benchmarkNote}`);
+        }
       }
     } catch (err) {
       benchmarkNote = `unreachable: ${err.message}`;

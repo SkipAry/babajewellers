@@ -52,6 +52,32 @@ name: Update gold & silver rates
 # the external trigger ever stops (expired token, service down, someone
 # deletes the job), GitHub will still run this eventually — late, but the
 # board will not sit frozen for a week. It is a floor, not the mechanism.
+# ── TIMING, 17 Nov 2026 — 10:00 -> 11:30 ───────────────────────────
+# The rate is now READ FROM PNG's board rather than derived from spot, and
+# that inverts what the right fetch time is. Deriving from spot, we wanted
+# to sample at the same moment they did. Reading their board, we must run
+# AFTER they publish, or we read yesterday's figures.
+#
+# Measured 17 Nov: PNG published at 10:02:00, we fetched at 10:00:47 — we
+# lost the race by 75 seconds, matched their 16 Nov board, and shipped a
+# rate ₹114 above their live one. The benchmark worked exactly as built;
+# it was simply handed stale input.
+#
+# Their observed publish times: 09:55, 10:02, 10:07, 10:10, 10:21.
+# 11:30 clears the latest by over an hour — chosen by the owner over a
+# tighter 10:35 because the cost of being late is nil and the cost of
+# being early is a whole day on the wrong number.
+#
+# The trade accepted here: the board carries YESTERDAY's rate from the
+# shop opening at 8:30 until 11:30. That is three hours of a stale figure
+# on a page titled "today's rate", against a near-certain correct rate
+# for the rest of the day. If the morning window ever matters more,
+# the fix is a second run, not an earlier one.
+#
+# If they ever drift past 11:30 the symptom is unchanged:
+# state.benchmark.updatedOnDate reads yesterday, and the job now logs
+# "STAMP IS NOT TODAY" rather than leaving it to be spotted on the site.
+# ───────────────────────────────────────────────────────────────────
 # ── TIMING, 9 Nov 2026 ─────────────────────────────────────────────
 # Moved 09:45 -> 10:45 IST. The site now tracks PNG Jewellers' board, and
 # PNG stamps its own page with an update time: measured 10:21 AM on 9 Nov.
@@ -85,7 +111,7 @@ name: Update gold & silver rates
 # ───────────────────────────────────────────────────────────────────
 on:
   schedule:
-    - cron: "30 4 * * *"   # 10:00 IST — fallback only; see above
+    - cron: "0 6 * * *"    # 11:30 IST — fallback only; see above
   workflow_dispatch:
     inputs:
       force:
