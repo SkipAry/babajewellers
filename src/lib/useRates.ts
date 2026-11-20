@@ -93,11 +93,47 @@ export function useRates(): RatesState {
 
 /* ── shared formatting, so the two surfaces cannot drift ────── */
 
+/* ── Display units ───────────────────────────────────────────────
+   rates.json stays in RUPEES PER GRAM. That is the canonical unit the
+   PNG benchmark compares against, the history table stores, and every
+   validation check is written in — changing it would mean rewriting all
+   of that to gain nothing.
+
+   What changed (20 Nov 2026) is only how the numbers are SHOWN. The shop
+   quotes gold per 10 grams and silver per kilogram, the way its printed
+   rate card does, so the site now matches the card rather than the
+   convention of the rate-aggregator sites. */
+
 export const RATE_ROWS = [
-  { key: "24k", label: "24K Gold" },
-  { key: "22k", label: "22K Gold" },
-  { key: "18k", label: "18K Gold" },
+  { key: "24k", label: "24 Carat" },
+  { key: "22k", label: "22 Carat" },
+  { key: "18k", label: "18 Carat" },
 ] as const;
+
+/**
+ * Silver, sold as finished items rather than as a metal rate.
+ *
+ * The rate card prices two products per kilogram instead of quoting
+ * silver 999, so the site does the same. `premiumPerGram` is what each
+ * item carries OVER the published silver rate, in ₹/g.
+ *
+ * ⚠ ASSUMPTION, from the card dated 20 Nov 2026: Payal was ₹1,52,000/kg
+ * against a published silver rate of ₹152/g (premium 0), and Jodavi was
+ * ₹1,57,000/kg (premium ₹5). That is ONE day's reading. If the gap
+ * between the two is not always ₹5, these two numbers are what to change
+ * — nothing else needs touching.
+ */
+export const SILVER_PRODUCTS = [
+  { key: "payal", label: "Payal", sub: "Anklets", premiumPerGram: 0 },
+  { key: "jodavi", label: "Jodavi", sub: "Toe Rings", premiumPerGram: 5 },
+] as const;
+
+/** Gold: ₹/g -> ₹ per 10 grams. */
+export const per10g = (perGram: number) => perGram * 10;
+
+/** Silver item: ₹/g + its premium -> ₹ per kilogram. */
+export const perKg = (silverPerGram: number, premiumPerGram: number) =>
+  (silverPerGram + premiumPerGram) * 1000;
 
 export const inr = (n: number) =>
   `₹${new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(n)}`;
@@ -134,4 +170,39 @@ export function rateFor(data: PublishedRates, key: string) {
   return key === "999"
     ? data.silver["999"]
     : data.gold[key as keyof PublishedRates["gold"]];
+}
+
+export type DisplayRow = {
+  key: string;
+  label: string;
+  /** Second line, e.g. "Anklets". Null for the gold rows. */
+  sub: string | null;
+  /** Already converted to the unit below. */
+  value: number;
+  unit: "per 10 grams" | "per kilogram";
+};
+
+/**
+ * The rows exactly as the shop's rate card lists them: three gold
+ * purities per 10 grams, then the two silver items per kilogram.
+ *
+ * One function so the six places that render rates cannot drift apart —
+ * which they previously could, since each built its own row list.
+ */
+export function displayRows(data: PublishedRates): DisplayRow[] {
+  const gold = RATE_ROWS.map((r) => ({
+    key: r.key,
+    label: r.label,
+    sub: null,
+    value: per10g(data.gold[r.key as keyof PublishedRates["gold"]]),
+    unit: "per 10 grams" as const,
+  }));
+  const silver = SILVER_PRODUCTS.map((p) => ({
+    key: p.key,
+    label: p.label,
+    sub: p.sub,
+    value: perKg(data.silver["999"], p.premiumPerGram),
+    unit: "per kilogram" as const,
+  }));
+  return [...gold, ...silver];
 }

@@ -97,7 +97,7 @@ export default function Page() {
       </h2>
       <div className="mt-6 space-y-5 text-base leading-relaxed text-ink/80">
         <p>
-          The rate above is the metal, per gram. The ornament&apos;s price is
+          The gold rate above is the metal, per 10 grams. The ornament&apos;s price is
           that rate times its weight, plus making charges for the
           craftsmanship, plus GST.
         </p>

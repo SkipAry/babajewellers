@@ -6,8 +6,7 @@ import {
   formatUpdated,
   inr,
   marketClosed,
-  RATE_ROWS,
-  rateFor,
+  displayRows,
   useRates,
 } from "@/lib/useRates";
 import { trackEvent } from "@/lib/analytics";
@@ -125,15 +124,29 @@ export default function RatesMenu({ onOpen, variant }: Props) {
               aria-busy={state.phase === "loading"}
               className="m-0 divide-y divide-maroon/10"
             >
-              {[...RATE_ROWS, { key: "999", label: "Silver 999" } as const].map(
+              {(data
+                ? displayRows(data)
+                : [
+                    { key: "24k", label: "24 Carat", sub: null, value: null, unit: "per 10 grams" },
+                    { key: "22k", label: "22 Carat", sub: null, value: null, unit: "per 10 grams" },
+                    { key: "18k", label: "18 Carat", sub: null, value: null, unit: "per 10 grams" },
+                    { key: "payal", label: "Payal", sub: "Anklets", value: null, unit: "per kilogram" },
+                    { key: "jodavi", label: "Jodavi", sub: "Toe Rings", value: null, unit: "per kilogram" },
+                  ]
+              ).map(
                 (row) => {
-                  const value = data ? rateFor(data, row.key) : null;
+                  const value = row.value;
                   return (
                     <div
                       key={row.key}
                       className="flex items-baseline justify-between gap-4 py-2.5"
                     >
-                      <dt className="text-sm text-ink/85">{row.label}</dt>
+                      <dt className="text-sm text-ink/85">
+                        {row.label}
+                        {row.sub ? (
+                          <span className="ml-1 text-[11px] text-ink/55">{row.sub}</span>
+                        ) : null}
+                      </dt>
                       <dd className="m-0 font-display text-base font-bold tabular-nums text-maroon-deep">
                         {value == null ? (
                           <span
@@ -144,7 +157,7 @@ export default function RatesMenu({ onOpen, variant }: Props) {
                           <>
                             {inr(value)}
                             <span className="ml-1 text-xs font-normal text-ink/70">
-                              /g
+                              {row.unit === "per kilogram" ? "/kg" : "/10g"}
                             </span>
                           </>
                         )}

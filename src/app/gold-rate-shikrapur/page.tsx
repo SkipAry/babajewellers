@@ -140,11 +140,16 @@ export const metadata: Metadata = {
   },
 };
 
+/* Mirrors the shop's printed rate card — gold by carat per 10 grams,
+   silver as the two items it actually sells, per kilogram. `premium` is
+   ₹/g over the published silver rate; see SILVER_PRODUCTS in
+   lib/useRates for where those figures came from. */
 const RATE_ROWS = [
-  { key: "24k", label: "24K Gold", note: "Purest form — coins and bars" },
-  { key: "22k", label: "22K Gold", note: "What most jewellery is made in" },
-  { key: "18k", label: "18K Gold", note: "Stone-set and lighter designs" },
-  { key: "999", label: "Silver 999", note: "Fine silver" },
+  { key: "24k", label: "24 Carat", note: "Purest form — coins and bars", unit: "/10g" },
+  { key: "22k", label: "22 Carat", note: "What most jewellery is made in", unit: "/10g" },
+  { key: "18k", label: "18 Carat", note: "Stone-set and lighter designs", unit: "/10g" },
+  { key: "payal", label: "Payal", note: "Anklets", unit: "/kg", premium: 0 },
+  { key: "jodavi", label: "Jodavi", note: "Toe Rings", unit: "/kg", premium: 5 },
 ] as const;
 
 /**
@@ -212,7 +217,7 @@ export default function GoldRatePage() {
         url: `${site.url}/gold-rate-shikrapur/`,
         name: `Gold Rate Today in Shikrapur, Pune — ${IST_TODAY}`,
         description:
-          "Daily 24K, 22K and 18K gold rate and silver rate per gram in Shikrapur, Pune.",
+          "Daily 24K, 22K and 18K gold rates per 10 grams, and silver item rates per kilogram, in Shikrapur, Pune.",
         inLanguage: "en-IN",
         isPartOf: { "@id": `${site.url}/#website` },
         /* The layout publishes one JewelryStore per branch — #store-karanje
@@ -268,7 +273,7 @@ export default function GoldRatePage() {
               Gold Rate Today in Shikrapur, Pune
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-center text-base leading-relaxed text-ink/75">
-              Live 24K, 22K and 18K gold rate and silver rate per gram at Baba
+              Live 24K, 22K and 18K gold rates per 10 grams, and silver item rates per kilogram, at Baba
               Jewellers, Pune–Nagar Road, Shikrapur — updated every morning.
               Ask in store for the exact rate at the time of purchase.
             </p>
@@ -290,9 +295,9 @@ export default function GoldRatePage() {
                     <dl className="m-0 divide-y divide-maroon/10">
                       {RATE_ROWS.map((row) => {
                         const value =
-                          row.key === "999"
-                            ? data.silver["999"]
-                            : data.gold[row.key as "24k" | "22k" | "18k"];
+                          "premium" in row
+                            ? (data.silver["999"] + row.premium) * 1000
+                            : data.gold[row.key as "24k" | "22k" | "18k"] * 10;
                         return (
                           <div
                             key={row.key}
@@ -307,7 +312,7 @@ export default function GoldRatePage() {
                             <dd className="m-0 font-display text-[clamp(1.25rem,3.5vw,1.6rem)] font-bold tabular-nums text-maroon-deep">
                               {inr(value)}
                               <span className="ml-1 text-[13px] font-normal text-ink/70">
-                                /g
+                                {row.unit}
                               </span>
                             </dd>
                           </div>
@@ -392,7 +397,7 @@ export default function GoldRatePage() {
             </h2>
             <div className="mt-6 space-y-5 text-base leading-relaxed text-ink/80">
               <p>
-                The rate above is the price of the metal itself, per gram. The
+                The gold rate above is the price of the metal itself, per 10 grams. The
                 final price of an ornament is that rate multiplied by its
                 weight, plus making charges for the craftsmanship, plus GST.
               </p>

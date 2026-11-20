@@ -5,8 +5,7 @@ import {
   formatUpdated,
   inr,
   marketClosed,
-  RATE_ROWS,
-  rateFor,
+  displayRows,
   useRates,
 } from "@/lib/useRates";
 
@@ -64,13 +63,10 @@ export default function RateTicker() {
   const updated = formatUpdated(data.quotedAt ?? data.updatedAt);
   const closed = marketClosed(data);
 
-  const items = [
-    ...RATE_ROWS.map((row) => ({
-      label: row.label,
-      value: `${inr(rateFor(data, row.key))}/g`,
-    })),
-    { label: "Silver 999", value: `${inr(rateFor(data, "999"))}/g` },
-  ];
+  const items = displayRows(data).map((row) => ({
+    label: row.sub ? `${row.label} ${row.sub}` : row.label,
+    value: `${inr(row.value)}${row.unit === "per kilogram" ? "/kg" : "/10g"}`,
+  }));
 
   /* Every cell in one list — the four rates, then the timestamp — so the
      diamond separators can be interleaved uniformly instead of being

@@ -91,15 +91,20 @@ export const IST_TODAY = new Intl.DateTimeFormat("en-IN", {
 export function locationMeta(town: string, slug: string) {
   const r = readRates();
   const fresh = r?.goldStatus === "fresh";
+  /* Per 10 grams throughout, matching the rate card and the on-page
+     table. This path is now only the fallback for when rates are not
+     fresh — every town page uses locationMetaCtrTest — but a snippet in
+     one unit and a page in another is the kind of mismatch that reads as
+     a mistake, so it moved too. */
   const title = fresh
-    ? `Gold Rate Today ${town}: 22K ${inr(r!.gold["22k"])}, 24K ${inr(r!.gold["24k"])}/g | Baba Jewellers`
+    ? `Gold Rate Today ${town}: 22K ${inr(r!.gold["22k"] * 10)}/10g | Baba Jewellers`
     : `Gold Rate Today in ${town} (${IST_TODAY}) — 24K, 22K, 18K | Baba Jewellers`;
   const description = fresh
-    ? `24K ${inr(r!.gold["24k"])} · 22K ${inr(r!.gold["22k"])} · 18K ${inr(r!.gold["18k"])} · ` +
-      `Silver ${inr(r!.silver["999"])} per gram — ${town}, ${IST_TODAY}. Updated daily. ` +
-      `BIS Hallmarked. आजचा सोन्याचा भाव.`
-    : `Gold rate today for ${town} — ${IST_TODAY}. Live 24K, 22K and 18K gold and silver ` +
-      `rates per gram from Baba Jewellers, Shikrapur. Updated every morning.`;
+    ? `24K ${inr(r!.gold["24k"] * 10)} · 22K ${inr(r!.gold["22k"] * 10)} · ` +
+      `18K ${inr(r!.gold["18k"] * 10)} per 10 grams — ${town}, ${IST_TODAY}. ` +
+      `Updated daily. BIS Hallmarked. आजचा सोन्याचा भाव.`
+    : `Gold rate today for ${town} — ${IST_TODAY}. Live 24K, 22K and 18K gold rates ` +
+      `per 10 grams, and silver, from Baba Jewellers, Shikrapur. Updated every morning.`;
   return { title, description, slug, fresh };
 }
 
@@ -136,14 +141,17 @@ export function locationMetaCtrTest(town: string, slug: string) {
     return locationMeta(town, slug);
   }
 
-  const k22 = inr(r!.gold["22k"]);
+  /* Per 10 grams, matching the shop's rate card and the on-page table.
+     A six-digit figure costs ~3 more characters than the per-gram form,
+     so the length ladder below matters more than it used to. */
+  const k22 = inr(r!.gold["22k"] * 10);
 
   /* Built long, then trimmed. At today's rates the full form is exactly
      60 for Shikrapur — no headroom — and a six-digit gold rate would
      silently push it over. Degrade by dropping " Charges" first, then
      the offer clause, rather than letting Google truncate mid-figure. */
   const withOffer = pct
-    ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Making Charges`
+    ? `Gold Rate Today ${town}: 22K ${k22}/10g · ${pct}% Making Charges`
     : null;
   /* "6% Off Making" and not "6% Making": the old short form cut the phrase
      mid-way and shipped titles reading "...· 6% Making", which a searcher
@@ -153,9 +161,9 @@ export function locationMetaCtrTest(town: string, slug: string) {
      Every rung must now be a COMPLETE phrase. A dangling word costs more
      trust than dropping the offer from the title entirely. */
   const withOfferShort = pct
-    ? `Gold Rate Today ${town}: 22K ${k22}/g · ${pct}% Off Making`
+    ? `Gold Rate Today ${town}: 22K ${k22}/10g · ${pct}% Off Making`
     : null;
-  const plain = `Gold Rate Today ${town}: 22K ${k22}/g | Baba Jewellers`;
+  const plain = `Gold Rate Today ${town}: 22K ${k22}/10g | Baba Jewellers`;
 
   const title =
     withOffer && withOffer.length <= 60
@@ -164,7 +172,7 @@ export function locationMetaCtrTest(town: string, slug: string) {
         ? withOfferShort
         : plain.length <= 60
           ? plain
-          : `Gold Rate Today ${town}: 22K ${k22}/g`;
+          : `Gold Rate Today ${town}: 22K ${k22}/10g`;
 
   /* 22K only, then three reasons the SERP cannot satisfy. Marathi last
      but inside the ~155 Google renders — the Marathi rate query converts
@@ -177,17 +185,22 @@ export function locationMetaCtrTest(town: string, slug: string) {
       }. `
     : "";
   const description =
-    `22K gold ${k22}/g in ${town} today. ${offerClause}` +
+    `22K gold ${k22}/10g in ${town} today. ${offerClause}` +
     `See how it has moved over the last 7 days. आजचा सोन्याचा भाव.`;
 
   return { title, description, slug, fresh };
 }
 
+/* Matches the shop's printed rate card: gold by carat per 10 grams, then
+   the two silver items per kilogram. `premium` is ₹/g over the published
+   silver rate — see SILVER_PRODUCTS in lib/useRates for where those two
+   figures came from and what to change if they move. */
 const RATE_ROWS = [
-  { key: "24k", label: "24K Gold", note: "Coins and bars" },
-  { key: "22k", label: "22K Gold", note: "Most jewellery" },
-  { key: "18k", label: "18K Gold", note: "Stone-set designs" },
-  { key: "999", label: "Silver 999", note: "Fine silver" },
+  { key: "24k", label: "24 Carat", note: "Coins and bars", unit: "/10g" },
+  { key: "22k", label: "22 Carat", note: "Most jewellery", unit: "/10g" },
+  { key: "18k", label: "18 Carat", note: "Stone-set designs", unit: "/10g" },
+  { key: "payal", label: "Payal", note: "Anklets", unit: "/kg", premium: 0 },
+  { key: "jodavi", label: "Jodavi", note: "Toe Rings", unit: "/kg", premium: 5 },
 ] as const;
 
 function formatUpdated(iso: string) {
@@ -252,7 +265,8 @@ export default function LocationRatePage({
               <div className="mt-10 overflow-hidden rounded-sm border border-maroon/15 bg-ivory">
                 <table className="w-full">
                   <caption className="sr-only">
-                    Gold and silver rates per gram for {town}, {IST_TODAY}
+                    Gold rates per 10 grams and silver item rates per kilogram for{" "}
+                    {town}, {IST_TODAY}
                   </caption>
                   <tbody>
                     {RATE_ROWS.map((row) => (
@@ -271,11 +285,13 @@ export default function LocationRatePage({
                         </th>
                         <td className="px-5 py-5 text-right font-display text-xl font-bold text-maroon-deep">
                           {inr(
-                            row.key === "999"
-                              ? data.silver["999"]
-                              : data.gold[row.key as "24k" | "22k" | "18k"]
+                            "premium" in row
+                              ? (data.silver["999"] + row.premium) * 1000
+                              : data.gold[row.key as "24k" | "22k" | "18k"] * 10
                           )}
-                          <span className="text-sm font-normal text-ink/60">/g</span>
+                          <span className="text-sm font-normal text-ink/60">
+                            {row.unit}
+                          </span>
                         </td>
                       </tr>
                     ))}

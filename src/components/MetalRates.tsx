@@ -5,7 +5,7 @@ import TrackedLink from "@/components/TrackedLink";
 import { site } from "@/data/site";
 import { ratesCopy, STALE_AFTER_HOURS } from "@/data/rates-config";
 import type { PublishedRates } from "@/data/rates-config";
-import { formatUpdated, inr, marketClosed, RATE_ROWS, rateFor, useRates } from "@/lib/useRates";
+import { displayRows, formatUpdated, inr, marketClosed, useRates } from "@/lib/useRates";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 
@@ -78,12 +78,20 @@ export default function MetalRates({
                   aria-busy={state.phase === "loading"}
                   className="m-0 divide-y divide-maroon/10"
                 >
-                  {[...RATE_ROWS, { key: "999", label: "Silver 999" } as const].map((row) => {
-                    const value = data ? rateFor(data, row.key) : null;
+                  {(data
+                    ? displayRows(data)
+                    : [
+                        { key: "24k", label: "24 Carat", sub: null, value: null, unit: "per 10 grams" },
+                        { key: "22k", label: "22 Carat", sub: null, value: null, unit: "per 10 grams" },
+                        { key: "18k", label: "18 Carat", sub: null, value: null, unit: "per 10 grams" },
+                        { key: "payal", label: "Payal", sub: "Anklets", value: null, unit: "per kilogram" },
+                        { key: "jodavi", label: "Jodavi", sub: "Toe Rings", value: null, unit: "per kilogram" },
+                      ]
+                  ).map((row) => {
+                    const value = row.value;
+                    const isSilver = row.unit === "per kilogram";
                     const stale =
-                      data &&
-                      (row.key === "999" ? data.silverStatus : data.goldStatus) ===
-                        "stale";
+                      data && (isSilver ? data.silverStatus : data.goldStatus) === "stale";
                     return (
                       <div
                         key={row.key}
@@ -91,6 +99,11 @@ export default function MetalRates({
                       >
                         <dt className="text-[15px] font-medium text-ink/85 sm:text-base">
                           {row.label}
+                          {row.sub ? (
+                            <span className="ml-1.5 text-[12px] font-normal text-ink/55">
+                              {row.sub}
+                            </span>
+                          ) : null}
                           {stale ? (
                             <span className="ml-2 align-middle text-[11px] uppercase tracking-wide text-ink/50">
                               last confirmed
@@ -107,7 +120,7 @@ export default function MetalRates({
                             <>
                               {inr(value)}
                               <span className="ml-1 text-[13px] font-normal text-ink/70">
-                                /g
+                                {row.unit === "per kilogram" ? "/kg" : "/10g"}
                               </span>
                             </>
                           )}

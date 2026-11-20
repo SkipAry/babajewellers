@@ -245,7 +245,7 @@ export const ratesCopy = {
   heading: "Today's Gold & Silver Rates",
   label: "Live Rates",
   intro:
-    "Indicative rates per gram, updated every morning. Ask in store for the exact rate at the time of purchase.",
+    "Gold per 10 grams, silver items per kilogram. Updated every morning. Ask in store for the exact rate at the time of purchase.",
   disclaimer:
     "Rates are indicative and may vary at the time of purchase. GST, making charges and other applicable charges may be additional.",
   delayed: "Rate update delayed — showing the last confirmed rates.",

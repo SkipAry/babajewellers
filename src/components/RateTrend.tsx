@@ -26,7 +26,10 @@ export default function RateTrend({
   if (history.length < 2) return null;
 
   const t = trendSummary(history);
-  const values = history.map((h) => h["22k"]);
+  /* Per 10 grams, matching the rate card and the table above it. The
+     stored history stays per-gram — that is what the benchmark and the
+     trend maths use — so the conversion happens only at display. */
+  const values = history.map((h) => h["22k"] * 10);
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = max - min || 1;
@@ -45,15 +48,15 @@ export default function RateTrend({
           {t.direction === "flat" ? (
             <>
               The 22K rate is unchanged since {fmtDay(t.from)}, at{" "}
-              <strong>{inr(values[values.length - 1])}</strong> per gram.
+              <strong>{inr(values[values.length - 1])}</strong> per 10 grams.
             </>
           ) : (
             <>
               22K has moved{" "}
               <strong>
-                {t.direction === "up" ? "up" : "down"} {inr(Math.abs(t.diff))}
+                {t.direction === "up" ? "up" : "down"} {inr(Math.abs(t.diff) * 10)}
               </strong>{" "}
-              per gram since {fmtDay(t.from)} — {Math.abs(t.pct).toFixed(1)}% in{" "}
+              per 10 grams since {fmtDay(t.from)} — {Math.abs(t.pct).toFixed(1)}% in{" "}
               {t.days} days.
             </>
           )}{" "}
@@ -65,7 +68,7 @@ export default function RateTrend({
       <div className="mt-6 overflow-hidden rounded-sm border border-maroon/15">
         <table className="w-full text-sm">
           <caption className="sr-only">
-            22K gold rate per gram in {town}, last {history.length} days
+            22K gold rate per 10 grams in {town}, last {history.length} days
           </caption>
           <thead>
             <tr className="bg-maroon/5">
@@ -73,7 +76,7 @@ export default function RateTrend({
                 Date
               </th>
               <th scope="col" className="px-4 py-3 text-right font-semibold text-maroon-deep">
-                22K per gram
+                22K per 10 grams
               </th>
               <th scope="col" className="px-4 py-3 text-right font-semibold text-maroon-deep">
                 Change
@@ -96,7 +99,7 @@ export default function RateTrend({
                   </th>
                   <td className="px-4 py-3 text-right">
                     <span className="font-display font-bold text-maroon-deep">
-                      {inr(row["22k"])}
+                      {inr(row["22k"] * 10)}
                     </span>
                     <span
                       aria-hidden="true"
@@ -112,7 +115,7 @@ export default function RateTrend({
                     ) : (
                       <span className={delta > 0 ? "text-maroon" : "text-ink/60"}>
                         {delta > 0 ? "+" : "−"}
-                        {inr(Math.abs(delta)).replace("₹", "₹")}
+                        {inr(Math.abs(delta) * 10)}
                       </span>
                     )}
                   </td>
