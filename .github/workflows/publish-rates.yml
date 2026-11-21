@@ -1,0 +1,70 @@
+# Publish today's rates from a phone.
+#
+# GitHub mobile app (or github.com in a phone browser):
+#   Actions -> "Publish today's rates" -> Run workflow
+#   -> five boxes -> Run.
+#
+# Runs on GitHub's servers, so the shop computer can be off. Commas and
+# ₹ signs are stripped, so "1,23,250" and "123250" both work.
+#
+# Nothing is published unless every check in scripts/publish-manual-rates.mjs
+# passes — purities in order, each figure in a sane range, all five given.
+# A refusal leaves the current board up rather than showing a wrong price.
+
+name: Publish today's rates
+
+on:
+  workflow_dispatch:
+    inputs:
+      g24:
+        description: "24 Carat — ₹ per 10 grams (e.g. 123250)"
+        required: true
+      g22:
+        description: "22 Carat — ₹ per 10 grams (e.g. 113500)"
+        required: true
+      g18:
+        description: "18 Carat — ₹ per 10 grams (e.g. 95000)"
+        required: true
+      payal:
+        description: "Payal / Anklets — ₹ per kilogram (e.g. 148500)"
+        required: true
+      jodavi:
+        description: "Jodavi / Toe Rings — ₹ per kilogram (e.g. 152500)"
+        required: true
+
+concurrency:
+  group: metal-rates
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Publish the rates
+        run: |
+          node scripts/publish-manual-rates.mjs \
+            --g24='${{ inputs.g24 }}' \
+            --g22='${{ inputs.g22 }}' \
+            --g18='${{ inputs.g18 }}' \
+            --payal='${{ inputs.payal }}' \
+            --jodavi='${{ inputs.jodavi }}'
+
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet -- public/rates.json data/rates-state.json data/manual-rates.json; then
+            echo "Rates unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/rates.json data/rates-state.json data/manual-rates.json
+          git commit -m "rates: $(TZ=Asia/Kolkata date +'%d %b %Y') (published from phone)"
+          git push

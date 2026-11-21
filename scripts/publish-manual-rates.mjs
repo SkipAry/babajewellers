@@ -37,7 +37,36 @@ function fail(msg) {
   process.exit(1);
 }
 
-const m = JSON.parse(readFileSync(MANUAL, "utf8"));
+/* Rates may arrive two ways:
+     - from data/manual-rates.json (editing the file, then `npm run rates:manual`)
+     - from command-line flags, which is how the GitHub workflow passes
+       the five numbers typed on a phone.
+   The flags win when present, and are written back into the file so the
+   two paths never disagree about what was last published. */
+function fromFlags() {
+  const get = (name) => {
+    const hit = process.argv.find((a) => a.startsWith(`--${name}=`));
+    if (!hit) return null;
+    const raw = hit.slice(name.length + 3).replace(/[,\s₹]/g, "");
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : NaN;
+  };
+  const keys = ["g24", "g22", "g18", "payal", "jodavi"];
+  const vals = Object.fromEntries(keys.map((k) => [k, get(k)]));
+  if (keys.every((k) => vals[k] === null)) return null;
+  for (const k of keys) {
+    if (vals[k] === null) fail(`--${k}= was not supplied (all five rates are required)`);
+    if (Number.isNaN(vals[k])) fail(`--${k}= is not a number`);
+  }
+  return {
+    date: istToday(),
+    gold10g: { "24k": vals.g24, "22k": vals.g22, "18k": vals.g18 },
+    silverKg: { payal: vals.payal, jodavi: vals.jodavi },
+  };
+}
+
+const flagged = fromFlags();
+const m = flagged ?? JSON.parse(readFileSync(MANUAL, "utf8"));
 
 /* Validation. These numbers go straight onto a jeweller's website with no
    second source to cross-check them, so a typo here is a wrong price in
@@ -75,6 +104,16 @@ const out = {
 };
 
 writeFileSync(PUBLIC, JSON.stringify(out, null, 2) + "\n");
+
+/* Mirror a flag-driven run back into the file, so it always shows what
+   is actually on the site. */
+if (flagged) {
+  const existing = JSON.parse(readFileSync(MANUAL, "utf8"));
+  writeFileSync(
+    MANUAL,
+    JSON.stringify({ ...existing, ...flagged }, null, 2) + "\n"
+  );
+}
 
 /* Keep the history going so the 7-day trend table still works. */
 try {
