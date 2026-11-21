@@ -296,7 +296,8 @@ export default function GoldRatePage() {
                       {RATE_ROWS.map((row) => {
                         const value =
                           "premium" in row
-                            ? (data.silver["999"] + row.premium) * 1000
+                            ? (data.silverItems?.[row.key as "payal" | "jodavi"] ??
+                                data.silver["999"] + row.premium) * 1000
                             : data.gold[row.key as "24k" | "22k" | "18k"] * 10;
                         return (
                           <div

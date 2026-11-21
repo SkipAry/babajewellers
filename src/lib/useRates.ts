@@ -197,11 +197,16 @@ export function displayRows(data: PublishedRates): DisplayRow[] {
     value: per10g(data.gold[r.key as keyof PublishedRates["gold"]]),
     unit: "per 10 grams" as const,
   }));
+  /* Hand-set item rates win when present: the shop prices Payal and
+     Jodavi independently, so a derived premium would overwrite a real
+     number with a guess. */
   const silver = SILVER_PRODUCTS.map((p) => ({
     key: p.key,
     label: p.label,
     sub: p.sub,
-    value: perKg(data.silver["999"], p.premiumPerGram),
+    value: data.silverItems
+      ? data.silverItems[p.key as "payal" | "jodavi"] * 1000
+      : perKg(data.silver["999"], p.premiumPerGram),
     unit: "per kilogram" as const,
   }));
   return [...gold, ...silver];

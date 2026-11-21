@@ -168,7 +168,15 @@ export const ratesConfig: RatesConfig = {
   goldRoundingIncrement: 1,
   silverRoundingIncrement: 1,
 
-  benchmarkEnabled: true,
+  /* OFF from 21 Nov 2026. The owner now sets the rates by hand — the
+     shop's own figures, which do not track PNG: on 21 Nov their 18K was
+     ₹1,550/10g under PNG's and the Payal/Jodavi gap moved from ₹5/g to
+     ₹4/g overnight, so no formula reproduces them.
+
+     The benchmark code is left in place, not deleted: turning this back
+     to true is the whole of the work if automatic PNG-matched rates are
+     ever wanted again. */
+  benchmarkEnabled: false,
   benchmarkUrl: "https://www.pngjewellers.com/pages/metal-rates",
   benchmarkUndercut24k: 15,
   benchmarkUndercutSilver: 2,
@@ -213,6 +221,16 @@ export type PublishedRates = {
      them, and publishing a purity nobody quoted meant publishing a guess. */
   gold: { "24k": number; "22k": number; "18k": number };
   silver: { "999": number };
+  /**
+   * The two silver items the shop actually prices, in ₹ per gram.
+   *
+   * Present only when the rates were set by hand — the shop gives Payal
+   * and Jodavi their own figures, and the gap between them is not fixed
+   * (₹5/g on 20 Nov 2026, ₹4/g on the 21st). When absent, the display
+   * derives both from `silver["999"]` using the premiums in
+   * SILVER_PRODUCTS.
+   */
+  silverItems?: { payal: number; jodavi: number };
   unit: "INR per gram";
   /** ISO 8601 with +05:30 offset. When WE last refreshed successfully. */
   updatedAt: string;
@@ -235,7 +253,7 @@ export type PublishedRates = {
    * several days running the benchmark has broken and the rate has
    * quietly drifted away from PNG again.
    */
-  source: "goldapi.io" | "benchmark:pngjewellers";
+  source: "goldapi.io" | "benchmark:pngjewellers" | "manual";
 };
 
 /** Older than this and the card shows a delayed notice. */

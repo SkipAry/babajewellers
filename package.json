@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "npx serve out",
     "rates:fetch": "node scripts/fetch-rates.mjs",
-    "rates:test": "node scripts/fetch-rates.mjs --selftest"
+    "rates:test": "node scripts/fetch-rates.mjs --selftest",
+    "rates:manual": "node scripts/publish-manual-rates.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",

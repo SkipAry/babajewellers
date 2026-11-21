@@ -109,9 +109,22 @@ name: Update gold & silver rates
 # POSTs to workflow_dispatch. Change the time THERE too, or the fetch keeps
 # running at 09:45.
 # ───────────────────────────────────────────────────────────────────
+# ── STOPPED 21 Nov 2026 ────────────────────────────────────────────
+# The owner now publishes rates by hand (`npm run rates:manual`, reading
+# data/manual-rates.json), so this job no longer runs on a schedule —
+# leaving it on would have it overwrite hand-set prices every morning
+# with figures nobody chose.
+#
+# It is kept, not deleted, and still runs from the Actions tab on
+# demand. To bring automation back: set benchmarkEnabled: true in
+# src/data/rates-config.ts and restore the `schedule:` block below.
+#
+# The external cron-job.org trigger must be DISABLED too — that is what
+# actually fires this, not the schedule here.
+# ───────────────────────────────────────────────────────────────────
 on:
-  schedule:
-    - cron: "0 6 * * *"    # 11:30 IST — fallback only; see above
+  # schedule:
+  #  - cron: "0 6 * * *"    # 11:30 IST — disabled, see above
   workflow_dispatch:
     inputs:
       force:

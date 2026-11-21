@@ -286,7 +286,8 @@ export default function LocationRatePage({
                         <td className="px-5 py-5 text-right font-display text-xl font-bold text-maroon-deep">
                           {inr(
                             "premium" in row
-                              ? (data.silver["999"] + row.premium) * 1000
+                              ? (data.silverItems?.[row.key as "payal" | "jodavi"] ??
+                                  data.silver["999"] + row.premium) * 1000
                               : data.gold[row.key as "24k" | "22k" | "18k"] * 10
                           )}
                           <span className="text-sm font-normal text-ink/60">
