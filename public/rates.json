@@ -1,20 +1,16 @@
 {
   "gold": {
-    "24k": 12325,
-    "22k": 11350,
-    "18k": 9500
+    "24k": 12117,
+    "22k": 11218,
+    "18k": 9479
   },
   "silver": {
-    "999": 148.5
-  },
-  "silverItems": {
-    "payal": 148.5,
-    "jodavi": 152.5
+    "999": 146
   },
   "unit": "INR per gram",
-  "updatedAt": "2026-11-21T20:09:23.098+05:30",
-  "quotedAt": "2026-11-21T20:09:23.098+05:30",
+  "updatedAt": "2026-11-22T11:31:11+05:30",
+  "quotedAt": "2026-11-22T11:29:38+05:30",
   "goldStatus": "fresh",
   "silverStatus": "fresh",
-  "source": "manual"
+  "source": "goldapi.io"
 }
