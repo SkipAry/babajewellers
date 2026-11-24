@@ -13,6 +13,7 @@ import Offers from "@/components/Offers";
 import PromiseBand from "@/components/PromiseBand";
 import Promises from "@/components/Promises";
 import Reels from "@/components/Reels";
+import Schemes from "@/components/Schemes";
 import Stores from "@/components/Stores";
 import { faqs } from "@/data/site";
 import { readRates } from "@/components/LocationRatePage";
@@ -50,6 +51,7 @@ export default function Home() {
         <MetalRates initialRates={initialRates} />
         <Collections />
         <Reels />
+        <Schemes />
         <BenefitCalculator />
         <Stores />
         <FAQ />

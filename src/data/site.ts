@@ -675,6 +675,157 @@ export const findPlan = (amount: number, months: number) =>
 export const inr = (n: number) =>
   `₹${new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(n)}`;
 
+/* ── Savings schemes (योजना) ─────────────────────────────────────
+ * The six schemes from the shop's own posters, transcribed 24 Nov 2026.
+ *
+ * Marathi is the source of truth here, not a translation target: these
+ * are the exact words on the posters customers have already seen in the
+ * shop and on WhatsApp, and Marathi search on this site converts at 8.4%
+ * against 1.2% for the English equivalent. The English line under each
+ * is a plain-words gloss for anyone who cannot read Devanagari — it is
+ * deliberately NOT a word-for-word translation of the terms, because the
+ * Marathi rows above it are what the shop is actually promising.
+ *
+ * ⚠ These are financial commitments. Every figure here was read off an
+ * image, so if any month count or percentage is wrong, this file is the
+ * one place to correct it — nothing is computed from these numbers.
+ *
+ * The Elite Plan (/elite-plan/) is deliberately NOT in this list. It
+ * still runs and keeps its own page and calculator; the owner does not
+ * advertise it alongside these six.
+ */
+export type SchemeRow = { label: string; value: string };
+export type Scheme = {
+  /** Poster number, kept so the site and the printed set stay in step. */
+  no: number;
+  slug: string;
+  /** Marathi name, as printed. */
+  name: string;
+  /** Roman spelling, for the English line and for search. */
+  nameEn: string;
+  rows: SchemeRow[];
+  /** The poster's own closing paragraph, verbatim. */
+  body: string;
+  /** Plain-English gloss. Not a literal translation of `body`. */
+  bodyEn: string;
+};
+
+export const schemes: Scheme[] = [
+  {
+    no: 1,
+    slug: "samruddhi",
+    name: "समृद्धी योजना",
+    nameEn: "Samruddhi Yojana",
+    rows: [
+      { label: "हप्त्यांचा कालावधी", value: "१० महिने" },
+      { label: "दुकानाचा बोनस", value: "११ वा हप्ता मोफत" },
+      { label: "दागिने खरेदी", value: "१२ व्या महिन्यात" },
+    ],
+    body:
+      "१० महिने नियमित हप्ते भरा आणि ११ वा हप्ता आमच्याकडून मोफत मिळवा. " +
+      "१२ व्या महिन्यात आपल्या आवडीचे दागिने खरेदी करा.",
+    bodyEn:
+      "Pay ten monthly instalments and the eleventh is on us. Choose your jewellery in the twelfth month.",
+  },
+  {
+    no: 2,
+    slug: "suvarna-bachat",
+    name: "सुवर्ण बचत योजना",
+    nameEn: "Suvarna Bachat Yojana",
+    rows: [
+      { label: "मासिक बुकिंग", value: "१ ग्रॅम सोने (चालू दराने)" },
+      { label: "कालावधी", value: "१० महिने" },
+      { label: "विशेष लाभ", value: "११ व्या महिन्यात १ ग्रॅम सोने मोफत" },
+    ],
+    body:
+      "दर महिन्याला १० महिने चालू दराने १ ग्रॅम सोने बुक करा. " +
+      "११ व्या महिन्यात १ ग्रॅम सोने पूर्णपणे मोफत मिळवा.",
+    bodyEn:
+      "Book one gram of gold each month for ten months, at that day's rate. The eleventh gram is free.",
+  },
+  {
+    no: 3,
+    slug: "bhagyashri",
+    name: "भाग्यश्री योजना",
+    nameEn: "Bhagyashri Yojana",
+    rows: [
+      { label: "हप्त्यांचा कालावधी", value: "२२ महिने" },
+      { label: "दुकानाचा बोनस", value: "३ हप्त्यांचा विशेष बोनस" },
+      { label: "लाभाचा महिना", value: "२३ व्या महिन्यात" },
+    ],
+    body:
+      "२२ महिने नियमित हप्ते भरा आणि २३ व्या महिन्यात आमच्याकडून " +
+      "३ हप्त्यांचा विशेष बोनस मिळवा!",
+    bodyEn:
+      "Pay twenty-two monthly instalments; in the twenty-third month we add a bonus worth three instalments.",
+  },
+  {
+    no: 4,
+    slug: "shubhlabh",
+    name: "शुभलाभ योजना",
+    nameEn: "Shubhlabh Yojana",
+    rows: [
+      { label: "हप्त्यांचा कालावधी", value: "६ महिने" },
+      { label: "बोनस (७ वा महिना)", value: "भरलेल्या रकमेवर ६% बोनस" },
+      { label: "खरेदी कालावधी", value: "८ व्या महिन्यात" },
+    ],
+    body:
+      "६ महिने नियमित हप्ते भरा. ७ व्या महिन्यात भरलेल्या रकमेवर ६% बोनस " +
+      "मिळेल आणि ८ व्या महिन्यात सोने खरेदी करता येईल.",
+    bodyEn:
+      "Pay six monthly instalments. In the seventh month you receive a 6% bonus on what you have paid, and from the eighth you can buy gold.",
+  },
+  {
+    no: 5,
+    slug: "swarnadhara",
+    name: "स्वर्णधारा गोल्ड स्कीम",
+    nameEn: "Swarnadhara Gold Scheme",
+    rows: [
+      { label: "एकूण कालावधी", value: "१४ महिने (+१ महिना खरेदी)" },
+      { label: "तुम्ही भरायचे हप्ते", value: "१२ हप्ते नियमित" },
+      { label: "दुकानाचा लाभ", value: "१ ला आणि १४ वा हप्ता मोफत" },
+    ],
+    body:
+      "१ ला आणि १४ वा हप्ता आमच्याकडून मोफत मिळवा. फक्त उर्वरित १२ हप्ते " +
+      "नियमित भरा आणि १५ व्या महिन्यात आपल्या आवडीचे सुंदर दागिने खरेदी करा.",
+    bodyEn:
+      "We pay the first and fourteenth instalments. You pay only the remaining twelve, then choose your jewellery in the fifteenth month.",
+  },
+  {
+    no: 6,
+    slug: "sampada",
+    name: "संपदा योजना",
+    nameEn: "Sampada Yojana",
+    rows: [
+      { label: "हप्त्यांचा कालावधी", value: "१० महिने" },
+      { label: "खरेदी कालावधी", value: "११ व्या महिन्यात" },
+      { label: "विशेष वैशिष्ट्य", value: "जमा रकमेवर घडणावळ शुल्क नाही" },
+    ],
+    body:
+      "१० महिने नियमित हप्ते भरा आणि ११ व्या महिन्यात दागिने खरेदी करा; " +
+      "जमा केलेल्या रकमेवर घडणावळ शुल्क नाही.",
+    bodyEn:
+      "Pay ten monthly instalments and buy in the eleventh month, with no making charges on the amount you have deposited.",
+  },
+];
+
+export const schemesCopy = {
+  heading: "बचत योजना",
+  headingEn: "Savings Schemes",
+  intro:
+    "थोडे थोडे साठवा आणि आपल्या आवडीचे दागिने घ्या. खालील कोणतीही योजना निवडा — " +
+    "हप्ता किती ठेवायचा हे तुम्ही ठरवा.",
+  introEn:
+    "Save a little each month and take home the jewellery you want. Pick whichever scheme suits you — you decide the instalment amount.",
+  /* No amounts anywhere on this page on purpose: the posters set the
+     structure, not the monthly figure, and inventing one would be a
+     promise nobody made. */
+  disclaimer:
+    "योजनेचे नियम व अटी लागू. हप्त्याची रक्कम व तपशीलासाठी दुकानात संपर्क साधा.",
+  disclaimerEn:
+    "Terms and conditions apply. Ask in store for instalment amounts and full details.",
+};
+
 export const savingsScheme = {
   /** Eyebrow above the heading — the poster's own strapline. */
   name: "आजची बचत, उद्याचे सुवर्ण भविष्य",

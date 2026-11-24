@@ -13,6 +13,9 @@ const navLinks = [
   { href: "/#promises", label: "Our Promises" },
   { href: "/#about", label: "About" },
   { href: "/#collections", label: "Collections" },
+  /* Anchors to the homepage section that sits directly above the Elite
+     Plan calculator, matching every other nav item. */
+  { href: "/#schemes", label: "Schemes" },
   { href: "/#stores", label: "Visit Us" },
   { href: "/#contact", label: "Contact" },
 ];
