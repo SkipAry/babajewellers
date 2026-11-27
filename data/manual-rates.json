@@ -1,13 +1,13 @@
 {
   "_comment": "Rates the shop sets by hand. These OVERRIDE the PNG benchmark, but only on the date below — a past date is ignored and the job falls back to the benchmark with a loud warning, because serving a stale hand-typed price is worse than serving an automatic one. To keep manual control, update this file (and the date) each day.",
-  "date": "2026-11-25",
+  "date": "2026-11-27",
   "gold10g": {
-    "24k": 122000,
-    "22k": 113040,
-    "18k": 92500
+    "24k": 125500,
+    "22k": 115870,
+    "18k": 98480
   },
   "silverKg": {
-    "payal": 143000,
-    "jodavi": 148000
+    "payal": 157500,
+    "jodavi": 162500
   }
 }
